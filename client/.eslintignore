@@ -1,0 +1,5 @@
+.nuxt
+public
+node_modules
+types/graphql.ts
+schemaQuery.js

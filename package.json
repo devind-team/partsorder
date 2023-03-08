@@ -1,0 +1,21 @@
+{
+  "name": "nuxt-nest-template",
+  "version": "0.1.1",
+  "description": "Nuxt nest template boilerplate",
+  "repository": "git@github.com:Luferov/nuxt-nest-template.git",
+  "author": "Victor <lyferov@yandex.ru>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "client:dev": "yarn --cwd client run dev:client",
+    "server:dev": "yarn --cwd client run dev:server"
+  },
+  "devDependencies": {
+    "prettier": "^2.8.4",
+    "concurrently": "^7.6.0"
+  },
+  "workspaces": [
+    "client",
+    "server"
+  ]
+}

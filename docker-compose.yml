@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  postgres:
+    container_name: postgres-partsorder
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: partsorder
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - './db/postgres/data:/var/lib/postgresql/data'
+
+  pgadmin:
+    container_name: pgadmin-partsorder
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - '5050:80'
+    depends_on:
+      - postgres
+    links:
+      - postgres
+  
+  redis:
+    container_name: redis-partsorder
+    image: redis:latest
+    restart: unless-stopped
+    ports:
+      - '6379:6379'

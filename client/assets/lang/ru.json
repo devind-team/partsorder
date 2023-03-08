@@ -1,0 +1,12 @@
+{
+  "title": "Template for nuxt",
+  "auth": {
+    "title": "Авторизация",
+    "login": "Войти",
+    "username": "Логин",
+    "password": "Пароль",
+    "singing": "Войти",
+    "logout": "Выйти",
+    "error": "Ошибка авторизации"
+  }
+}

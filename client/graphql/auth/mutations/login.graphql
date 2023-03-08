@@ -1,0 +1,11 @@
+#import "../fragments/user-fields.graphql"
+
+mutation Login($userLoginInput: UserLoginInput!) {
+  login(userLoginInput: $userLoginInput) {
+    accessToken
+    user {
+      ...UserFields
+    }
+    __typename
+  }
+}
