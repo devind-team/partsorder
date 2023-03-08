@@ -1,3 +1,12 @@
 {
-  "title": "Template for nuxt"
+  "title": "Partsorder",
+  "auth": {
+    "title": "Authorization",
+    "login": "Sign in",
+    "username": "Username",
+    "password": "Password",
+    "singing": "Sing in",
+    "logout": "Log out",
+    "error": "Authorization error"
+  }
 }
