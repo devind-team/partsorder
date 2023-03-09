@@ -22,7 +22,7 @@ export class AuthResolver {
     }
   }
 
-  @Mutation(() => UserLoginType, { nullable: true })
+  @Mutation(() => UserLoginType)
   async register(@Args('userRegisterInput') userRegisterInput: UserRegisterInput): Promise<UserLoginType> {
     return await this.authService.register(userRegisterInput)
   }
