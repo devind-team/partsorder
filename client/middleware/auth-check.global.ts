@@ -1,3 +1,4 @@
+import { ApolloError } from '@apollo/client'
 import { parse } from 'cookie-es'
 import { useAuthStore } from '~/stores'
 import { useNuxtApp } from '#app'
@@ -25,12 +26,13 @@ export default defineNuxtRouteMiddleware(async (_to, _from) => {
         fetchPolicy: 'network-only',
       })
       .then(({ data }: { data: MeQuery }) => data.me)
+      .catch((error: ApolloError) => {
+        console.log(error)
+      })
     if (user) {
       authStore.user = user
-    } else {
-      if (process.client) {
-        await $apolloHelpers.onLogout()
-      }
+    } else if (process.client) {
+      await $apolloHelpers.onLogout()
     }
   }
 })
