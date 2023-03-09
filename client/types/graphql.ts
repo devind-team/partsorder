@@ -22,7 +22,7 @@ export type Gender =
 export type Mutation = {
   __typename?: 'Mutation';
   login: UserLoginType;
-  register?: Maybe<UserLoginType>;
+  register: UserLoginType;
 };
 
 
@@ -165,6 +165,13 @@ export type LoginMutationVariables = Exact<{
 
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename: 'UserLoginType', accessToken: string, user: { __typename: 'User', id: string, username: string, avatar?: string | null, email: string, lastName: string, firstName: string, sirName?: string | null, birthday?: any | null, role: Role, gender: Gender, active: boolean, createdAt: any, updatedAt: any } } };
+
+export type RegisterMutationVariables = Exact<{
+  userRegisterInput: UserRegisterInput;
+}>;
+
+
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename: 'UserLoginType', accessToken: string, user: { __typename: 'User', id: string, username: string, avatar?: string | null, email: string, lastName: string, firstName: string, sirName?: string | null, birthday?: any | null, role: Role, gender: Gender, active: boolean, createdAt: any, updatedAt: any } } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
