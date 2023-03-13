@@ -82,5 +82,18 @@ enum Gender {
 
 model Order {
   /// Идентификатор заказа
-  id Int @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
+  /// Создатель заказа
+  creator     String @db.VarChar(50)
+  /// Клиент
+  client      String @db.VarChar(100)
+  /// Статус заказа
+  orderStatus String @db.VarChar(30)
+
+  /// Дата создания заказа
+  createdAt DateTime @default(now()) @map("created_at")
+  /// Дата изменения заказа
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("orders")
 }
