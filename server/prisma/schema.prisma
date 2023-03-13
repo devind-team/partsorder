@@ -79,3 +79,8 @@ enum Gender {
   MALE
   FEMALE
 }
+
+model Order {
+  /// Идентификатор заказа
+  id Int @id @default(autoincrement())
+}
