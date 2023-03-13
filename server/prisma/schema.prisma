@@ -80,20 +80,100 @@ enum Gender {
   FEMALE
 }
 
+model Product {
+  /// Идентификатор товара
+  id           Int     @id @default(autoincrement())
+  /// Артикул
+  /// @Validator.MinLength(3)
+  /// @Validator.MaxLength(30)
+  article      String  @unique @db.VarChar(50)
+  /// Название
+  title        String  @map("title") @db.VarChar(100)
+  /// Производитель
+  manufacturer String  @map("manufacturer") @db.VarChar(50)
+  /// Псевдонимы
+  aliases      String  @db.VarChar(500)
+  /// Изображения товара
+  images       String?
+  /// Оригинальность товара
+  orig         Boolean @default(true)
+
+  /// Дата создания продукта
+  createdAt DateTime @default(now()) @map("created_at")
+  /// Дата последнего изменения продукта
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("products")
+}
+
+model Item {
+  /// Идентификатор позиции заказа
+  id           Int     @id @default(autoincrement())
+  /// Артикул
+  articleId    Product @relation(fields: [itemId], references: [id])
+  itemId       Int
+  /// Количество
+  quantity     Int
+  /// Статус позиции заказа
+  itemStatus   String  @default(CREATED)
+  /// Тип доставки
+  deliveryType String  @default(TURK)
+  /// Номер машины
+  carNo        String  @db.VarChar(50)
+  /// Номер рейса
+  routeNo      String  @db.VarChar(50)
+
+  /// Дата последнего изменения позиции заказа
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("items")
+}
+
+enum itemStatus {
+  CREATED
+  APPROVED
+  PURCHASED
+  EUSTOCK
+  DELIVERY
+  RUSTOCK
+  COMPLETED
+}
+
+enum deliveryType {
+  TURK
+  KZ
+  LT
+}
+
 model Order {
   /// Идентификатор заказа
   id          Int    @id @default(autoincrement())
   /// Создатель заказа
-  creator     String @db.VarChar(50)
+  creator     User   @relation(fields: [creatorId], references: [id])
+  creatorId   Int
   /// Клиент
   client      String @db.VarChar(100)
   /// Статус заказа
-  orderStatus String @db.VarChar(30)
+  orderStatus String @default(CREATED)
 
   /// Дата создания заказа
-  createdAt DateTime @default(now()) @map("created_at")
-  /// Дата изменения заказа
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  /// Дата согласования заказа
+  approvedAt DateTime @default(now()) @map("approved_at") @approvedAt
+  /// Дата закрытия заказа
+  closedAt   DateTime @default(now()) @map("closed_at") @closedAt
+
+  /// Товары в заказе
+  items Item[]
 
   @@map("orders")
+}
+
+enum orderStatus {
+  CREATED
+  APPROVAL
+  APPROVED
+  PURCHASING
+  DELIVERY
+  CLOSED
 }
