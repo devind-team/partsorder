@@ -3523,10 +3523,10 @@
     hookable "^5.4.2"
     unhead "1.1.21"
 
-"@vee-validate/i18n@^4.7.4":
-  version "4.7.4"
-  resolved "https://registry.yarnpkg.com/@vee-validate/i18n/-/i18n-4.7.4.tgz#3e7eeaa6e48c596daf9e39126b0d45db070b9b21"
-  integrity sha512-zK5rnPjgd4kBEfUj4jWUu6GHsldETji/JuorBb+emWSD1QUo4nEr1R7zFqHHunbAQu664iIQnzAlsfzkkXM40A==
+"@vee-validate/i18n@^4.8.1":
+  version "4.8.1"
+  resolved "https://registry.yarnpkg.com/@vee-validate/i18n/-/i18n-4.8.1.tgz#399e95c99cba96c730df8c4ed9ee77ee22320a62"
+  integrity sha512-yi3X3Q7/pD+W00eRhfN0lBzUzVA+TFwMVyHDhsuVOV55pXOMTRHsvVw7hK9w3E0n/RkTZXlARUHYBmeZjmmuiA==
 
 "@vercel/nft@^0.22.6":
   version "0.22.6"
