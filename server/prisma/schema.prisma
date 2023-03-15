@@ -90,9 +90,9 @@ model Product {
   /// Название
   title        String  @map("title") @db.VarChar(100)
   /// Производитель
-  manufacturer String  @map("manufacturer") @db.VarChar(50)
-  /// Псевдонимы
-  aliases      String  @db.VarChar(500)
+  manufacturer String? @map("manufacturer") @db.VarChar(50)
+  /// Псевдонимы через запятую
+  aliases      String? @db.VarChar(500)
   /// Изображения товара
   images       String?
   /// Оригинальность товара
@@ -102,26 +102,29 @@ model Product {
   createdAt DateTime @default(now()) @map("created_at")
   /// Дата последнего изменения продукта
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  Item      Item[]
+  Price     Price[]
 
+  @@index([article, title])
   @@map("products")
 }
 
 model Item {
   /// Идентификатор позиции заказа
-  id           Int     @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   /// Артикул
-  articleId    Product @relation(fields: [itemId], references: [id])
   itemId       Int
+  article      Product       @relation(fields: [itemId], references: [id], onDelete: Cascade)
   /// Количество
   quantity     Int
   /// Статус позиции заказа
-  itemStatus   String  @default(CREATED)
+  itemStatus   itemStatus    @default(CREATED)
   /// Тип доставки
-  deliveryType String  @default(TURK)
+  deliveryType deliveryType? @default(TURK)
   /// Номер машины
-  carNo        String  @db.VarChar(50)
+  carNo        String?       @db.VarChar(50)
   /// Номер рейса
-  routeNo      String  @db.VarChar(50)
+  routeNo      String?       @db.VarChar(50)
 
   /// Дата последнего изменения позиции заказа
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
@@ -147,21 +150,25 @@ enum deliveryType {
 
 model Order {
   /// Идентификатор заказа
-  id          Int    @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   /// Создатель заказа
-  creator     User   @relation(fields: [creatorId], references: [id])
+  creator     User        @relation(fields: [creatorId], references: [id])
   creatorId   Int
   /// Клиент
-  client      String @db.VarChar(100)
+  client      Client      @relation(fields: [clientId], references: [id])
+  clientId    Int
   /// Статус заказа
-  orderStatus String @default(CREATED)
+  orderStatus orderStatus @default(CREATED)
+  /// Ответсвенный менеджер
+  managerId   Int
+  manager     User        @relation(fields: [managerId], references: [id])
 
   /// Дата создания заказа
-  createdAt  DateTime @default(now()) @map("created_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
   /// Дата согласования заказа
-  approvedAt DateTime @default(now()) @map("approved_at") @approvedAt
+  approvedAt DateTime? @default(now()) @map("approved_at")
   /// Дата закрытия заказа
-  closedAt   DateTime @default(now()) @map("closed_at") @closedAt
+  closedAt   DateTime? @default(now()) @map("closed_at")
 
   /// Товары в заказе
   items Item[]
@@ -176,4 +183,50 @@ enum orderStatus {
   PURCHASING
   DELIVERY
   CLOSED
+}
+
+model Client {
+  /// Идентификатор клиента
+  id        Int     @id @default(autoincrement())
+  /// Название клиента
+  name      String  @map("name") @db.VarChar(100)
+  /// Ответсвенный менеджер
+  managerId Int
+  manager   User    @relation(fields: [managerId], references: [id])
+  /// Адрес
+  address   String  @map("address") @db.VarChar(500)
+  /// Email пользователя
+  /// @Validator.IsEmail()
+  email     String? @db.VarChar(50)
+  /// Телефон
+  /// @Validator.MinLength(3)
+  /// @Validator.MaxLength(20)
+  phone     String? @db.VarChar(50)
+
+  /// Дата создания клиента
+  createdAt DateTime @default(now()) @map("created_at")
+  Order     Order[]
+
+  @@map("clients")
+}
+
+model Price {
+  /// Идентификатор ценового предложения
+  id           Int      @id @default(autoincrement())
+  /// Артикул
+  priceArticle Int
+  article      Product  @relation(fields: [priceArticle], references: [article], onDelete: Cascade)
+  /// Поставщик
+  supplier     String   @map("supplier") @db.VarChar(500)
+  /// Цена
+  price        Float
+  /// Срок поставки
+  duration     DateTime
+
+  /// Дата создания
+  createdAt DateTime @default(now()) @map("created_at")
+  /// Дата обновления
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("prices")
 }
