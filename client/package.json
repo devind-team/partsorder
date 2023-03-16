@@ -48,7 +48,7 @@
     "@nuxtjs/robots": "^3.0.0",
     "@nuxtjs/tailwindcss": "^6.4.1",
     "@pinia/nuxt": "^0.4.7",
-    "@vee-validate/i18n": "^4.7.4",
+    "@vee-validate/i18n": "^4.8.3",
     "@vueuse/core": "^9.13.0",
     "graphql-tag": "^2.12.6",
     "nuxt": "^3.2.3",
