@@ -144,6 +144,7 @@ enum itemStatus {
 
 enum deliveryType {
   TURK
+  RORO
   KZ
   LT
 }
@@ -210,18 +211,30 @@ model Client {
   @@map("clients")
 }
 
+model Supplier {
+  /// Идентификатор поставщика
+  id        Int       @id @default(autoincrement())
+  /// Название
+  name      String    @unique @db.VarChar(200)
+  /// Страна
+  country   String?   @db.VarChar(50)
+  /// Сайт
+  site      String?   @db.VarChar(50)
+}
+
 model Price {
   /// Идентификатор ценового предложения
-  id           Int      @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   /// Артикул
-  priceArticle Int
-  article      Product  @relation(fields: [priceArticle], references: [article], onDelete: Cascade)
+  priceId String
+  article       Product  @relation(fields: [priceId], references: [id], onDelete: Cascade)
   /// Поставщик
-  supplier     String   @map("supplier") @db.VarChar(500)
+  supplierId    Int
+  supplier      Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
   /// Цена
-  price        Float
+  price         Float
   /// Срок поставки
-  duration     DateTime
+  duration      String?
 
   /// Дата создания
   createdAt DateTime @default(now()) @map("created_at")
