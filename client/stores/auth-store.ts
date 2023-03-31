@@ -7,6 +7,7 @@ export type AuthStoreStateType = {
 
 export type AuthStoreGettersType = {
   loginIn: (state: AuthStoreStateType) => boolean
+  initials: (state: AuthStoreStateType) => string
 }
 
 export const useAuthStore = defineStore<string, AuthStoreStateType, AuthStoreGettersType>('authStore', {
@@ -15,5 +16,6 @@ export const useAuthStore = defineStore<string, AuthStoreStateType, AuthStoreGet
   }),
   getters: {
     loginIn: (state) => state.user !== null,
+    initials: (state) => (state.user ? `${state.user.lastName[0]}${state.user.firstName[0]}` : ''),
   },
 })

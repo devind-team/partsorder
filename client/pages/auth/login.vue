@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import * as yup from 'yup'
+import { object, string } from 'yup'
 import { Field, Form, FormActions } from 'vee-validate'
-import { definePageMeta, useLocalePath } from '#imports'
-import { useRouter } from '#app'
-import { useAuthStore } from '~/stores'
 import { LoginMutation, LoginMutationVariables, UserLoginInput } from '~/types/graphql'
 import loginMutation from '~/graphql/auth/mutations/login.graphql'
+import { useAuthStore } from '~/stores'
+import { definePageMeta, useLocalePath } from '#imports'
+import { useRouter } from '#app'
 
 const { t } = useI18n()
 const { onLogin } = useApollo()
@@ -21,7 +21,6 @@ useHead({ title: t('auth.title') })
 
 const { mutate, onDone, loading } = useMutation<LoginMutation, LoginMutationVariables>(loginMutation)
 onDone(async ({ data }) => {
-  console.log(data)
   if (!data) return
   const { accessToken, user } = data.login
   await onLogin(accessToken)
@@ -29,14 +28,17 @@ onDone(async ({ data }) => {
   await router.push(localePath({ name: 'index' }))
 })
 
-const schema = yup.object({
-  username: yup.string().required().min(2).label(t('auth.username')),
-  password: yup.string().required().min(6).label(t('auth.password')),
+const schema = object({
+  username: string().required().min(2).label(t('auth.username')),
+  password: string().required().min(4).label(t('auth.password')),
 })
 
-const handleLogin = async (userLoginInput: UserLoginInput, { setErrors }: FormActions<UserLoginInput>) => {
+const handleSubmit = async (
+  values: UserLoginInput,
+  { setErrors }: FormActions<{ username: string; password: string }>
+) => {
   try {
-    await mutate({ userLoginInput })
+    await mutate({ userLoginInput: values })
   } catch (e) {
     setErrors({ username: t('auth.error'), password: t('auth.error') })
   }
@@ -44,7 +46,7 @@ const handleLogin = async (userLoginInput: UserLoginInput, { setErrors }: FormAc
 </script>
 <template>
   <v-container>
-    <Form as="v-form" :validation-schema="schema" @submit="handleLogin">
+    <Form as="v-form" :validation-schema="schema" @submit="handleSubmit">
       <v-card :loading="loading" class="mx-auto w-50">
         <v-card-title>{{ $t('auth.title') }}</v-card-title>
         <v-card-text>

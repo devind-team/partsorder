@@ -1,12 +1,23 @@
 {
   "title": "Partsorder",
   "auth": {
-    "title": "Authorization",
-    "login": "Sign in",
-    "username": "Username",
-    "password": "Password",
-    "singing": "Sing in",
-    "logout": "Log out",
-    "error": "Authorization error"
+    "title": "Авторизация",
+    "register": "Регистрация",
+    "login": "Войти",
+    "username": "Логин",
+    "password": "Пароль",
+    "passwordConfirmation": "Повторите пароль",
+    "pc": "Пароли должны совпадать",
+    "email": "Email",
+    "lastName": "Фамилия",
+    "firstName": "Имя",
+    "sirName": "Отчество",
+    "singing": "Войти",
+    "doRegister": "Зарегистрироваться",
+    "logout": "Выйти",
+    "error": "Ошибка авторизации"
+  },
+  "profile": {
+    "me": "Профиль"
   }
 }
