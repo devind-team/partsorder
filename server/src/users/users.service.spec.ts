@@ -3,15 +3,16 @@ import { UsersService } from './users.service'
 import { PrismaService } from '@common/services/prisma.service'
 import { FilesModule } from '@files/files.module'
 import { UsersResolver } from '@users/users.resolver'
+import { ConfigModule } from '@nestjs/config'
+import { MinioModuleTest } from '@files/files.resolver.spec'
 
 describe('UsersService', () => {
   let service: UsersService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [FilesModule],
+      imports: [FilesModule, ConfigModule, MinioModuleTest],
       providers: [PrismaService, UsersService, UsersResolver],
-      exports: [UsersService],
     }).compile()
 
     service = module.get<UsersService>(UsersService)
