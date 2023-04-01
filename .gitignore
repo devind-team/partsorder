@@ -1,7 +1,10 @@
 .idea/
 
+.env
 db/
+data/
 node_modules/
 server/dist/
 server/node_modules/
 server/src/@generated/
+client/types/graphql.ts

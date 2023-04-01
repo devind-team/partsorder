@@ -92,6 +92,14 @@ jobs:
     defaults:
       run:
         working-directory: server
+    env:
+      SECRET_KEY: 'secret_key'
+      DATABASE_URL: 'postgresql://postgres:1234@postgres:1234/partsorder'
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio12345678
+      MINIO_END_POINT: minio
+      MINIO_PORT: 9000
+      MINIO_BUCKET: storage
     steps:
       - uses: actions/setup-node@v3
         with:
