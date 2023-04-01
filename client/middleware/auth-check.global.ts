@@ -1,8 +1,7 @@
-import { ApolloError } from '@apollo/client'
 import { parse } from 'cookie-es'
 import { useAuthStore } from '~/stores'
 import { useNuxtApp } from '#app'
-import { MeQuery, User } from '~/types/graphql'
+import { MeQuery } from '~/types/graphql'
 import meQuery from '~/graphql/auth/queries/me.graphql'
 
 const DEFAULT_CLIENT_ID = 'default'
@@ -20,18 +19,14 @@ export default defineNuxtRouteMiddleware(async (_to, _from) => {
   if (token && !authStore.loginIn) {
     // If token exists, but user not
     const defaultClient = $apollo.clients[DEFAULT_CLIENT_ID]
-    const user: User | null = await defaultClient
-      .query({
-        query: meQuery,
-        fetchPolicy: 'network-only',
-      })
-      .then(({ data }: { data: MeQuery }) => data.me)
-      .catch((error: ApolloError) => {
-        console.log(error)
-      })
-    if (user) {
-      authStore.user = user
-    } else if (process.client) {
+    try {
+      authStore.user = await defaultClient
+        .query({
+          query: meQuery,
+          fetchPolicy: 'network-only',
+        })
+        .then(({ data }: { data: MeQuery }) => data.me)
+    } catch {
       await $apolloHelpers.onLogout()
     }
   }
