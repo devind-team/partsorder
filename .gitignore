@@ -6,5 +6,6 @@ data/
 node_modules/
 server/dist/
 server/node_modules/
+server/prisma/dbml
 server/src/@generated/
 client/types/graphql.ts
