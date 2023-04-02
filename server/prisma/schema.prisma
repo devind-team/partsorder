@@ -23,6 +23,14 @@ generator nestgraphql {
   decorate_2_arguments = "[]"
 }
 
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
+// generator docs {
+//   provider = "prisma-docs-generator"
+// }
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -31,45 +39,64 @@ datasource db {
 // Модель хранения пользователей
 model User {
   /// Идентификатор пользователя
-  id        Int       @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   /// Логин пользователя
   /// @Validator.MinLength(3)
   /// @Validator.MaxLength(30)
-  username  String    @unique @db.VarChar(50)
+  username  String  @unique @db.VarChar(50)
   /// @HideField()
-  password  String    @db.VarChar(256)
+  password  String  @db.VarChar(256)
   /// Email пользователя
   /// @Validator.IsEmail()
-  email     String    @unique @db.VarChar(50)
+  email     String  @unique @db.VarChar(50)
   /// Аватар пользователя
   avatar    String?
   /// Фамилия
   /// @Validator.MinLength(3)
   /// @Validator.MaxLength(50)
-  lastName  String    @map("last_name") @db.VarChar(50)
+  lastName  String  @map("last_name") @db.VarChar(50)
   /// Имя
   /// @Validator.MinLength(3)
   /// @Validator.MaxLength(50)
-  firstName String    @map("first_name") @db.VarChar(50)
+  firstName String  @map("first_name") @db.VarChar(50)
   /// Отчество
   /// @Validator.MaxLength(50)
-  sirName   String?   @map("sir_name") @db.VarChar(50)
+  sirName   String? @map("sir_name") @db.VarChar(50)
   /// Флаг активности пользователя
-  active    Boolean   @default(true)
+  active    Boolean @default(true)
+
+  /// Номер телефона
+  /// @Validator.MinLength(3)
+  /// @Validator.MaxLength(20)
+  phone    String?   @db.VarChar(50)
   /// День рожденья
   /// @Validator.IsDate()
-  birthday  DateTime?
+  birthday DateTime?
   /// Роль пользователя
-  role      Role      @default(USER)
+  role     Role      @default(USER)
   /// Пол пользователя
-  gender    Gender    @default(UNKNOWN)
+  gender   Gender    @default(UNKNOWN)
 
   /// Дата регистрации пользователя
   createdAt DateTime @default(now()) @map("created_at")
   /// Дата обновления
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  /// Идентификатор менеджера
+  managerId Int?
+  manager   User?    @relation("ManagerClient", fields: [managerId], references: [id])
+  users     User[]   @relation("ManagerClient")
 
-  files File[]
+  /// Мои файлы
+  files        File[]
+  /// Мои заказы
+  orders       Order[]       @relation("OrderUser")
+  /// Заказы за которые пользователь отвечает
+  manageOrders Order[]       @relation("OrderManager")
+  status       Status[]
+  item         Item[]
+  statusItem   StatusItem[]
+  comment      Comment[]
+  commentItem  CommentItem[]
 
   @@index([username, email])
   @@map("users")
@@ -105,172 +132,312 @@ model File {
   /// Дата обновления
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
   /// Файл пользователя, если null - файл системный
-  user      User?    @relation(fields: [userId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId    Int?     @map("user_id")
+
+  products Product[]
 
   @@map("files")
 }
 
+//####################
+//## Сервис заказов ##
+//####################
+
+/// Список доступных товаров
 model Product {
   /// Идентификатор товара
   id           Int     @id @default(autoincrement())
   /// Артикул
   /// @Validator.MinLength(3)
   /// @Validator.MaxLength(30)
-  article      String  @unique @db.VarChar(50)
+  vendorCode   String  @unique @map("verndor_code") @db.VarChar(50)
   /// Название
-  title        String  @map("title") @db.VarChar(100)
+  /// @Validator.MinLength(2)
+  /// @Validator.MaxLength(30)
+  name         String  @db.VarChar(100)
   /// Производитель
   manufacturer String? @map("manufacturer") @db.VarChar(50)
   /// Псевдонимы через запятую
   aliases      String? @db.VarChar(500)
-  /// Изображения товара
-  images       String?
   /// Оригинальность товара
-  orig         Boolean @default(true)
+  original     Boolean @default(true)
+  /// Товаров на складе
+  stock        Int     @default(0)
 
   /// Дата создания продукта
   createdAt DateTime @default(now()) @map("created_at")
   /// Дата последнего изменения продукта
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
-  Item      Item[]
-  Price     Price[]
 
-  @@index([article, title])
+  /// Цены на товар
+  prices     Price[]
+  /// Атрибуты товаров
+  attributes AttributeValue[]
+  /// Товары в заказах
+  item       Item[]
+  /// Изображения товара
+  images     File[]
+
   @@map("products")
 }
 
-model Item {
-  /// Идентификатор позиции заказа
-  id           Int           @id @default(autoincrement())
-  /// Артикул
-  itemId       Int
-  article      Product       @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  /// Количество
-  quantity     Int
-  /// Статус позиции заказа
-  itemStatus   itemStatus    @default(CREATED)
-  /// Тип доставки
-  deliveryType deliveryType? @default(TURK)
-  /// Номер машины
-  carNo        String?       @db.VarChar(50)
-  /// Номер рейса
-  routeNo      String?       @db.VarChar(50)
+/// Цены на товар
+model Price {
+  /// Идентификатор ценового предложения
+  id       Int     @id @default(autoincrement())
+  /// Цена за единицу/штуку
+  price    Decimal @db.Decimal(9, 2)
+  /// Срок поставки в днях
+  duration Int?
 
-  /// Дата последнего изменения позиции заказа
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  /// Название поставщика
+  /// @Validator.MinLength(2)
+  /// @Validator.MaxLength(200)
+  supplierName String  @map("supplier_name") @db.VarChar(200)
+  /// Страна поставщика
+  country      String? @db.VarChar(50)
+  /// Сайт
+  site         String? @db.VarChar(128)
 
-  @@map("items")
+  /// Дата создания
+  createdAt DateTime  @default(now()) @map("created_at")
+  /// Дата обновления
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+  /// Дата действия цены
+  validAt   DateTime? @map("valid_at")
+
+  /// Продукт товара
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int     @map("product_id")
+  item      Item[]
+
+  @@map("prices")
 }
 
-enum itemStatus {
-  CREATED
-  APPROVED
-  PURCHASED
-  EUSTOCK
-  DELIVERY
-  RUSTOCK
-  COMPLETED
+/// Модель атрибутов товара
+model Attribute {
+  /// Идентификатор атрибута
+  id        Int              @id @default(autoincrement())
+  /// Название атрибута
+  /// @Validator.MinLength(2)
+  /// @Validator.MaxLength(50)
+  name      String           @map("name") @db.VarChar(50)
+  /// Дата создания
+  createdAt DateTime         @default(now()) @map("created_at")
+  /// Продукты
+  products  AttributeValue[]
+
+  @@map("attributes")
 }
 
-enum deliveryType {
-  TURK
-  RORO
-  KZ
-  LT
+/// Модель значений атрибутов товара
+model AttributeValue {
+  /// Идентификатор атрибута
+  id          Int       @id @default(autoincrement())
+  /// Название атрибута
+  /// @Validator.MinLength(2)
+  /// @Validator.MaxLength(50)
+  value       String    @map("name") @db.VarChar(50)
+  /// Дата создания
+  createdAt   DateTime  @default(now()) @map("created_at")
+  /// Товар
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId   Int       @map("product_id")
+  /// Атрибут
+  attribute   Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  attributeId Int       @map("attribute_id")
+
+  @@map("attribute_values")
 }
 
+/// Заказ пользователя
 model Order {
   /// Идентификатор заказа
-  id          Int         @id @default(autoincrement())
-  /// Создатель заказа
-  creator     User        @relation(fields: [creatorId], references: [id])
-  creatorId   Int
-  /// Клиент
-  client      Client      @relation(fields: [clientId], references: [id])
-  clientId    Int
-  /// Статус заказа
-  orderStatus orderStatus @default(CREATED)
-  /// Ответсвенный менеджер
-  managerId   Int
-  manager     User        @relation(fields: [managerId], references: [id])
+  id        Int      @id @default(autoincrement())
+  /// Адрес доставки
+  address   String?
+  /// Дата создания
+  createdAt DateTime @default(now()) @map("created_at")
+  /// Пользователь, которые создал заказ
+  user      User     @relation("OrderUser", fields: [userId], references: [id])
+  userId    Int      @map("user_id")
+  /// Менеджер заказа
+  manager   User?    @relation("OrderManager", fields: [managerId], references: [id])
+  managerId Int?     @map("manager_id")
 
-  /// Дата создания заказа
-  createdAt  DateTime  @default(now()) @map("created_at")
-  /// Дата согласования заказа
-  approvedAt DateTime? @default(now()) @map("approved_at")
-  /// Дата закрытия заказа
-  closedAt   DateTime? @default(now()) @map("closed_at")
-
-  /// Товары в заказе
-  items Item[]
+  statuses Status[]
+  item     Item[]
+  comments Comment[]
 
   @@map("orders")
 }
 
-enum orderStatus {
+/// Модель статусов заказов
+model Status {
+  /// Идентификатор статуса
+  id        Int         @id @default(autoincrement())
+  /// Статус
+  status    OrderStatus @default(CREATED)
+  /// Дата добавления статуса
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  /// Заказ
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId Int   @map("order_id")
+  /// Пользователь
+  user    User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId  Int?  @map("user_id")
+
+  @@map("statuses")
+}
+
+/// Статусы заказов
+enum OrderStatus {
+  /// Заказ создан
   CREATED
+  /// Заказ на согласовании
   APPROVAL
+  /// Заказ согласован
   APPROVED
+  /// Заказ оплачен
   PURCHASING
+  /// Заказ в пути
   DELIVERY
+  /// Заказ закрыт
   CLOSED
 }
 
-model Client {
-  /// Идентификатор клиента
-  id        Int     @id @default(autoincrement())
-  /// Название клиента
-  name      String  @map("name") @db.VarChar(100)
-  /// Ответсвенный менеджер
-  managerId Int
-  manager   User    @relation(fields: [managerId], references: [id])
-  /// Адрес
-  address   String  @map("address") @db.VarChar(500)
-  /// Email пользователя
-  /// @Validator.IsEmail()
-  email     String? @db.VarChar(50)
-  /// Телефон
-  /// @Validator.MinLength(3)
-  /// @Validator.MaxLength(20)
-  phone     String? @db.VarChar(50)
-
-  /// Дата создания клиента
+/// Комментарии к заказу
+model Comment {
+  /// Идентификатор комментария
+  id        Int      @id @default(autoincrement())
+  /// Текст комментария
+  text      String
+  /// Дата создания
   createdAt DateTime @default(now()) @map("created_at")
-  Order     Order[]
 
-  @@map("clients")
+  /// Заказ
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId Int   @map("order_id")
+  /// Пользователь добавил
+  user    User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId  Int?  @map("user_id")
+
+  /// Комментарии по дереву
+  comment       Comment?      @relation("ParentComment", fields: [parentId], references: [id])
+  parentId      Int?          @map("parent_id")
+  comments      Comment[]     @relation("ParentComment")
+
+  @@map("comments")
 }
 
-model Supplier {
-  /// Идентификатор поставщика
-  id        Int       @id @default(autoincrement())
-  /// Название
-  name      String    @unique @db.VarChar(200)
-  /// Страна
-  country   String?   @db.VarChar(50)
-  /// Сайт
-  site      String?   @db.VarChar(50)
-}
-
-model Price {
-  /// Идентификатор ценового предложения
-  id            Int      @id @default(autoincrement())
-  /// Артикул
-  priceId String
-  article       Product  @relation(fields: [priceId], references: [id], onDelete: Cascade)
-  /// Поставщик
-  supplierId    Int
-  supplier      Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
-  /// Цена
-  price         Float
-  /// Срок поставки
-  duration      String?
+/// Модель товара
+model Item {
+  /// Идентификатор позиции заказа
+  id           Int           @id @default(autoincrement())
+  /// Количество
+  quantity     Int           @default(1)
+  /// Номер машины
+  carNo        String?       @map("car_no") @db.VarChar(50)
+  /// Номер рейса
+  routeNo      String?       @map("route_no") @db.VarChar(50)
+  /// Тип доставки
+  deliveryType DeliveryType? @default(TURKIYE) @map("delivery_type")
 
   /// Дата создания
   createdAt DateTime @default(now()) @map("created_at")
-  /// Дата обновления
+  /// Дата изменения позиции заказа
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  /// Заказ
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   Int      @map("order_id")
+  /// Продукт
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int      @map("product_id")
+  /// Стоимость товара
+  price     Price?   @relation(fields: [priceId], references: [id], onDelete: SetNull)
+  priceId   Int?     @map("price_id")
+  /// Пользователь добавил
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId    Int?     @map("user_id")
 
-  @@map("prices")
+  /// Статусы товара
+  statuses    StatusItem[]
+  commentItem CommentItem[]
+
+  @@map("items")
+}
+
+/// Комментарии к заказу
+model CommentItem {
+  /// Идентификатор комментария
+  id        Int      @id @default(autoincrement())
+  /// Текст комментария
+  text      String
+  /// Дата создания
+  createdAt DateTime @default(now()) @map("created_at")
+
+  /// Заказ
+  item   Item  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId Int   @map("item_id")
+  /// Пользователь добавил
+  user   User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId Int?  @map("user_id")
+
+  /// Комментарии по дереву
+  comment  CommentItem?  @relation("ParentCommentItem", fields: [parentId], references: [id])
+  parentId Int?      @map("parent_id")
+  comments CommentItem[] @relation("ParentCommentItem")
+
+  @@map("comment_items")
+}
+
+/// Модель статусов товара в заказе
+model StatusItem {
+  /// Идентификатор статуса
+  id        Int        @id @default(autoincrement())
+  /// Статус товара
+  status    ItemStatus @default(CREATED)
+  /// Дата добавления статуса
+  createdAt DateTime   @default(now()) @map("created_at")
+
+  /// Товар
+  item   Item  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId Int   @map("item_id")
+  /// Пользователь
+  user   User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId Int?  @map("user_id")
+
+  @@map("status_items")
+}
+
+/// Статус товара
+enum ItemStatus {
+  /// Товар создан
+  CREATED
+  /// Товар согласован
+  APPROVED
+  /// Товар оплачен
+  PURCHASED
+  /// Товар на складе в Европе
+  EUSTOCK
+  /// Товар в пути
+  DELIVERY
+  /// Товар на складе в России
+  RUSTOCK
+  /// Товар доставлен
+  COMPLETED
+}
+
+// Тип доставки товара
+enum DeliveryType {
+  /// РОРО
+  RORO
+  /// Через Турцию
+  TURKIYE
+  /// Через Казахстан
+  KAZAKHSTAN
+  /// Через Литву
+  LITHUANIA
 }
