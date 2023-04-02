@@ -11,7 +11,7 @@ COPY . .
 
 RUN yarn && yarn run generate && yarn run build
 
-FROM node:19.6.0
+FROM node:19.7.0
 
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/package*.json ./

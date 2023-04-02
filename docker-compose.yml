@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   traefik:
-    container_name: traefik-template
+    container_name: traefik-partsorder
     image: traefik:v2.9
     ports:
       - '443:443'
@@ -25,7 +25,7 @@ services:
       - "traefik.http.services.traefik-traefik.loadbalancer.server.port=888"
 
   portainer:
-    container_name: portainer-template
+    container_name: portainer-partsorder
     image: portainer/portainer-ce:latest
     restart: always
     volumes:
@@ -33,7 +33,7 @@ services:
       - ./data/portainer:/data
 
   postgres:
-    container_name: postgres-template
+    container_name: postgres-partsorder
     image: postgres:latest
     restart: unless-stopped
     environment:
@@ -46,7 +46,7 @@ services:
       - './data/postgres/data:/var/lib/postgresql/data'
 
   minio:
-    container_name: minio-template
+    container_name: minio-partsorder
     image: minio/minio
     command: server /data --console-address ":9001"
     environment:
@@ -56,7 +56,7 @@ services:
       - './data/s3/data:/data'
 
   minio-client:
-    container_name: minio-client-template
+    container_name: minio-client-partsorder
     image: minio/mc
     entrypoint: ['/bin/sh', '-c']
     command:
@@ -68,7 +68,7 @@ services:
       - minio
 
   redis:
-    container_name: redis-nuxt-template
+    container_name: redis-partsorder
     image: redis:latest
     restart: unless-stopped
     ports:
