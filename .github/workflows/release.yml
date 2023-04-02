@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: npm i
       - name: EsLint
-        run: npm run eslint
+        run: npm run lint
 
   test-client:
     name: Test client
@@ -83,7 +83,7 @@ jobs:
       - name: Install dependencies
         run: npm i
       - name: EsLint
-        run: npm run eslint
+        run: npm run lint
 
   test-server:
     name: Test Server
@@ -106,7 +106,7 @@ jobs:
           node-version: 19.8.1
       - uses: actions/checkout@v3
       - name: Install dependencies
-        run: yarn
+        run: npm i
       - name: Generate types
         run: npm run generate
       - name: Test
