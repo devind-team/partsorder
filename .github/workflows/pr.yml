@@ -21,9 +21,9 @@ jobs:
           node-version: 19.8.1
       - uses: actions/checkout@v3
       - name: Install dependencies
-        run: npm i
+        run: yarn
       - name: EsLint
-        run: npm run lint
+        run: yarn run lint
 
   test-client:
     name: Test client
@@ -52,9 +52,9 @@ jobs:
           node-version: 19.8.1
       - uses: actions/checkout@v3
       - name: Install dependencies
-        run: npm i
+        run: yarn
       - name: EsLint
-        run: npm run lint
+        run: yarn run lint
 
   test-server:
     name: Test Server
@@ -77,8 +77,8 @@ jobs:
           node-version: 19.8.1
       - uses: actions/checkout@v3
       - name: Install dependencies
-        run: npm i
+        run: yarn
       - name: Generate types
-        run: npm run generate
+        run: yarn run generate
       - name: Test
-        run: npm run test
+        run: yarn run test

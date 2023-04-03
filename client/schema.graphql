@@ -11,20 +11,24 @@ type UserCountAggregate {
   firstName: Int!
   sirName: Int!
   active: Int!
+  phone: Int!
   birthday: Int!
   role: Int!
   gender: Int!
   createdAt: Int!
   updatedAt: Int!
+  managerId: Int!
   _all: Int!
 }
 
 type UserAvgAggregate {
   id: Float
+  managerId: Float
 }
 
 type UserSumAggregate {
   id: Int
+  managerId: Int
 }
 
 type UserMinAggregate {
@@ -36,11 +40,13 @@ type UserMinAggregate {
   firstName: String
   sirName: String
   active: Boolean
+  phone: String
   birthday: DateTime
   role: Role
   gender: Gender
   createdAt: DateTime
   updatedAt: DateTime
+  managerId: Int
 }
 
 """
@@ -68,11 +74,361 @@ type UserMaxAggregate {
   firstName: String
   sirName: String
   active: Boolean
+  phone: String
   birthday: DateTime
   role: Role
   gender: Gender
   createdAt: DateTime
   updatedAt: DateTime
+  managerId: Int
+}
+
+"""Модель статусов заказов"""
+type Status {
+  """Идентификатор статуса"""
+  id: ID!
+
+  """Статус"""
+  status: OrderStatus!
+
+  """Дата добавления статуса"""
+  createdAt: DateTime!
+  orderId: Int!
+  userId: Int
+
+  """Заказ"""
+  order: Order!
+
+  """Пользователь"""
+  user: User
+}
+
+"""Статусы заказов"""
+enum OrderStatus {
+  CREATED
+  APPROVAL
+  APPROVED
+  PURCHASING
+  DELIVERY
+  CLOSED
+}
+
+type CommentCount {
+  comments: Int!
+}
+
+"""Комментарии к заказу"""
+type Comment {
+  """Идентификатор комментария"""
+  id: ID!
+
+  """Текст комментария"""
+  text: String!
+
+  """Дата создания"""
+  createdAt: DateTime!
+  orderId: Int!
+  userId: Int
+  parentId: Int
+
+  """Заказ"""
+  order: Order!
+
+  """Пользователь добавил"""
+  user: User
+
+  """Комментарии по дереву"""
+  comment: Comment
+  comments: [Comment!]
+  _count: CommentCount!
+}
+
+type OrderCount {
+  statuses: Int!
+  item: Int!
+  comments: Int!
+}
+
+"""Заказ пользователя"""
+type Order {
+  """Идентификатор заказа"""
+  id: ID!
+
+  """Адрес доставки"""
+  address: String
+
+  """Дата создания"""
+  createdAt: DateTime!
+  userId: Int!
+  managerId: Int
+
+  """Пользователь, которые создал заказ"""
+  user: User!
+
+  """Менеджер заказа"""
+  manager: User
+  statuses: [Status!]
+  item: [Item!]
+  comments: [Comment!]
+  _count: OrderCount!
+}
+
+"""Модель статусов товара в заказе"""
+type StatusItem {
+  """Идентификатор статуса"""
+  id: ID!
+
+  """Статус товара"""
+  status: ItemStatus!
+
+  """Дата добавления статуса"""
+  createdAt: DateTime!
+  itemId: Int!
+  userId: Int
+
+  """Товар"""
+  item: Item!
+
+  """Пользователь"""
+  user: User
+}
+
+"""Статус товара"""
+enum ItemStatus {
+  CREATED
+  APPROVED
+  PURCHASED
+  EUSTOCK
+  DELIVERY
+  RUSTOCK
+  COMPLETED
+}
+
+type CommentItemCount {
+  comments: Int!
+}
+
+"""Комментарии к заказу"""
+type CommentItem {
+  """Идентификатор комментария"""
+  id: ID!
+
+  """Текст комментария"""
+  text: String!
+
+  """Дата создания"""
+  createdAt: DateTime!
+  itemId: Int!
+  userId: Int
+  parentId: Int
+
+  """Заказ"""
+  item: Item!
+
+  """Пользователь добавил"""
+  user: User
+
+  """Комментарии по дереву"""
+  comment: CommentItem
+  comments: [CommentItem!]
+  _count: CommentItemCount!
+}
+
+type ItemCount {
+  statuses: Int!
+  commentItem: Int!
+}
+
+"""Модель товара"""
+type Item {
+  """Идентификатор позиции заказа"""
+  id: ID!
+
+  """Количество"""
+  quantity: Int!
+
+  """Номер машины"""
+  carNo: String
+
+  """Номер рейса"""
+  routeNo: String
+
+  """Тип доставки"""
+  deliveryType: DeliveryType
+
+  """Дата создания"""
+  createdAt: DateTime!
+
+  """Дата изменения позиции заказа"""
+  updatedAt: DateTime!
+  orderId: Int!
+  productId: Int!
+  priceId: Int
+  userId: Int
+
+  """Заказ"""
+  order: Order!
+
+  """Продукт"""
+  product: Product!
+
+  """Стоимость товара"""
+  price: Price
+
+  """Пользователь добавил"""
+  user: User
+
+  """Статусы товара"""
+  statuses: [StatusItem!]
+  commentItem: [CommentItem!]
+  _count: ItemCount!
+}
+
+enum DeliveryType {
+  RORO
+  TURKIYE
+  KAZAKHSTAN
+  LITHUANIA
+}
+
+type PriceCount {
+  item: Int!
+}
+
+"""Цены на товар"""
+type Price {
+  """Идентификатор ценового предложения"""
+  id: ID!
+
+  """Цена за единицу/штуку"""
+  price: Decimal!
+
+  """Срок поставки в днях"""
+  duration: Int
+
+  """Название поставщика"""
+  supplierName: String!
+
+  """Страна поставщика"""
+  country: String
+
+  """Сайт"""
+  site: String
+
+  """Комментарий"""
+  comment: String
+
+  """Дата создания"""
+  createdAt: DateTime!
+
+  """Дата обновления"""
+  updatedAt: DateTime!
+
+  """Дата действия цены"""
+  validAt: DateTime
+  productId: Int!
+
+  """Продукт товара"""
+  product: Product!
+  item: [Item!]
+  _count: PriceCount!
+}
+
+"""An arbitrary-precision Decimal type"""
+scalar Decimal
+
+type AttributeCount {
+  products: Int!
+}
+
+"""Модель атрибутов товара"""
+type Attribute {
+  """Идентификатор атрибута"""
+  id: ID!
+
+  """Название атрибута"""
+  name: String!
+
+  """Дата создания"""
+  createdAt: DateTime!
+
+  """Продукты"""
+  products: [AttributeValue!]
+  _count: AttributeCount!
+}
+
+"""Модель значений атрибутов товара"""
+type AttributeValue {
+  """Идентификатор атрибута"""
+  id: ID!
+
+  """Название атрибута"""
+  value: String!
+
+  """Дата создания"""
+  createdAt: DateTime!
+  productId: Int!
+  attributeId: Int!
+
+  """Товар"""
+  product: Product!
+
+  """Атрибут"""
+  attribute: Attribute!
+}
+
+type ProductCount {
+  prices: Int!
+  attributes: Int!
+  item: Int!
+  images: Int!
+}
+
+"""Список доступных товаров"""
+type Product {
+  """Идентификатор товара"""
+  id: ID!
+
+  """Артикул"""
+  vendorCode: String!
+
+  """Название"""
+  name: String!
+
+  """Производитель"""
+  manufacturer: String
+
+  """Псевдонимы через запятую"""
+  aliases: String
+
+  """Оригинальность товара"""
+  original: Boolean!
+
+  """Товаров на складе"""
+  stock: Int!
+
+  """Дата создания продукта"""
+  createdAt: DateTime!
+
+  """Дата последнего изменения продукта"""
+  updatedAt: DateTime!
+
+  """Цены на товар"""
+  prices: [Price!]
+
+  """Атрибуты товаров"""
+  attributes: [AttributeValue!]
+
+  """Товары в заказах"""
+  item: [Item!]
+
+  """Изображения товара"""
+  images: [File!]
+  _count: ProductCount!
+}
+
+type FileCount {
+  products: Int!
 }
 
 type File {
@@ -97,6 +453,8 @@ type File {
 
   """Файл пользователя, если null - файл системный"""
   user: User
+  products: [Product!]
+  _count: FileCount!
 }
 
 type User {
@@ -124,6 +482,9 @@ type User {
   """Флаг активности пользователя"""
   active: Boolean!
 
+  """Номер телефона"""
+  phone: String
+
   """День рожденья"""
   birthday: DateTime
 
@@ -138,7 +499,25 @@ type User {
 
   """Дата обновления"""
   updatedAt: DateTime!
+
+  """Идентификатор менеджера"""
+  managerId: Int
+  manager: User
+  users: [User!]
+
+  """Мои файлы"""
   files: [File!]
+
+  """Мои заказы"""
+  orders: [Order!]
+
+  """Заказы за которые пользователь отвечает"""
+  manageOrders: [Order!]
+  status: [Status!]
+  item: [Item!]
+  statusItem: [StatusItem!]
+  comment: [Comment!]
+  commentItem: [CommentItem!]
 }
 
 type FileUploadType {

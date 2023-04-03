@@ -13,15 +13,13 @@ const router = useRouter()
 const localePath = useLocalePath()
 const authStore = useAuthStore()
 
-definePageMeta({
-  middleware: 'guest',
-})
+definePageMeta({ middleware: 'guest' })
 
 useHead({ title: t('auth.register') })
 
 const { mutate, onDone, loading } = useMutation<RegisterMutation, RegisterMutationVariables>(registerMutation)
 onDone(async ({ data }) => {
-  if (!data) return
+  if (!data || !data.register) return
   const { accessToken, user } = data.register
   await onLogin(accessToken)
   authStore.user = user
