@@ -199,6 +199,8 @@ model Price {
   country      String? @db.VarChar(50)
   /// Сайт
   site         String? @db.VarChar(128)
+  /// Комментарий
+  comment      String?
 
   /// Дата создания
   createdAt DateTime  @default(now()) @map("created_at")
@@ -325,9 +327,9 @@ model Comment {
   userId  Int?  @map("user_id")
 
   /// Комментарии по дереву
-  comment       Comment?      @relation("ParentComment", fields: [parentId], references: [id])
-  parentId      Int?          @map("parent_id")
-  comments      Comment[]     @relation("ParentComment")
+  comment  Comment?  @relation("ParentComment", fields: [parentId], references: [id])
+  parentId Int?      @map("parent_id")
+  comments Comment[] @relation("ParentComment")
 
   @@map("comments")
 }
@@ -387,7 +389,7 @@ model CommentItem {
 
   /// Комментарии по дереву
   comment  CommentItem?  @relation("ParentCommentItem", fields: [parentId], references: [id])
-  parentId Int?      @map("parent_id")
+  parentId Int?          @map("parent_id")
   comments CommentItem[] @relation("ParentCommentItem")
 
   @@map("comment_items")
