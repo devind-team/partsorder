@@ -12,7 +12,9 @@ const authStore = useAuthStore()
       <template v-if="authStore.loginIn">
         <v-menu>
           <template #activator="{ props }">
-            <v-avatar :image="authStore.avatar" v-bind="props" color="primary">{{ authStore.initials }}</v-avatar>
+            <v-avatar :image="authStore.user && authStore.user.avatar" v-bind="props" color="primary">
+              {{ authStore.initials }}
+            </v-avatar>
           </template>
           <v-list>
             <v-list-item :to="localePath({ name: 'profile-me' })" prepend-icon="mdi-account-circle">

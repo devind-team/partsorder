@@ -4,19 +4,16 @@ import { GraphQLError } from 'graphql'
 import { JwtService } from '@nestjs/jwt'
 import { UserLoginInput, UserLoginType, UserRegisterInput } from './dto'
 import { User } from '@generated/user'
-import type { Bcrypt, Passport } from './providers'
-import { BCRYPT, PASSPORT } from './providers'
+import type { Bcrypt } from './providers'
+import { BCRYPT } from './providers'
 import { JwtPayload } from './strategies'
-import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
-    @Inject(BCRYPT) private readonly bcryptService: Bcrypt,
-    @Inject(PASSPORT) private readonly passportService: Passport
+    @Inject(BCRYPT) private readonly bcryptService: Bcrypt
   ) {}
 
   async login({ username, password }: UserLoginInput): Promise<UserLoginType> {

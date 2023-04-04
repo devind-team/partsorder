@@ -48,7 +48,7 @@
     "@mdi/font": "^7.2.96",
     "@nuxtjs/apollo": "^5.0.0-alpha.6",
     "@nuxtjs/robots": "^3.0.0",
-    "@nuxtjs/tailwindcss": "^6.6.4",
+    "@nuxtjs/tailwindcss": "^6.6.5",
     "@pinia/nuxt": "^0.4.7",
     "@vee-validate/i18n": "^4.8.3",
     "@vueuse/core": "^9.13.0",

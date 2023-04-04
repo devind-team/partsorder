@@ -7,7 +7,7 @@ import { PrismaService } from '@common/services/prisma.service'
 import { AuthResolver } from './auth.resolver'
 import { AuthService } from './auth.service'
 import { JwtStrategy, LocalStrategy } from './strategies'
-import { bcryptServiceProvider, passportServiceProvider } from './providers'
+import { bcryptServiceProvider } from './providers'
 
 @Module({
   imports: [
@@ -29,15 +29,7 @@ import { bcryptServiceProvider, passportServiceProvider } from './providers'
     }),
     ConfigModule,
   ],
-  providers: [
-    passportServiceProvider,
-    bcryptServiceProvider,
-    PrismaService,
-    AuthService,
-    AuthResolver,
-    JwtStrategy,
-    LocalStrategy,
-  ],
+  providers: [bcryptServiceProvider, PrismaService, AuthService, AuthResolver, JwtStrategy, LocalStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}
