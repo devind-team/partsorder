@@ -61,8 +61,6 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/partsorder-client
-      - name: Copy prettier & yarn.lock files
-        run: cp ../.prettier .prettier && cp ../yarn.lock yarn.lock
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
@@ -134,8 +132,6 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/partsorder-server
-      - name: Copy prettier & yarn.lock files
-        run: cp ../.prettier .prettier && cp ../yarn.lock yarn.lock
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:

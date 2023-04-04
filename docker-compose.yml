@@ -1,5 +1,58 @@
 version: '3.9'
 
+x-secret-common-variables: &secret-common-variables
+  SECRET_KEY: "${SECRET_KEY}"
+  NC_AUTH_JWT_SECRET: "${SECRET_KEY}"
+
+x-postgres-variables: &postgres-variables
+  POSTGRES_DB: "${DB_NAME}"
+  POSTGRES_USER: "${DB_USER}"
+  POSTGRES_PASSWORD: "${DB_PASSWORD}"
+
+x-database-variables: &database-variables
+  DB_USER: "${DB_USER}"
+  DB_PASSWORD: "${DB_PASSWORD}"
+  DB_HOST: "${DB_HOST}"
+  DB_PORT: "${DB_PORT}"
+  DB_NAME: "${DB_NAME}"
+  DATABASE_URL: "postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}"
+
+x-nocodb-variables: &nocodb-variables
+  NC_ADMIN_EMAIL: "${NC_ADMIN_EMAIL}"
+  NC_ADMIN_PASSWORD: "${NC_ADMIN_PASSWORD}"
+  NC_DB: "pg://${NC_DB_HOST}:${DB_PORT}?u=${NC_DB_USER}&p=${NC_DB_PASSWORD}&d=${NC_DB_NAME}"
+  NC_PUBLIC_URL: "https://nocodb.${SITE}"
+  NC_DISABLE_TELE: true
+  NC_REDIS_URL: "${REDIS_URL}"
+  NC_SMTP_FROM: "${SMTP_FROM}"
+  NC_SMTP_HOST: "${SMTP_HOST}"
+  NC_SMTP_PORT: "${SMTP_PORT}"
+  NC_SMTP_USERNAME: "${SMTP_USERNAME}"
+  NC_SMTP_PASSWORD: "${SMTP_PASSWORD}"
+  NC_SMTP_SECURE: "${SMTP_SECURE}"
+  NC_SMTP_IGNORE_TLS: "${SMTP_IGNORE_TLS}"
+
+  # NC_S3_BUCKET_NAME: "${NC_S3_BUCKET_NAME}"
+  # NC_S3_REGION: "${NC_S3_REGION}" # default us-east-1.
+  # NC_S3_ACCESS_KEY: "${MINIO_ROOT_USER}"
+  # NC_S3_ACCESS_SECRET: "${MINIO_ROOT_PASSWORD}"
+
+x-nocodb-db-variables: &nocodb-db-variables
+  POSTGRES_DB: "${NC_DB_NAME}"
+  POSTGRES_USER: "${NC_DB_USER}"
+  POSTGRES_PASSWORD: "${NC_DB_PASSWORD}"
+
+x-minio-variables: &minio-variables
+  MINIO_ROOT_USER: "${MINIO_ROOT_USER}"
+  MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD}"
+  MINIO_END_POINT: "${MINIO_END_POINT}"
+  MINIO_PORT: "${MINIO_PORT}"
+  MINIO_BUCKET: "${MINIO_BUCKET}"
+
+networks:
+  traefik_proxy:
+    name: traefik_proxy
+
 services:
   traefik:
     container_name: traefik-partsorder
@@ -9,53 +62,106 @@ services:
       - '80:80'
     security_opt:
       - no-new-privileges:true
+    networks:
+      - default
+      - traefik_proxy
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./infrastructure/traefik/traefik.yml:/etc/traefik/traefik.yml
-      - ./infrastructure/traefik/custom:/custom
-      - ./infrastructure/ssl:/ssl
-      # - .infrastructure/traefik/acme.json:/etc/acme.json
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "letsencrypt:/letsencrypt"
+      # - ./infrastructure/traefik/traefik.yml:/etc/traefik/traefik.yml
+      # - ./infrastructure/traefik/custom:/custom
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.entrypoints=http"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.${SITE}`)"
       - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.middlewares.traefik-auth.basicauth.users=admin:$$apr1$$7TWQEQau$$q5iJq2d/QJUZVp4HYavc7/"
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIC_ADMIN}"
       - "traefik.http.routers.traefik.middlewares=traefik-auth"
-      - "traefik.http.services.traefik-traefik.loadbalancer.server.port=888"
+      - "traefik.http.services.traefik-traefik.loadbalancer.server.port=8080"
 
   portainer:
     container_name: portainer-partsorder
     image: portainer/portainer-ce:latest
     restart: always
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./data/portainer:/data
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "portainer:/data"
+    networks:
+      - traefik_proxy
+    labels:
+      - "traefik.enable=true"
 
-  postgres:
-    container_name: postgres-partsorder
-    image: postgres:latest
-    restart: unless-stopped
+  nocodb:
+    container_name: nocodb-partsorder
+    image: "nocodb/nocodb:latest"
+    depends_on:
+      - nocodb-db
     environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      <<: *nocodb-variables
+      <<: *secret-common-variables
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.nocodb.loadbalancer.server.port=8080
+      - "traefik.http.routers.nocodb.rule=Host(`nocodb.${DOMAINNAME}`)"
+      - traefik.http.routers.nocodb.entrypoints=https
+      - com.centurylinklabs.watchtower.enable=true
+    networks:
+      - traefik_proxy
+    restart: always
+    volumes:
+      - "nocodb-data:/usr/app/data"
+
+  nocodb-db:
+    container_name: nocodb-db-partsorder
+    image: postgres:15.2
+    restart: always
+    environment:
+      <<: *nocodb-db-variables
+    networks:
+      - traefik_proxy
     ports:
       - "${DB_PORT}:5432"
     volumes:
-      - './data/postgres/data:/var/lib/postgresql/data'
+      - 'nocodb-db:/var/lib/postgresql/data'
+    healthcheck:
+      interval: 10s
+      retries: 10
+      test: "pg_isready -U ${NC_DB_USER} -d ${NC_DB_NAME}"
+      timeout: 2s
+
+  postgres:
+    container_name: postgres-partsorder
+    image: postgres:15.2
+    restart: always
+    environment:
+      <<: *postgres-variables
+    networks:
+      - default
+      - traefik_proxy
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - 'database:/var/lib/postgresql/data'
+    healthcheck:
+      interval: 10s
+      retries: 10
+      test: "pg_isready -U ${DB_USER} -d ${DB_NAME}"
+      timeout: 2s
 
   minio:
     container_name: minio-partsorder
     image: minio/minio
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      <<: *minio-variables
     ports:
       - "9000:9000"
+    networks:
+      - traefik_proxy
     volumes:
       - './data/s3/data:/data'
+    labels:
+      - "traefik.enable=true"
 
   minio-client:
     container_name: minio-client-partsorder
@@ -66,12 +172,40 @@ services:
         mc alias set local http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}
         mc mb --ignore-existing local/${MINIO_BUCKET}
         mc anonymous set download local/${MINIO_BUCKET}
+    networks:
+      - traefik_proxy
     depends_on:
       - minio
+
+  watchtower:
+    command: "--schedule \"0 5 * * *\" --cleanup --label-enable"
+    container_name: watchtower
+    image: containrrr/watchtower
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+    networks:
+      - traefik_proxy
+    restart: always
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
   redis:
     container_name: redis-partsorder
     image: redis:latest
     restart: unless-stopped
+    networks:
+      - traefik_proxy
     ports:
       - '6379:6379'
+
+volumes:
+  letsencrypt:
+    name: traefik-letsencrypt
+  database:
+    name: database
+  portainer:
+    name: portainer
+  nocodb-data:
+    name: nocodb-data
+  nocodb-db:
+    name: nocodb-db

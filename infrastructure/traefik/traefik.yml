@@ -3,8 +3,13 @@ entryPoints:
     address: ":80"
   https:
     address: ":443"
-#
-#http:
+    http:
+      tls:
+        certResolver: letsencrypt
+        domains:
+          - main: "${SITE}"
+          - sans: "*.${SITE}"
+# http:
 #  routers:
 #    http-catchall:
 #      rule: hostregexp(`{host:.+}`)
@@ -28,3 +33,15 @@ providers:
 
 api:
   dashboard: true
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      dnsChallenge:
+        delayBeforeCheck: "15"
+        provider: cloudflare
+        resolvers:
+          - 1.1.1.1:53
+          - 1.0.0.1:53
+      email: info@${SITE}
+      storage: /letsencrypt/acme.json

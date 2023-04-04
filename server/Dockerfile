@@ -7,6 +7,7 @@ RUN apt-get update -y && \
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
+COPY prettierrc .prettierrc
 COPY . .
 
 RUN yarn && yarn run generate && yarn run build
