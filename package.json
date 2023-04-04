@@ -11,7 +11,7 @@
     "server:dev": "yarn --cwd client run dev:server"
   },
   "devDependencies": {
-    "concurrently": "^7.6.0",
+    "concurrently": "^8.0.1",
     "prettier": "^2.8.7",
     "synp": "^1.9.10"
   },
