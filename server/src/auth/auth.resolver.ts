@@ -14,7 +14,7 @@ export class AuthResolver {
   @UseGuards(LocalAuthGuard)
   async login(
     @Args('userLoginInput') userLoginInput: UserLoginInput,
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ): Promise<UserLoginType> {
     return {
       accessToken: await this.authService.createJwtToken(user),

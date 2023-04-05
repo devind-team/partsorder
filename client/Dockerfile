@@ -1,24 +1,24 @@
-FROM node:19.7.0 as builder
+FROM node:19.8.1 as builder
 
 ENV HOST 0.0.0.0
 
-RUN apt-get update -y && \
-    apt-get upgrade -y && \
-    yarn cache clean --all
+RUN apt-get update -y && apt-get upgrade -y && npm i -g pnpm
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-COPY prettierrc .prettierrc
 COPY . .
 
-RUN yarn && \
-    yarn run codegen-schema && \
-    yarn run build && \
+RUN pnpm i && \
+    pnpm run codegen-schema && \
+    pnpm run build && \
     rm -rf $(ls -A | grep -v .output)
 
 
-FROM node:19.7.0
+FROM node:19.8.1
+
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
 COPY --from=builder /usr/src/app/.output ./.output
 

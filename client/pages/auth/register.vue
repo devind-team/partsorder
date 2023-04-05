@@ -39,7 +39,7 @@ const schema = yup.object({
         .min(2)
         .label(t(`auth.${c}`)),
     }),
-    {}
+    {},
   ),
   password: yup.string().required().min(6).label(t('auth.password')),
   passwordConfirmation: yup
@@ -50,7 +50,7 @@ const schema = yup.object({
 
 const handleRegister = async (
   values: UserRegisterInput & { passwordConfirmation: string },
-  { setErrors }: FormActions<UserRegisterInput>
+  { setErrors }: FormActions<UserRegisterInput>,
 ) => {
   try {
     const { passwordConfirmation, ...userRegisterInput } = values // eslint-disable-line @typescript-eslint/no-unused-vars

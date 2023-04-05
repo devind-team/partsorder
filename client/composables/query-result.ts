@@ -19,7 +19,7 @@ export type UseResultReturn<T> = Readonly<Ref<Readonly<T>>>
  * @returns Readonly ref with `undefined` or the resolved `result`.
  */
 export function useResult<TResult, TResultKey extends keyof NonNullable<TResult> = keyof NonNullable<TResult>>(
-  result: Ref<TResult | undefined>
+  result: Ref<TResult | undefined>,
 ): UseResultReturn<undefined | ExtractSingleKey<NonNullable<TResult>, TResultKey>>
 
 /**
@@ -39,10 +39,10 @@ export function useResult<TResult, TResultKey extends keyof NonNullable<TResult>
 export function useResult<
   TResult,
   TDefaultValue,
-  TResultKey extends keyof NonNullable<TResult> = keyof NonNullable<TResult>
+  TResultKey extends keyof NonNullable<TResult> = keyof NonNullable<TResult>,
 >(
   result: Ref<TResult | undefined>,
-  defaultValue: TDefaultValue
+  defaultValue: TDefaultValue,
 ): UseResultReturn<TDefaultValue | ExtractSingleKey<NonNullable<TResult>, TResultKey>>
 
 /**
@@ -62,13 +62,13 @@ export function useResult<
 export function useResult<TResult, TDefaultValue, TReturnValue>(
   result: Ref<TResult | undefined>,
   defaultValue: TDefaultValue | undefined,
-  pick: (data: DeepRequired<DeepNonNullable<TResult>>) => TReturnValue
+  pick: (data: DeepRequired<DeepNonNullable<TResult>>) => TReturnValue,
 ): UseResultReturn<TDefaultValue | TReturnValue>
 
 export function useResult<TResult, TDefaultValue, TReturnValue>(
   result: Ref<TResult | undefined>,
   defaultValue?: TDefaultValue,
-  pick?: (data: DeepRequired<DeepNonNullable<TResult>>) => TReturnValue
+  pick?: (data: DeepRequired<DeepNonNullable<TResult>>) => TReturnValue,
 ): UseResultReturn<TResult | TResult[keyof TResult] | TDefaultValue | TReturnValue | undefined> {
   return computed(() => {
     const value = result.value

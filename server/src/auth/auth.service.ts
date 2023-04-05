@@ -13,7 +13,7 @@ export class AuthService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly jwtService: JwtService,
-    @Inject(BCRYPT) private readonly bcryptService: Bcrypt
+    @Inject(BCRYPT) private readonly bcryptService: Bcrypt,
   ) {}
 
   async login({ username, password }: UserLoginInput): Promise<UserLoginType> {

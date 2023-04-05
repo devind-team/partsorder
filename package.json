@@ -1,22 +1,14 @@
 {
-  "name": "partsorder",
-  "version": "0.1.1",
-  "description": "Nuxt nest template boilerplate",
-  "repository": "git@github.com:Luferov/nuxt-nest-template.git",
-  "author": "Victor <lyferov@yandex.ru>",
-  "license": "MIT",
-  "private": true,
-  "scripts": {
-    "client:dev": "yarn --cwd client run dev:client",
-    "server:dev": "yarn --cwd client run dev:server"
+  "dependencies": {
+    "prettier": "^2.8.7"
   },
-  "devDependencies": {
-    "concurrently": "^7.6.0",
-    "prettier": "^2.8.7",
-    "synp": "^1.9.10"
-  },
-  "workspaces": [
-    "client",
-    "server"
-  ]
+  "prettier": {
+    "tabWidth": 2,
+    "singleQuote": true,
+    "useTabs": false,
+    "printWidth": 120,
+    "trailingComma": "all",
+    "endOfLine": "auto",
+    "semi": false
+  }
 }

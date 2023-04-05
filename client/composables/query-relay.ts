@@ -25,7 +25,7 @@ export type ResultDefaultValueType<TNode> = {
 
 export type TransformUpdate<TResultQuery, TResultMutation> = (
   data: TResultQuery,
-  result?: Omit<FetchResult<TResultMutation>, 'context'>
+  result?: Omit<FetchResult<TResultMutation>, 'context'>,
 ) => TResultQuery
 
 export type QueryRelayParams<TResult = any, TVariables = any> = {
@@ -46,7 +46,7 @@ export type UseResultDefaultValueType<TNode> = { totalCount: number; edges: { no
 export type QueryRelayResult<
   TResult = any,
   TVariables = any,
-  TNode extends { id: string | number } = any
+  TNode extends { id: string | number } = any,
 > = UseQueryReturn<TResult, TVariables> & {
   dataQuery: UseResultReturn<UseResultDefaultValueType<TNode> | ExtractSingleKey<NonNullable<TResult>>>
   data: ComputedRef<TNode[]>
@@ -57,34 +57,34 @@ export type QueryRelayResult<
     cache: DataProxy,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
     transform: TransformUpdate<TResult, TResultMutation>,
-    isStrict: boolean
+    isStrict: boolean,
   ) => void
   addUpdate: <TResultMutation>(
     cache: DataProxy,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
-    key?: string | null
+    key?: string | null,
   ) => void
   changeUpdate: <TResultMutation>(
     cache: DataProxy,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
-    key?: string | null
+    key?: string | null,
   ) => void
   deleteUpdate: <TResultMutation>(
     cache: DataProxy,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
-    isStrict?: boolean
+    isStrict?: boolean,
   ) => void
 }
 
 export function useQueryRelay<
   TResult extends Record<string, any> = any,
   TVariables extends OperationVariables = any,
-  TNode extends { id: string | number } = any
+  TNode extends { id: string | number } = any,
 >(
   queryParams: QueryRelayParams<TResult, TVariables>,
   queryOptions: QueryRelayOptions = {
     pagination: useOffsetPagination(),
-  }
+  },
 ): QueryRelayResult<TResult, TVariables, TNode> {
   const { document: documentNode, variables = {}, options = {} } = queryParams
   const { pagination, fetchScroll } = queryOptions
@@ -147,7 +147,7 @@ export function useQueryRelay<
               edges: [...previousResult[key].edges, ...(fetchMoreResult as TResult)[key].edges],
             },
           }),
-          {}
+          {},
         ) as TResult
       },
     })
@@ -182,7 +182,7 @@ export function useQueryRelay<
             }
           })
         }
-      }
+      },
     )
   })
 
@@ -197,7 +197,7 @@ export function useQueryRelay<
     cache: DataProxy,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
     transform: TransformUpdate<TResult, TResultMutation>,
-    isStrict = true
+    isStrict = true,
   ): void => {
     try {
       const cacheData = cache.readQuery<TResult, TVariables>({
@@ -227,7 +227,7 @@ export function useQueryRelay<
    * @param result
    */
   const getMutationResult = <TResultMutation>(
-    result: Omit<FetchResult<TResultMutation, Record<string, any>, Record<string, any>>, 'context'>
+    result: Omit<FetchResult<TResultMutation, Record<string, any>, Record<string, any>>, 'context'>,
   ): NonNullable<TResultMutation>[keyof NonNullable<TResultMutation>] | undefined | null =>
     result.data && result.data[Object.keys(result.data)[0] as keyof typeof result.data]
 
@@ -240,7 +240,7 @@ export function useQueryRelay<
   const addUpdate = <TResultMutation>(
     cache: DataProxy,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
-    key: string | null = null
+    key: string | null = null,
   ): void => {
     update(cache, result, (dataCache) => {
       const mutationResult = getMutationResult(result)
@@ -265,7 +265,7 @@ export function useQueryRelay<
                         node: mutationResult[kdm],
                         __typename: getEdgeTypename(
                           dataCache[k].edges,
-                          mutationResult[kdm] as TNode & { __typename?: string }
+                          mutationResult[kdm] as TNode & { __typename?: string },
                         ),
                       },
                     ]),
@@ -288,7 +288,7 @@ export function useQueryRelay<
   const changeUpdate = <TResultMutation>(
     cache: DataProxy,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
-    key: string | null = null
+    key: string | null = null,
   ): void => {
     update(cache, result, (dataCache) => {
       const k: string = Object.keys(dataCache)[0]
@@ -298,7 +298,7 @@ export function useQueryRelay<
       if (node) {
         dataCache[k].edges.find((el: { node: TNode }) => el.node.id === node.id).node = Object.assign(
           dataCache[k].edges.find((el: { node: TNode }) => el.node.id === node.id).node,
-          node
+          node,
         )
       }
       return dataCache
@@ -314,7 +314,7 @@ export function useQueryRelay<
   const deleteUpdate = <TResultMutation>(
     cache: DataProxy,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
-    isStrict = true
+    isStrict = true,
   ): void => {
     update(
       cache,
@@ -328,7 +328,7 @@ export function useQueryRelay<
         }
         return dataCache
       },
-      isStrict
+      isStrict,
     )
   }
 

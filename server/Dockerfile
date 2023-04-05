@@ -1,18 +1,25 @@
-FROM node:19.7.0 as builder
+FROM node:19.8.1 as builder
 
 RUN apt-get update -y && \
     apt-get upgrade -y && \
-    yarn cache clean --all
+    npm i -g npm --upgrade
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-COPY prettierrc .prettierrc
 COPY . .
 
-RUN yarn && yarn run generate && yarn run build
+RUN npm i -g npm --upgrade && \
+    npm i && \
+    npm update && \
+    npm run prebuild && \
+    npm run generate && \
+    npm run build
 
-FROM node:19.7.0
+FROM node:19.8.1
+
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/package*.json ./
@@ -21,4 +28,4 @@ COPY --from=builder /usr/src/app/dist ./dist
 ENV HOST 0.0.0.0
 EXPOSE 3000
 
-CMD ["yarn", "run", "start:prod"]
+CMD ["npm", "run", "start:prod"]

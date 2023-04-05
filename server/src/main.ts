@@ -20,7 +20,7 @@ async function bootstrap() {
     new ValidationPipe({
       transform: true,
       disableErrorMessages: true,
-    })
+    }),
   )
 
   const port = process.env.PORT || 8000

@@ -35,7 +35,7 @@ const schema = object({
 
 const handleSubmit = async (
   values: UserLoginInput,
-  { setErrors }: FormActions<{ username: string; password: string }>
+  { setErrors }: FormActions<{ username: string; password: string }>,
 ) => {
   try {
     await mutate({ userLoginInput: values })
