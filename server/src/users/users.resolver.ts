@@ -9,6 +9,7 @@ import { FileUploadInput } from '@files/dto/file-upload.input'
 @Resolver()
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
+
   @UseGuards(GqlAuthGuard)
   @Query(() => User)
   async me(@CurrentUser() user: User): Promise<User> {
@@ -19,7 +20,7 @@ export class UsersResolver {
   @Mutation(() => User)
   async uploadAvatar(
     @CurrentUser() user: User,
-    @Args({ name: 'fileUpload', type: () => FileUploadInput }) fileUpload: FileUploadInput
+    @Args({ name: 'fileUpload', type: () => FileUploadInput }) fileUpload: FileUploadInput,
   ): Promise<User> {
     return this.usersService.updateAvatar(fileUpload, user)
   }

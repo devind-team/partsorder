@@ -12,7 +12,7 @@ import { OperationVariables } from '@apollo/client/core'
 export function useCommonQuery<
   TResult extends Record<string, any> = any,
   TVariables extends OperationVariables = any,
-  TResultKey extends keyof NonNullable<TResult> = keyof NonNullable<TResult>
+  TResultKey extends keyof NonNullable<TResult> = keyof NonNullable<TResult>,
 >(queryParams: QueryRelayParams<TResult, TVariables>) {
   const { document, variables = {}, options = {} } = queryParams
   /**
@@ -21,7 +21,7 @@ export function useCommonQuery<
   const q: UseQueryReturn<TResult, TVariables> = useQuery<TResult, TVariables>(
     document,
     variables as TVariables,
-    options
+    options,
   )
   const data = useResult<TResult, TResultKey>(q.result)
   /**
@@ -35,7 +35,7 @@ export function useCommonQuery<
     cache: DataProxy,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
     transform: TransformUpdate<TResult, TResultMutation>,
-    isStrict = true
+    isStrict = true,
   ): void => {
     try {
       const variablesValue = getValue<TVariables>(variables)
@@ -59,7 +59,7 @@ export function useCommonQuery<
    * @param result - результат выполнения мутации
    */
   const getMutationResult = <TResultMutation>(
-    result: Omit<FetchResult<TResultMutation, Record<string, any>, Record<string, any>>, 'context'>
+    result: Omit<FetchResult<TResultMutation, Record<string, any>, Record<string, any>>, 'context'>,
   ): NonNullable<TResultMutation>[keyof NonNullable<TResultMutation>] | undefined | null =>
     result.data && result.data[Object.keys(result.data)[0] as keyof typeof result.data]
   /**
@@ -73,7 +73,7 @@ export function useCommonQuery<
     cache: DataProxy,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
     key: string | null = null,
-    start = true
+    start = true,
   ): void => {
     update(cache, result, (dataCache) => {
       const mutationResult = getMutationResult(result)
@@ -99,7 +99,7 @@ export function useCommonQuery<
   const changeUpdate = <TResultMutation>(
     cache: DataProxy,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
-    key: string | null = null
+    key: string | null = null,
   ): void => {
     update(cache, result, (dataCache) => {
       const mutationResult = getMutationResult(result)
@@ -109,7 +109,7 @@ export function useCommonQuery<
       if (key) {
         if (Array.isArray(dataCache[dataKey])) {
           const index: number = dataCache[dataKey].findIndex(
-            (e: any) => e.id === (mutationResult[key as keyof typeof mutationResult] as { id: string }).id
+            (e: any) => e.id === (mutationResult[key as keyof typeof mutationResult] as { id: string }).id,
           )
           dataCache[dataKey].splice(index, 1, mutationResult[key as keyof typeof mutationResult])
         } else {
@@ -126,7 +126,7 @@ export function useCommonQuery<
    */
   const resetUpdate = <TResultMutation>(
     cache: DataProxy,
-    result: Omit<FetchResult<TResultMutation>, 'context'>
+    result: Omit<FetchResult<TResultMutation>, 'context'>,
   ): void => {
     update(cache, result, (dataCache) => {
       const mutationResult = getMutationResult(result)
@@ -146,7 +146,7 @@ export function useCommonQuery<
   const deleteUpdate = <TResultMutation>(
     cache: DataProxy,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
-    isStrict = true
+    isStrict = true,
   ): void => {
     update(
       cache,
@@ -159,7 +159,7 @@ export function useCommonQuery<
         }
         return dataCache
       },
-      isStrict
+      isStrict,
     )
   }
 
@@ -177,7 +177,7 @@ export function useCommonQuery<
 export type UpdateType<TResult = any> = <TResultMutation>(
   cache: DataProxy,
   result: Omit<FetchResult<TResultMutation>, 'context'>,
-  transform: TransformUpdate<TResult, TResultMutation>
+  transform: TransformUpdate<TResult, TResultMutation>,
 ) => void
 export type AddUpdateType = ReturnType<typeof useCommonQuery>['addUpdate']
 export type ChangeUpdateType = ReturnType<typeof useCommonQuery>['changeUpdate']

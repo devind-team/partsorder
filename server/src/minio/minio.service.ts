@@ -12,7 +12,7 @@ export class MinioService {
 
   constructor(
     private readonly configService: ConfigService,
-    @InjectMinioClient() private readonly minioClient: MinioClient
+    @InjectMinioClient() private readonly minioClient: MinioClient,
   ) {
     this.bucket = configService.get<string>('MINIO_BUCKET', 'bucket')
   }

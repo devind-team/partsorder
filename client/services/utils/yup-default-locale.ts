@@ -39,7 +39,7 @@ function printValue(value: any, quoteStrings?: boolean) {
       if (result !== null) return result
       return value
     },
-    2
+    2,
   )
 }
 
@@ -106,7 +106,7 @@ class ValidationError extends Error {
     errorOrErrors: string | ValidationError | readonly ValidationError[],
     value?: any,
     field?: string,
-    type?: string
+    type?: string,
   ) {
     super()
 

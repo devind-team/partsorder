@@ -27,7 +27,7 @@ const schema = yup.object({
 })
 
 const { mutate, onDone, loading } = useMutation<UploadAvatarMutation, UploadAvatarMutationVariables>(
-  uploadAvatarMutation
+  uploadAvatarMutation,
 )
 
 onDone(async ({ data }) => {
@@ -43,7 +43,7 @@ onBeforeUnmount(() => {
 })
 const handleUpdateAvatar = async (
   values: UploadAvatarMutationVariables,
-  { setErrors }: FormActions<UploadAvatarMutationVariables>
+  { setErrors }: FormActions<UploadAvatarMutationVariables>,
 ) => {
   try {
     const client = resolveClient()

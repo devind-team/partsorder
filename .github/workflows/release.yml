@@ -21,10 +21,12 @@ jobs:
         with:
           node-version: 19.8.1
       - uses: actions/checkout@v3
-      - name: Install dependencies
-        run: yarn
+      - name: Install dependency
+        run: npm i -g pnpm
+      - name: Install dependency
+        run: pnpm i
       - name: EsLint
-        run: yarn run lint
+        run: pnpm run lint
 
   test-client:
     name: Test client
@@ -38,8 +40,10 @@ jobs:
         with:
           node-version: 19.8.1
       - uses: actions/checkout@v3
-      - name: Install dependencies
-        run: yarn
+      - name: Install dependency
+        run: npm i -g pnpm
+      - name: Install dependency
+        run: pnpm i
 
   build-client:
     name: Build client
@@ -80,10 +84,10 @@ jobs:
         with:
           node-version: 19.8.1
       - uses: actions/checkout@v3
-      - name: Install dependencies
-        run: yarn
+      - name: Install dependency
+        run: npm i
       - name: EsLint
-        run: yarn run lint
+        run: npm run lint
 
   test-server:
     name: Test Server
@@ -105,12 +109,12 @@ jobs:
         with:
           node-version: 19.8.1
       - uses: actions/checkout@v3
-      - name: Install dependencies
-        run: yarn
+      - name: Install dependency
+        run: npm i
       - name: Generate types
-        run: yarn run generate
+        run: npm run generate
       - name: Test
-        run: yarn run test
+        run: npm run test
 
   build-server:
     name: Build server
