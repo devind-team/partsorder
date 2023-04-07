@@ -1,8 +1,8 @@
 import { defineApolloClient } from '@nuxtjs/apollo'
 
 export default defineApolloClient({
-  httpEndpoint: process.env.API_URL || 'http://localhost:8000/graphql/',
-  browserHttpEndpoint: process.env.API_URL_BROWSER || 'http://localhost:8000/graphql/',
-  wsEndpoint: process.env.WS_URL_BROWSER || 'ws://localhost:8000/graphql/',
+  httpEndpoint: process.env.NUXT_API_URL as string,
+  browserHttpEndpoint: process.env.NUX_API_URL_BROWSER as string,
+  wsEndpoint: process.env.NUXT_WS_URL_BROWSER as string,
   // inMemoryCacheOptions: { fragmentMatcher }
 })

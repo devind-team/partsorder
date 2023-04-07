@@ -2,7 +2,6 @@
 import { useHead, useI18n } from '#imports'
 
 const { t } = useI18n()
-
 useHead({
   title: t('title'),
 })
