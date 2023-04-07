@@ -69,10 +69,7 @@ x-minio-variables: &minio-variables
   MINIO_BUCKET: "${MINIO_BUCKET}"
 
 x-server-environment: &server-environment
-  <<: *secret-common-variables
-  <<: *database-variables
-  <<: *minio-variables
-  <<: *smtp-variables
+  <<: [*secret-common-variables, *database-variables, *minio-variables, *smtp-variables]
   REDIS_URL: "${REDIS_URL}"
 
 networks:
@@ -347,7 +344,7 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     healthcheck:
-      test: [ "CMD", "redis-cli","ping" ]
+      test: ["CMD", "redis-cli","ping"]
 
 volumes:
   minio:
