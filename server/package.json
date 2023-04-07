@@ -26,6 +26,7 @@
     "generate-types": "prisma generate --watch",
     "generate": "prisma generate && eslint \"src/@generated/**/*.ts\" --fix",
     "migrate": "prisma db push",
+    "migrate:prod": "prisma migrate deploy",
     "seed": "prisma db seed"
   },
   "dependencies": {

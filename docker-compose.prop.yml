@@ -131,7 +131,7 @@ services:
 
   client:
     container_name: client-partsorder
-    build: ./client
+    image: ghcr.io/devind-team/partsorder/partsorder-client:latest
     restart: always
     depends_on:
       - server
@@ -151,7 +151,7 @@ services:
 
   server:
     container_name: server-partsorder
-    build: ./server
+    image: ghcr.io/devind-team/partsorder/partsorder-server:latest
     restart: always
     depends_on:
       - postgres
@@ -171,9 +171,8 @@ services:
 
   server-migration:
     container_name: server-migration-partsorder
-    build: ./server
+    image: ghcr.io/devind-team/partsorder/partsorder-server:latest
     command: "npm run migrate:prod"
-    restart: unless-stopped
     depends_on:
       - postgres
     environment:
