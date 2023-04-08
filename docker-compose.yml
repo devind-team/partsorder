@@ -100,11 +100,7 @@ services:
       - "--certificatesResolvers.letsencrypt.acme.preferredchain='ISRG Root X1'"
       - "--certificatesResolvers.letsencrypt.acme.tlschallenge=true"
       - "--certificatesResolvers.letsencrypt.acme.httpchallenge=true"
-      - "--certificatesResolvers.letsencrypt.acme.httpChallenge.entryPoint=https"
-      - "--certificatesResolvers.letsencrypt.acme.dnschallenge=true"
-      - "--certificatesresolvers.letsencrypt.acme.dnschallenge.provider=digitalocean"
-      - "--certificatesResolvers.letsencrypt.acme.dnsChallenge.resolvers=1.1.1.1:53,1.0.0.1:53"
-      - "--certificatesResolvers.letsencrypt.acme.dnsChallenge.delayBeforeCheck=1"
+      - "--certificatesResolvers.letsencrypt.acme.httpChallenge.entryPoint=web"
     restart: always
     security_opt:
       - no-new-privileges:true
