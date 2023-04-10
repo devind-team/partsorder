@@ -1,0 +1,65 @@
+version: '3.9'
+
+x-postgres-variables: &postgres-variables
+  POSTGRES_DB: "${DB_NAME}"
+  POSTGRES_USER: "${DB_USER}"
+  POSTGRES_PASSWORD: "${DB_PASSWORD}"
+
+x-minio-variables: &minio-variables
+  MINIO_ROOT_USER: "${MINIO_ROOT_USER}"
+  MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD}"
+  MINIO_END_POINT: "${MINIO_END_POINT}"
+  MINIO_PORT: "${MINIO_PORT}"
+  MINIO_BUCKET: "${MINIO_BUCKET}"
+
+
+services:
+  postgres:
+    container_name: postgres-dev-partsorder
+    image: postgres:15.2
+    restart: always
+    environment:
+      <<: *postgres-variables
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - './infrastructure/postgres/data:/var/lib/postgresql/data'
+    healthcheck:
+      interval: 10s
+      retries: 10
+      test: "pg_isready -U ${DB_USER} -d ${DB_NAME}"
+      timeout: 2s
+
+  minio:
+    container_name: minio-dev-partsorder
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      <<: *minio-variables
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - './infrastructure/s3/data:/data'
+
+  minio-client:
+    container_name: minio-dev-client-partsorder
+    image: minio/mc
+    restart: unless-stopped
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - |
+        mc alias set local http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}
+        mc mb --ignore-existing local/${MINIO_BUCKET}
+        mc anonymous set download local/${MINIO_BUCKET}
+    depends_on:
+      - minio
+
+  redis:
+    container_name: redis-dev-partsorder
+    image: redis:latest
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
