@@ -156,7 +156,7 @@ model Product {
   /// Название
   /// @Validator.MinLength(2)
   /// @Validator.MaxLength(30)
-  name         String  @db.VarChar(100)
+  name         String? @db.VarChar(100)
   /// Производитель
   manufacturer String? @map("manufacturer") @db.VarChar(50)
   /// Псевдонимы через запятую
@@ -190,7 +190,7 @@ model Price {
   /// Цена за единицу/штуку
   price    Decimal @db.Decimal(9, 2)
   /// Срок поставки в днях
-  duration Int?
+  duration String?
 
   /// Название поставщика
   /// @Validator.MinLength(2)
