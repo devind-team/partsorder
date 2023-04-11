@@ -6,7 +6,7 @@ const authStore = useAuthStore()
 <template>
   <v-app-bar :title="$t('title')" floating>
     <template #prepend>
-      <v-img src="/favicon.ico" width="52" />
+      <v-img src="/favicon.ico" width="50" />
     </template>
     <template #append>
       <template v-if="authStore.loginIn">
@@ -27,7 +27,7 @@ const authStore = useAuthStore()
         </v-menu>
       </template>
       <template v-else>
-        <v-btn :to="localePath({ name: 'auth-register' })" stacked>{{ $t('auth.register') }}</v-btn>
+        <!--<v-btn :to="localePath({ name: 'auth-register' })" stacked>{{ $t('auth.register') }}</v-btn>-->
         <v-btn :to="localePath({ name: 'auth-login' })" stacked>{{ $t('auth.login') }}</v-btn>
       </template>
     </template>
