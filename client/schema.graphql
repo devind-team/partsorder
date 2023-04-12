@@ -304,7 +304,7 @@ type Price {
   price: Decimal!
 
   """Срок поставки в днях"""
-  duration: Int
+  duration: String
 
   """Название поставщика"""
   supplierName: String!
@@ -393,7 +393,7 @@ type Product {
   vendorCode: String!
 
   """Название"""
-  name: String!
+  name: String
 
   """Производитель"""
   manufacturer: String
@@ -432,7 +432,7 @@ type FileCount {
 }
 
 type File {
-  """Идентифик��тор файла"""
+  """Идентификатор файла"""
   id: ID!
 
   """Название файла"""
