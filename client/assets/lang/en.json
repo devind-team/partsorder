@@ -31,7 +31,7 @@
     "new": "Create a new order",
     "create": "Send an order",
     "address": "Delivery address",
-    "file": "Select a file"
+    "file": "Order file"
   },
   "index": {
     "header": "Spare parts for trucks from Europe",

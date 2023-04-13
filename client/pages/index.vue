@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useHead, useI18n } from '#imports'
-//import '/assets/css/tailwind.css'
 
 const { t } = useI18n()
 useHead({

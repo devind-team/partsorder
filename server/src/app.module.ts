@@ -10,6 +10,7 @@ import { UsersModule } from '@users/users.module'
 import { FilesModule } from '@files/files.module'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AppService } from './app.service'
     AuthModule,
     UsersModule,
     FilesModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
