@@ -14,10 +14,12 @@ export default defineNuxtRouteMiddleware(async (_to, _from) => {
     const cookies = parse(ssrContext?.event?.req?.headers?.cookie || '') as Record<string, string>
     token = cookies[`apollo:${DEFAULT_CLIENT_ID}.token`]
   } else {
+    // @ts-ignore
     token = await $apolloHelpers.getToken()
   }
   if (token && !authStore.loginIn) {
     // If token exists, but user not
+    // @ts-ignore
     const defaultClient = $apollo.clients[DEFAULT_CLIENT_ID]
     try {
       authStore.user = await defaultClient
@@ -27,6 +29,7 @@ export default defineNuxtRouteMiddleware(async (_to, _from) => {
         })
         .then(({ data }: { data: MeQuery }) => data.me)
     } catch {
+      // @ts-ignore
       await $apolloHelpers.onLogout()
     }
   }
