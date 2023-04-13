@@ -1,23 +1,41 @@
 {
-  "title": "Partsorder",
+  "title": "Best Trans Parts",
+  "close": "Close",
   "auth": {
-    "title": "Авторизация",
-    "register": "Регистрация",
-    "login": "Войти",
-    "username": "Логин",
-    "password": "Пароль",
-    "passwordConfirmation": "Повторите пароль",
-    "pc": "Пароли должны совпадать",
+    "title": "Authorization",
+    "register": "Registration",
+    "login": "Login",
+    "username": "Username",
+    "password": "Password",
+    "passwordConfirmation": "Password Confirmation",
+    "pc": "Passwords must match",
     "email": "Email",
-    "lastName": "Фамилия",
-    "firstName": "Имя",
-    "sirName": "Отчество",
-    "singing": "Войти",
-    "doRegister": "Зарегистрироваться",
-    "logout": "Выйти",
-    "error": "Ошибка авторизации"
+    "lastName": "Last name",
+    "firstName": "First Name",
+    "sirName": "Patronymic",
+    "singing": "Log in",
+    "doRegister": "Register",
+    "logout": "Log Out",
+    "error": "Authorization error"
   },
   "profile": {
-    "me": "Профиль"
+    "me": "Profile",
+    "avatar": "Avatar",
+    "general": "Main fields",
+    "uploadAvatar": "Upload a new avatar",
+    "choseAvatar": "Select an avatar",
+    "media": "Select a file",
+    "put": "Upload"
+  },
+  "order": {
+    "new": "Create a new order",
+    "create": "Send an order",
+    "address": "Delivery address",
+    "file": "Select a file"
+  },
+  "index": {
+    "header": "Spare parts for trucks from Europe",
+    "title": "Direct deliveries of original spare parts for trucks from Volvo, MAN, DAF, Scania, Mercedes, Iveco and other brands",
+    "info": "User registration is temporarily closed. Orders via managers by phone +7(4812)688-555"
   }
 }
