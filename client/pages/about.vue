@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { useHead } from '#head'
-import { definePageMeta, useI18n } from '#imports'
+import { definePageMeta, useI18n, useHead } from '#imports'
 
 const { t } = useI18n()
 
