@@ -1,0 +1,10 @@
+mutation CreateOrder($address: String, $file: FileUploadInput!) {
+  createOrder(order: { address: $address, file: $file }) {
+    order {
+      id
+      address
+      # Добавить необходимых полей
+      __typename
+    }
+  }
+}

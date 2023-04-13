@@ -2,6 +2,13 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type FileUploadType {
+  fileName: String!
+  bucket: String!
+  name: String!
+  presignedUrl: String!
+}
+
 type UserCountAggregate {
   id: Int!
   username: Int!
@@ -520,16 +527,50 @@ type User {
   commentItem: [CommentItem!]
 }
 
-type FileUploadType {
-  fileName: String!
-  bucket: String!
-  name: String!
-  presignedUrl: String!
-}
-
 type UserLoginType {
   accessToken: String!
   user: User!
+}
+
+type OrderCountAggregate {
+  id: Int!
+  address: Int!
+  createdAt: Int!
+  userId: Int!
+  managerId: Int!
+  _all: Int!
+}
+
+type OrderAvgAggregate {
+  id: Float
+  userId: Float
+  managerId: Float
+}
+
+type OrderSumAggregate {
+  id: Int
+  userId: Int
+  managerId: Int
+}
+
+type OrderMinAggregate {
+  id: Int
+  address: String
+  createdAt: DateTime
+  userId: Int
+  managerId: Int
+}
+
+type OrderMaxAggregate {
+  id: Int
+  address: String
+  createdAt: DateTime
+  userId: Int
+  managerId: Int
+}
+
+type CreateOrderType {
+  order: Order!
 }
 
 type Query {
@@ -541,6 +582,7 @@ type Mutation {
   login(userLoginInput: UserLoginInput!): UserLoginType!
   register(userRegisterInput: UserRegisterInput!): UserLoginType
   uploadAvatar(fileUpload: FileUploadInput!): User!
+  createOrder(order: CreateOrderInput!): CreateOrderType!
 }
 
 input UserLoginInput {
@@ -564,4 +606,9 @@ input FileUploadInput {
   fileName: String!
   bucket: String!
   name: String!
+}
+
+input CreateOrderInput {
+  address: String
+  file: FileUploadInput!
 }
