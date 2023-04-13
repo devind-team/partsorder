@@ -3,26 +3,26 @@ import { useAuthStore } from '~/stores'
 import { useNuxtApp } from '#app'
 import { MeQuery } from '~/types/graphql'
 import meQuery from '~/graphql/auth/queries/me.graphql'
+import { useApollo } from '#imports'
 
 const DEFAULT_CLIENT_ID = 'default'
 
 export default defineNuxtRouteMiddleware(async (_to, _from) => {
-  const { ssrContext, $apollo, $apolloHelpers } = useNuxtApp()
+  const { ssrContext } = useNuxtApp()
+  const apollo = useApollo()
   const authStore = useAuthStore()
+  const { resolveClient } = useApolloClient()
+  const client = resolveClient()
   let token: string | null
   if (process.server) {
     const cookies = parse(ssrContext?.event?.req?.headers?.cookie || '') as Record<string, string>
     token = cookies[`apollo:${DEFAULT_CLIENT_ID}.token`]
   } else {
-    // @ts-ignore
-    token = await $apolloHelpers.getToken()
+    token = await apollo.getToken()
   }
   if (token && !authStore.loginIn) {
-    // If token exists, but user not
-    // @ts-ignore
-    const defaultClient = $apollo.clients[DEFAULT_CLIENT_ID]
     try {
-      authStore.user = await defaultClient
+      authStore.user = await client
         .query({
           query: meQuery,
           fetchPolicy: 'network-only',
@@ -30,7 +30,7 @@ export default defineNuxtRouteMiddleware(async (_to, _from) => {
         .then(({ data }: { data: MeQuery }) => data.me)
     } catch {
       // @ts-ignore
-      await $apolloHelpers.onLogout()
+      await apollo.onLogout()
     }
   }
 })
