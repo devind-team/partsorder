@@ -29,6 +29,7 @@
   },
   "order": {
     "new": "Create a new order",
+    "my": "My orders",
     "create": "Send an order",
     "address": "Delivery address",
     "file": "Order file"
