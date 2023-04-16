@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { useAuthStore } from '~/stores'
 import { definePageMeta, useApollo, useLocalePath } from '#imports'
+import { useAuthStore } from '~/stores'
 
 import { useRouter } from '#app'
 
-definePageMeta({
-  middleware: 'auth',
-})
+definePageMeta({ middleware: 'auth' })
 const { onLogout } = useApollo()
 const authStore = useAuthStore()
 const router = useRouter()

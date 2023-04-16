@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { object, string } from 'yup'
+import { Field, Form, FormActions } from 'vee-validate'
 import { definePageMeta, useI18n, useHead } from '#imports'
 import {
   PresignedPutObjectQuery,
@@ -7,7 +8,6 @@ import {
   CreateOrderMutation,
   CreateOrderMutationVariables,
 } from '~/types/graphql'
-import { Field, Form, FormActions } from 'vee-validate'
 import createOrderMutation from '~/graphql/orders/mutations/create-order.graphql'
 import presignedPutUrlQuery from '~/graphql/files/queries/presigned-put-url.graphql'
 

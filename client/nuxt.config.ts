@@ -1,8 +1,13 @@
 // import pugPlugin from 'vite-plugin-pug'
-//import vuetify from 'vite-plugin-vuetify'
+import vuetify from 'vite-plugin-vuetify'
 import eslintPlugin from 'vite-plugin-eslint'
 
 export default defineNuxtConfig({
+  runtimeConfig: {
+    public: {
+      minioExternal: 'http://localhost:9000/',
+    },
+  },
   ssr: true,
   css: ['~/assets/css/tailwind.css', 'vuetify/lib/styles/main.sass', '@mdi/font/css/materialdesignicons.min.css'],
   modules: [
@@ -30,7 +35,7 @@ export default defineNuxtConfig({
     ],
   },
   vite: {
-    plugins: [eslintPlugin()],
+    plugins: [vuetify(), eslintPlugin()],
   },
   build: {
     transpile: ['vuetify'],

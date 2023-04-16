@@ -1,18 +1,20 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/stores'
+import { useLocalePath } from '#imports'
 
 const authStore = useAuthStore()
+const localePath = useLocalePath()
 </script>
 <template>
   <v-app-bar :title="$t('title')" density="compact" floating>
     <template #prepend>
-      <v-img src="/favicon.ico" width="50" />
+      <NuxtLink :to="localePath({ name: 'index' })"><v-img src="/favicon.ico" width="50" /></NuxtLink>
     </template>
     <template #append>
       <template v-if="authStore.loginIn">
         <v-menu>
           <template #activator="{ props }">
-            <v-avatar :image="authStore.user && authStore.user.avatar" v-bind="props" color="primary">
+            <v-avatar :image="authStore.avatar" v-bind="props" color="primary">
               {{ authStore.initials }}
             </v-avatar>
           </template>

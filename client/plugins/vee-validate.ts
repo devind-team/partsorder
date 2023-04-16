@@ -11,5 +11,6 @@ configure({
 })
 
 export default defineNuxtPlugin(({ $i18n }) => {
+  // @ts-ignore
   setLocale(unref($i18n.locale))
 })

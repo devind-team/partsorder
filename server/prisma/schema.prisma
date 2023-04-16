@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
 }
 
 generator nestgraphql {
@@ -10,6 +9,8 @@ generator nestgraphql {
 
   fields_Validator_from  = "class-validator"
   fields_Validator_input = true
+  fields_Scalars_from    = "graphql-scalars"
+  fields_Scalars_input   = true
 
   decorate_1_type      = "@(Create|Update)@(One|Many)UserArgs"
   decorate_1_field     = data
@@ -48,9 +49,10 @@ model User {
   /// @HideField()
   password  String  @db.VarChar(256)
   /// Email пользователя
-  /// @Validator.IsEmail()
+  /// @FieldType('Scalars.GraphQLEmailAddress')
   email     String  @unique @db.VarChar(50)
   /// Аватар пользователя
+  /// @FieldType('Scalars.GraphQLURL')
   avatar    String?
   /// Фамилия
   /// @Validator.MinLength(3)

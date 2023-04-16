@@ -77,12 +77,7 @@ const handleUpdateAvatar = async (
         <v-row>
           <v-col>{{ $t('profile.avatar') }}</v-col>
           <v-col class="flex flex-col items-center">
-            <v-avatar
-              :image="authStore.user && authStore.user.avatar"
-              :color="authStore.user && authStore.user.avatar ? null : 'primary'"
-              size="100"
-              class="mb-10"
-            >
+            <v-avatar :image="authStore.avatar" :color="authStore.avatar ? null : 'primary'" size="100" class="mb-10">
               {{ authStore.initials }}
             </v-avatar>
             <v-dialog v-model="avatarDialog" width="600">

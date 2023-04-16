@@ -29,8 +29,9 @@ export default defineNuxtRouteMiddleware(async (_to, _from) => {
         })
         .then(({ data }: { data: MeQuery }) => data.me)
     } catch {
-      // @ts-ignore
-      await apollo.onLogout()
+      if (process.client) {
+        await apollo.onLogout()
+      }
     }
   }
 })

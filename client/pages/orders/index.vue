@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { useHead } from '#imports'
+import { useHead, useLocalePath } from '#imports'
+const localePath = useLocalePath()
 
 useHead({
   title: 'Мои заказы',
@@ -11,7 +12,7 @@ useHead({
     <v-card>
       <v-card-actions>
         <v-spacer />
-        <v-btn :href="localePath({ name: 'orders-new' })">Добавить новый заказ</v-btn>
+        <v-btn :to="localePath({ name: 'orders-new' })">Добавить новый заказ</v-btn>
       </v-card-actions>
       <v-card-text>Таблица с заказами</v-card-text>
     </v-card>

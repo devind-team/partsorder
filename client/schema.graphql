@@ -110,7 +110,7 @@ type Status {
   user: User
 }
 
-"""Статусы заказов"""
+"""Статусы заказ��в"""
 enum OrderStatus {
   CREATED
   APPROVAL
@@ -316,7 +316,7 @@ type Price {
   """Название поставщика"""
   supplierName: String!
 
-  """Страна поставщика"""
+  """Страна п��ставщика"""
   country: String
 
   """Сайт"""
@@ -593,7 +593,7 @@ input UserLoginInput {
 input UserRegisterInput {
   username: String!
   password: String!
-  email: String!
+  email: EmailAddress!
   lastName: String!
   firstName: String!
   sirName: String
@@ -601,6 +601,11 @@ input UserRegisterInput {
   """Date of birthday """
   birthday: DateTime
 }
+
+"""
+A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
+"""
+scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
 
 input FileUploadInput {
   fileName: String!
