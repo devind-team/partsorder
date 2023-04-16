@@ -27,7 +27,7 @@
     "@graphql-codegen/typescript-document-nodes": "^3.0.3",
     "@graphql-codegen/typescript-operations": "^3.0.3",
     "@graphql-codegen/typescript-vue-apollo": "^3.3.7",
-    "concurrently": "^7.6.0",
+    "concurrently": "^8.0.1",
     "@typescript-eslint/eslint-plugin": "^5.58.0",
     "@typescript-eslint/parser": "^5.58.0",
     "prettier": "^2.8.7",
