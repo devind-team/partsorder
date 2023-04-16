@@ -8,6 +8,7 @@ x-client-environment: &client-environment
   NUXT_API_URL: "https://${SITE}/graphql/"
   NUX_API_URL_BROWSER: "http://server:8000/graphql/"
   NUXT_WS_URL_BROWSER: "wss://${SITE}/graphql/"
+  NUXT_MINIO_EXTERNAL: "${MINIO_EXTERNAL_URL}"
 
 x-postgres-variables: &postgres-variables
   POSTGRES_DB: "${DB_NAME}"
@@ -70,6 +71,7 @@ x-minio-variables: &minio-variables
 
 x-server-environment: &server-environment
   <<: [*secret-common-variables, *database-variables, *minio-variables, *smtp-variables]
+  MINIO_EXTERNAL_URL: "${MINIO_EXTERNAL_URL}"
   MINIO_END_POINT: "minio"
   REDIS_URL: "${REDIS_URL}"
 
