@@ -21,6 +21,7 @@ export default defineNuxtRouteMiddleware(async (_to, _from) => {
     token = await apollo.getToken()
   }
   if (token && !authStore.loginIn) {
+    console.log('token', token)
     try {
       authStore.user = await client
         .query({
@@ -28,7 +29,9 @@ export default defineNuxtRouteMiddleware(async (_to, _from) => {
           fetchPolicy: 'network-only',
         })
         .then(({ data }: { data: MeQuery }) => data.me)
-    } catch {
+      console.log(authStore.user)
+    } catch (e) {
+      console.log(e)
       if (process.client) {
         await apollo.onLogout()
       }

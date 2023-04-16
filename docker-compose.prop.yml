@@ -274,7 +274,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.services.minio.loadbalancer.server.port=9000"
       - "traefik.http.routers.minio.service=minio"
-      - "traefik.http.routers.minio.rule=Host(`${SITE}`) && Path(`/storage`)"
+      - "traefik.http.routers.minio.rule=Host(`s3.${SITE}`)"
+      - "traefik.http.routers.minio.tls=true"
       - "traefik.http.routers.minio.tls.certresolver=letsencrypt"
       - "traefik.http.routers.minio.entrypoints=https"
 

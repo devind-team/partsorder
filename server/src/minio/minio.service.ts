@@ -63,8 +63,12 @@ export class MinioService {
     const [hashedFileName, ext] = this.hashedName(fileName)
     try {
       const fileName = `${hashedFileName}${ext}`
-      const presignedUrl = await this.minioClient.presignedPutObject(this.bucket, fileName)
-      return [this.bucket, fileName, presignedUrl]
+      const presignedUrl = new URL(await this.minioClient.presignedPutObject(this.bucket, fileName))
+      const pURL = new URL(
+        `${presignedUrl.pathname}${presignedUrl.search}`,
+        this.configService.get<string>('MINIO_EXTERNAL_URL'),
+      )
+      return [this.bucket, fileName, pURL.toString()]
     } catch (e) {
       throw new GraphQLError(`Error create presigned url: ${e}`)
     }
