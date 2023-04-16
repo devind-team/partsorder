@@ -12,7 +12,6 @@ export default defineNuxtConfig({
     '@nuxtjs/robots',
     '@nuxtjs/color-mode',
     '@nuxtjs/apollo',
-    '@nuxt/devtools',
   ],
   // @ts-ignore
   apollo: {
