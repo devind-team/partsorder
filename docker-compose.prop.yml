@@ -63,6 +63,7 @@ x-grafana-environment: &grafana-environment
   GF_USERS_ALLOW_SIGN_UP: "${GF_USERS_ALLOW_SIGN_UP}"
 
 x-minio-variables: &minio-variables
+  MINIO_SERVER_URL: "${MINIO_SERVER_URL}"
   MINIO_ROOT_USER: "${MINIO_ROOT_USER}"
   MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD}"
   MINIO_END_POINT: "${MINIO_END_POINT}"
@@ -71,7 +72,6 @@ x-minio-variables: &minio-variables
 
 x-server-environment: &server-environment
   <<: [*secret-common-variables, *database-variables, *minio-variables, *smtp-variables]
-  MINIO_EXTERNAL_URL: "${MINIO_EXTERNAL_URL}"
   MINIO_END_POINT: "minio"
   REDIS_URL: "${REDIS_URL}"
 

@@ -5,10 +5,10 @@ import eslintPlugin from 'vite-plugin-eslint'
 export default defineNuxtConfig({
   runtimeConfig: {
     public: {
-      minioExternal: 'http://localhost:9000/',
+      minioServerUrl: 'http://localhost:9000/',
     },
   },
-  ssr: true,
+  ssr: false,
   css: ['~/assets/css/tailwind.css', 'vuetify/lib/styles/main.sass', '@mdi/font/css/materialdesignicons.min.css'],
   modules: [
     '@pinia/nuxt',

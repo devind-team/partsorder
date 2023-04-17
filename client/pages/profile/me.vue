@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import * as yup from 'yup'
 import { Field, Form, FormActions } from 'vee-validate'
-import { definePageMeta } from '#imports'
+import { definePageMeta, useMinio } from '#imports'
 import { useAuthStore } from '~/stores'
 import {
   PresignedPutObjectQuery,
@@ -11,9 +11,11 @@ import {
 } from '~/types/graphql'
 import presignedPutUrlQuery from '~/graphql/files/queries/presigned-put-url.graphql'
 import uploadAvatarMutation from '~/graphql/auth/mutations/upload-avatar.graphql'
+import { storeToRefs } from 'pinia'
 
 const { t } = useI18n()
 const { resolveClient } = useApolloClient()
+const { makeUrl } = useMinio()
 
 definePageMeta({ middleware: 'auth' })
 useHead({ title: t('profile.me') })
@@ -21,6 +23,8 @@ useHead({ title: t('profile.me') })
 const authStore = useAuthStore()
 const avatarDialog = ref(false)
 const generalFields = ['username', 'email', 'lastName', 'firstName', 'sirName']
+
+const { user } = storeToRefs(authStore)
 
 const schema = yup.object({
   fileUpload: yup.string().required().label(t('profile.media')),
@@ -33,7 +37,7 @@ const { mutate, onDone, loading } = useMutation<UploadAvatarMutation, UploadAvat
 onDone(async ({ data }) => {
   if (!data) return
   const { avatar } = data.uploadAvatar
-  authStore.user && (authStore.user.avatar = avatar)
+  authStore.setAvatar(avatar as string)
   avatarDialog.value = false
 })
 
@@ -77,7 +81,7 @@ const handleUpdateAvatar = async (
         <v-row>
           <v-col>{{ $t('profile.avatar') }}</v-col>
           <v-col class="flex flex-col items-center">
-            <v-avatar :image="authStore.avatar" :color="authStore.avatar ? null : 'primary'" size="100" class="mb-10">
+            <v-avatar :image="makeUrl(user.avatar)" :color="user.avatar ? null : 'primary'" size="100" class="mb-10">
               {{ authStore.initials }}
             </v-avatar>
             <v-dialog v-model="avatarDialog" width="600">
