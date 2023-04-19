@@ -110,7 +110,7 @@ type Status {
   user: User
 }
 
-"""Статусы заказ��в"""
+"""Статусы заказов"""
 enum OrderStatus {
   CREATED
   APPROVAL
@@ -316,7 +316,7 @@ type Price {
   """Название поставщика"""
   supplierName: String!
 
-  """Страна п��ставщика"""
+  """Страна поставщика"""
   country: String
 
   """Сайт"""
@@ -445,11 +445,14 @@ type File {
   """Название файла"""
   name: String!
 
-  """Название файла в баскете"""
-  key: String!
+  """Название сервиса, на котором расположен файл"""
+  endPoint: String!
 
   """Название баскета для хранения файла"""
   bucket: String!
+
+  """Название файла в баскете"""
+  key: String!
 
   """Дата создания"""
   createdAt: DateTime!

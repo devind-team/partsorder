@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/stores'
-import { useLocalePath, useMinio } from '#imports'
+import { useLocalePath } from '#imports'
 
 const authStore = useAuthStore()
 const localePath = useLocalePath()
-const { makeUrl } = useMinio()
 </script>
 <template>
   <v-app-bar :title="$t('title')" density="compact" floating>
@@ -15,7 +14,7 @@ const { makeUrl } = useMinio()
       <template v-if="authStore.loginIn">
         <v-menu>
           <template #activator="{ props }">
-            <v-avatar :image="makeUrl(authStore.user.avatar)" v-bind="props" color="primary">
+            <v-avatar :image="authStore.user.avatar" v-bind="props" color="primary">
               {{ authStore.initials }}
             </v-avatar>
           </template>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import * as yup from 'yup'
 import { Field, Form, FormActions } from 'vee-validate'
-import { definePageMeta, useMinio } from '#imports'
+import { definePageMeta } from '#imports'
 import { useAuthStore } from '~/stores'
 import {
   PresignedPutObjectQuery,
@@ -15,7 +15,6 @@ import { storeToRefs } from 'pinia'
 
 const { t } = useI18n()
 const { resolveClient } = useApolloClient()
-const { makeUrl } = useMinio()
 
 definePageMeta({ middleware: 'auth' })
 useHead({ title: t('profile.me') })
@@ -81,7 +80,7 @@ const handleUpdateAvatar = async (
         <v-row>
           <v-col>{{ $t('profile.avatar') }}</v-col>
           <v-col class="flex flex-col items-center">
-            <v-avatar :image="makeUrl(user.avatar)" :color="user.avatar ? null : 'primary'" size="100" class="mb-10">
+            <v-avatar :image="user.avatar" :color="user.avatar ? null : 'primary'" size="100" class="mb-10">
               {{ authStore.initials }}
             </v-avatar>
             <v-dialog v-model="avatarDialog" width="600">

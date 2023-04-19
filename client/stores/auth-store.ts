@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { User } from '~/types/graphql'
 
 export type AuthStoreStateType = {
-  user: User | null
+  user?: User | null
 }
 
 export type AuthStoreGettersType = {
@@ -21,7 +21,7 @@ export const useAuthStore = defineStore<string, AuthStoreStateType, AuthStoreGet
       user: null,
     }),
     getters: {
-      loginIn: (state) => state.user !== null,
+      loginIn: (state) => !!state.user,
       initials: (state) => (state.user ? `${state.user.lastName[0]}${state.user.firstName[0]}` : ''),
     },
     actions: {

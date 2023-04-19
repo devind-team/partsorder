@@ -20,8 +20,9 @@ export class FilesService {
     return this.prismaService.file.create({
       data: {
         name: uploadFile.fileName,
-        key: uploadFile.name,
+        endPoint: this.minioService.getEndPoint(),
         bucket: this.minioService.getBucket(),
+        key: uploadFile.name,
         userId: user?.id,
       },
     })

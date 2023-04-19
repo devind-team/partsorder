@@ -8,7 +8,7 @@ export default defineNuxtConfig({
       minioServerUrl: 'http://localhost:9000/',
     },
   },
-  ssr: false,
+  ssr: process.env.NODE_ENV === 'development',
   css: ['~/assets/css/tailwind.css', 'vuetify/lib/styles/main.sass', '@mdi/font/css/materialdesignicons.min.css'],
   modules: [
     '@pinia/nuxt',

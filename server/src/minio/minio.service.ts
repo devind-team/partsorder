@@ -17,8 +17,18 @@ export class MinioService {
     this.bucket = configService.get<string>('MINIO_BUCKET', 'bucket')
   }
 
+  /**
+   * Bucket s3.
+   */
   getBucket(): string {
     return this.bucket
+  }
+
+  /**
+   * End point s3.
+   */
+  getEndPoint(): string {
+    return this.configService.get<string>('MINIO_END_POINT')
   }
 
   async listBuckets() {
