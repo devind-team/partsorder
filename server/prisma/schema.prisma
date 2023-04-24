@@ -119,19 +119,19 @@ enum Gender {
 // Модель хранения файлов
 model File {
   /// Идентификатор файла
-  id       Int    @id @default(autoincrement())
+  id        Int    @id @default(autoincrement())
   /// Название файла
   /// @Validator.MinLength(3)
-  name     String @db.VarChar(512)
+  name      String @db.VarChar(512)
   /// Название сервиса, на котором расположен файл
   /// @FieldType('Scalars.GraphQLURL')
-  endPoint String @map("end_point") @db.VarChar(64)
+  serverUrl String @map("server_url") @db.VarChar(64)
   /// Название баскета для хранения файла
   /// @Validator.MinLength(3)
-  bucket   String @db.VarChar(64)
+  bucket    String @db.VarChar(64)
   /// Название файла в баскете
   /// @Validator.MinLength(3)
-  key      String @db.VarChar(512)
+  key       String @db.VarChar(512)
 
   /// Дата создания
   createdAt DateTime @default(now()) @map("created_at")

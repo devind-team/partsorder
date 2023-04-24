@@ -31,30 +31,6 @@ services:
       test: "pg_isready -U ${DB_USER} -d ${DB_NAME}"
       timeout: 2s
 
-  minio:
-    container_name: minio-dev-partsorder
-    image: minio/minio
-    command: server /data --console-address ":9001"
-    environment:
-      <<: *minio-variables
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    volumes:
-      - './infrastructure/s3/data:/data'
-
-  minio-client:
-    container_name: minio-dev-client-partsorder
-    image: minio/mc
-    entrypoint: ['/bin/sh', '-c']
-    command:
-      - |
-        mc alias set local http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}
-        mc mb --ignore-existing local/${MINIO_BUCKET}
-        mc anonymous set download local/${MINIO_BUCKET}
-    depends_on:
-      - minio
-
   redis:
     container_name: redis-dev-partsorder
     image: redis:latest

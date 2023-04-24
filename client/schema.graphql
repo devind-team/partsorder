@@ -446,7 +446,7 @@ type File {
   name: String!
 
   """Название сервиса, на котором расположен файл"""
-  endPoint: String!
+  serverUrl: String!
 
   """Название баскета для хранения файла"""
   bucket: String!

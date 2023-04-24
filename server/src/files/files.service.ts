@@ -12,6 +12,15 @@ export class FilesService {
   constructor(private readonly prismaService: PrismaService, private readonly minioService: MinioService) {}
 
   /**
+   * Получаем информацию о нахождении сервера файлов.
+   */
+  storageInfo(): { serverUrl: string; bucket: string } {
+    return {
+      serverUrl: this.minioService.getServerUrl(),
+      bucket: this.minioService.getBucket(),
+    }
+  }
+  /**
    * Функция для добавления файла
    * @param uploadFile Загруженный с помощью minio файл
    * @param user Пользователь
@@ -20,7 +29,7 @@ export class FilesService {
     return this.prismaService.file.create({
       data: {
         name: uploadFile.fileName,
-        endPoint: this.minioService.getEndPoint(),
+        serverUrl: this.minioService.getServerUrl(),
         bucket: this.minioService.getBucket(),
         key: uploadFile.name,
         userId: user?.id,

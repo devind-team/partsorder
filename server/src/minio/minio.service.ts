@@ -8,15 +8,25 @@ import { GraphQLError } from 'graphql'
 
 @Injectable()
 export class MinioService {
+  private readonly serverUrl: string
+  private readonly endPoint: string
   private readonly bucket: string
 
   constructor(
     private readonly configService: ConfigService,
     @InjectMinioClient() private readonly minioClient: MinioClient,
   ) {
+    this.serverUrl = this.configService.get<string>('MINIO_SERVER_URL')
+    this.endPoint = this.configService.get<string>('MINIO_END_POINT')
     this.bucket = configService.get<string>('MINIO_BUCKET', 'bucket')
   }
 
+  /**
+   * Server url minio.
+   */
+  getServerUrl(): string {
+    return this.serverUrl
+  }
   /**
    * Bucket s3.
    */

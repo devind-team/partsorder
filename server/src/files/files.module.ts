@@ -15,7 +15,7 @@ import { FilesService } from './files.service'
         secretKey: config.get<string>('MINIO_ROOT_PASSWORD'),
         endPoint: config.get<string>('MINIO_END_POINT'),
         port: Number(config.get<number>('MINIO_PORT', 9000)),
-        useSSL: true,
+        useSSL: config.get<string>('MINIO_USE_SSL', 'false') === 'true',
       }),
       inject: [ConfigService],
     }),
