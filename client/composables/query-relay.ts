@@ -31,7 +31,7 @@ export type TransformUpdate<TResultQuery, TResultMutation> = (
 export type QueryRelayParams<TResult = any, TVariables = any> = {
   document: DocumentParameter<TResult, TVariables>
   variables?: VT<TVariables>
-  options: OptionsParameter<TResult, TVariables>
+  options?: OptionsParameter<TResult, TVariables>
 }
 
 export type QueryRelayOptions = {
@@ -345,3 +345,16 @@ export function useQueryRelay<
     deleteUpdate,
   }
 }
+
+export type UpdateRelayType<TResult = any> = <TResultMutation>(
+  cache: DataProxy,
+  result: Omit<FetchResult<TResultMutation>, 'context'>,
+  transform: TransformUpdate<TResult, TResultMutation>,
+) => void
+export type AddUpdateRelayType = <TResultMutation>(
+  cache: DataProxy,
+  result: Omit<FetchResult<TResultMutation>, 'context'>,
+  key?: string | null,
+) => void
+export type ChangeUpdateRelayType = ReturnType<typeof useQueryRelay>['changeUpdate']
+export type DeleteUpdateRelayType = ReturnType<typeof useQueryRelay>['deleteUpdate']

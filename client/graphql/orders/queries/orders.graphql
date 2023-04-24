@@ -1,0 +1,21 @@
+query Orders($first: Int, $after: String) {
+  orders(first: $first, after: $after, orderBy: { createdAt: desc }) {
+    totalCount
+    pageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      __typename
+    }
+    edges {
+      node {
+        id
+        address
+        createdAt
+        __typename
+      }
+      __typename
+    }
+  }
+}

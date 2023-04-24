@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { object, string } from 'yup'
 import { Field, Form, FormActions } from 'vee-validate'
-import { definePageMeta, useI18n, useHead } from '#imports'
+import { useI18n, useHead } from '#imports'
 import {
   PresignedPutObjectQuery,
   PresignedPutObjectQueryVariables,
@@ -11,22 +11,26 @@ import {
 import createOrderMutation from '~/graphql/orders/mutations/create-order.graphql'
 import presignedPutUrlQuery from '~/graphql/files/queries/presigned-put-url.graphql'
 
+const props = defineProps({
+  addUpdate: { type: Function, required: true },
+})
+
 const { t } = useI18n()
 const { resolveClient } = useApolloClient()
-
-definePageMeta({
-  middleware: 'auth',
-})
 
 useHead({
   title: t('order.title'),
 })
 
+const active = ref<boolean>(false)
+
 const schema = object({
   address: string().required().min(2).label(t('order.address')),
   file: string().required().label(t('order.file')),
 })
-const { mutate, loading } = useMutation<CreateOrderMutation, CreateOrderMutationVariables>(createOrderMutation)
+const { mutate, loading } = useMutation<CreateOrderMutation, CreateOrderMutationVariables>(createOrderMutation, {
+  update: (cache, result) => props.addUpdate(cache, result, 'order'),
+})
 
 const abortController = new AbortController()
 onBeforeUnmount(() => {
@@ -53,7 +57,8 @@ const handleCreateOrder = async (
     if (response.ok) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { __typename, presignedUrl, ...fileUpload } = presignedPutUrl
-      mutate({ address: values.address, file: fileUpload })
+      await mutate({ address: values.address, file: fileUpload })
+      active.value = false
     }
   } catch (e) {
     console.error(e)
@@ -62,10 +67,13 @@ const handleCreateOrder = async (
 }
 </script>
 <template>
-  <v-container>
-    <Form as="v-form" :validation-schema="schema" @submit="handleCreateOrder">
-      <v-card :loading="loading" class="mx-auto lg:w-1/2">
-        <v-card-title>{{ $t('order.title') }}</v-card-title>
+  <v-dialog v-model="active" width="600px">
+    <template #activator="{ props: propsDialog }">
+      <slot :props="propsDialog" />
+    </template>
+    <Form :validation-schema="schema" @submit="handleCreateOrder">
+      <v-card :loading="loading">
+        <v-card-title>{{ $t('order.new') }}</v-card-title>
         <v-card-text>
           <Field v-slot="{ field, errors }" name="address">
             <v-text-field v-bind="field" :label="$t('order.address')" :error-messages="errors" type="input" />
@@ -75,6 +83,7 @@ const handleCreateOrder = async (
           </Field>
         </v-card-text>
         <v-card-actions>
+          <v-btn @click="active = false">{{ $t('cancel') }}</v-btn>
           <v-spacer />
           <v-btn color="primary" type="submit">
             {{ $t('order.create') }}
@@ -82,5 +91,5 @@ const handleCreateOrder = async (
         </v-card-actions>
       </v-card>
     </Form>
-  </v-container>
+  </v-dialog>
 </template>
