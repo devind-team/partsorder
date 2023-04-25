@@ -597,6 +597,7 @@ type OrderConnectionType {
 type Query {
   me: User!
   presignedPutUrl(fileName: String!): FileUploadType!
+  order(orderId: Float!): Order!
   orders(where: OrderWhereInput, orderBy: [OrderOrderByWithRelationInput!], cursor: OrderWhereUniqueInput, take: Int, skip: Int, distinct: [OrderScalarFieldEnum!], after: String, before: String, first: Int, last: Int): OrderConnectionType!
 }
 

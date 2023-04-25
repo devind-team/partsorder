@@ -5,32 +5,27 @@ import { CurrentUser } from '@auth/auth.decorators'
 import { OrdersService } from '@orders/orders.service'
 import { CreateOrderInput } from '@orders/dto/create-order.input'
 import { CreateOrderType } from '@orders/dto/create-order.type'
-import { User } from '@generated/user'
 import { OrderConnectionType } from '@orders/dto/order-connection.type'
 import { OrderConnectionArgs } from '@orders/dto/order-connection.args'
-import { findManyCursorConnection } from '@common/relay/find-many-cursor-connection'
-import { PrismaService } from '@common/services/prisma.service'
+import { User } from '@generated/user'
+import { Order } from '@generated/order'
 
 @UseGuards(GqlAuthGuard)
 @Resolver()
 export class OrdersResolver {
-  constructor(private readonly ordersService: OrdersService, private readonly prismaService: PrismaService) {}
+  constructor(private readonly ordersService: OrdersService) {}
+
+  @Query(() => Order)
+  async order(@CurrentUser() user: User, @Args({ name: 'orderId' }) orderId: number): Promise<Order> {
+    return await this.ordersService.getOrder(orderId)
+  }
 
   /**
    * Запрос заказов пользователя
    */
   @Query(() => OrderConnectionType)
   async orders(@CurrentUser() user: User, @Args() params: OrderConnectionArgs): Promise<OrderConnectionType> {
-    return findManyCursorConnection(
-      (args) =>
-        this.prismaService.order.findMany({
-          where: params.where,
-          orderBy: params.orderBy,
-          ...args,
-        }),
-      () => this.prismaService.order.count({ where: params.where }),
-      params,
-    )
+    return await this.ordersService.getOrderConnection(user, params)
   }
 
   @Mutation(() => CreateOrderType)
