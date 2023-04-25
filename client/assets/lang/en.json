@@ -38,6 +38,9 @@
   "index": {
     "header": "Spare parts for trucks from Europe",
     "title": "Direct deliveries of original spare parts for trucks from Volvo, MAN, DAF, Scania, Mercedes, Iveco and other brands",
-    "info": "User registration is temporarily closed. Orders via managers by phone +7(4812)688-555"
+    "info": "User registration is temporarily closed. Orders via managers by phone +7(4812)688-555",
+    "searchtitle": "Enter the article of the spare part to search",
+    "dosearch": "Search",
+    "article": "Article"
   }
 }
