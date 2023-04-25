@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import { useFilters, useHead, useI18n } from '#imports'
+import { useFilters, useHead, useI18n, useLocalePath, useRouter } from '#imports'
 import ordersQuery from '~/graphql/orders/queries/orders.graphql'
 import AddOrder from '~/components/orders/AddOrder.vue'
 import { OrdersQuery, OrdersQueryVariables } from '~/types/graphql'
 
+const localePath = useLocalePath()
+const router = useRouter()
 const { t } = useI18n()
 
 useHead({
@@ -22,6 +24,10 @@ const headers = [
   { title: 'Адрес доставки', key: 'address', sortable: false },
   { title: 'Дата создания', key: 'createdAt', sortable: false },
 ]
+
+const rowClickHandler = (e, { item }) => {
+  router.push(localePath({ name: 'orders-orderId', params: { orderId: item.raw.id } }))
+}
 </script>
 <template>
   <v-container>
@@ -40,6 +46,7 @@ const headers = [
           :headers="headers"
           :items="orders"
           :loading="loading"
+          @click:row="rowClickHandler"
         >
           <template #item.createdAt="{ item }">
             {{ dateTimeHM(item.raw.createdAt) }}
