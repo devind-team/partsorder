@@ -31,12 +31,18 @@ dependencies:
   '@tailwindcss/typography':
     specifier: ^0.5.9
     version: 0.5.9(tailwindcss@3.3.1)
+  '@types/accounting':
+    specifier: ^0.4.2
+    version: 0.4.2
   '@vee-validate/i18n':
     specifier: ^4.8.6
     version: 4.8.6
   '@vueuse/core':
     specifier: ^10.1.0
     version: 10.1.0(vue@3.2.47)
+  accounting:
+    specifier: ^0.4.1
+    version: 0.4.1
   graphql-tag:
     specifier: ^2.12.6
     version: 2.12.6(graphql@16.6.0)
@@ -2664,6 +2670,10 @@ packages:
       minimatch: 7.4.6
     dev: false
 
+  /@types/accounting@0.4.2:
+    resolution: {integrity: sha512-M8W6tsLZguGdRaSQMmg58PUM/5HgoDuBGVyMiYNGi0FZkLzJDjUBGGYRYj1J9OWELCTqfux+ogVyKObCzfWJgg==}
+    dev: false
+
   /@types/babel__core@7.20.0:
     resolution: {integrity: sha512-+n8dL/9GWblDO0iU6eZAwEIJVr5DWigtle+Q6HLOrh/pdbXOhOtqzq8VPPE2zvNJzSKY4vH/z3iT3tn0A3ypiQ==}
     dependencies:
@@ -3450,6 +3460,10 @@ packages:
     dependencies:
       mime-types: 2.1.35
       negotiator: 0.6.3
+    dev: false
+
+  /accounting@0.4.1:
+    resolution: {integrity: sha512-RU6KY9Y5wllyaCNBo1W11ZOTnTHMMgOZkIwdOOs6W5ibMTp72i4xIbEA48djxVGqMNTUNbvrP/1nWg5Af5m2gQ==}
     dev: false
 
   /acorn-import-assertions@1.8.0(acorn@8.8.2):

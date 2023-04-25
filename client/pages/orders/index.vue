@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useHead, useI18n } from '#imports'
+import { useFilters, useHead, useI18n } from '#imports'
 import ordersQuery from '~/graphql/orders/queries/orders.graphql'
 import AddOrder from '~/components/orders/AddOrder.vue'
 import { OrdersQuery, OrdersQueryVariables } from '~/types/graphql'
@@ -9,7 +9,7 @@ const { t } = useI18n()
 useHead({
   title: t('order.title'),
 })
-
+const { dateTimeHM } = useFilters()
 const {
   data: orders,
   pagination,
@@ -40,7 +40,11 @@ const headers = [
           :headers="headers"
           :items="orders"
           :loading="loading"
-        />
+        >
+          <template #item.createdAt="{ item }">
+            {{ dateTimeHM(item.raw.createdAt) }}
+          </template>
+        </v-data-table-server>
       </v-card-text>
     </v-card>
   </v-container>
