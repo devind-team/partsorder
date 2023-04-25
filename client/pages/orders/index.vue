@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { useFilters, useHead, useI18n, useLocalePath, useRouter } from '#imports'
+import { useFilters, useHead, useI18n, useLocalePath } from '#imports'
 import ordersQuery from '~/graphql/orders/queries/orders.graphql'
 import AddOrder from '~/components/orders/AddOrder.vue'
 import { OrdersQuery, OrdersQueryVariables } from '~/types/graphql'
+import UserView from '~/components/common/UserView.vue'
 
 const localePath = useLocalePath()
-const router = useRouter()
 const { t } = useI18n()
 
 useHead({
@@ -23,11 +23,9 @@ const headers = [
   { title: '#', key: 'id', sortable: false },
   { title: 'Адрес доставки', key: 'address', sortable: false },
   { title: 'Дата создания', key: 'createdAt', sortable: false },
+  { title: 'Статус', key: 'statuses', sortable: false },
+  { title: 'Менеджер', key: 'manager', sortable: false },
 ]
-
-const rowClickHandler = (e, { item }) => {
-  router.push(localePath({ name: 'orders-orderId', params: { orderId: item.raw.id } }))
-}
 </script>
 <template>
   <v-container>
@@ -41,15 +39,37 @@ const rowClickHandler = (e, { item }) => {
       </v-card-actions>
       <v-card-text>
         <v-data-table-server
+          v-model:page="pagination.page.value"
           v-model:items-per-page="pagination.pageSize.value"
           :items-length="pagination.count.value"
           :headers="headers"
           :items="orders"
           :loading="loading"
-          @click:row="rowClickHandler"
         >
+          <template #item.id="{ item }">
+            <nuxt-link :to="localePath({ name: 'orders-orderId', params: { orderId: item.raw.id } })">
+              {{ item.raw.id }}
+            </nuxt-link>
+          </template>
           <template #item.createdAt="{ item }">
             {{ dateTimeHM(item.raw.createdAt) }}
+          </template>
+          <template #item.statuses="{ item }">
+            <v-tooltip v-for="status in item.raw.statuses" :key="status.id" location="bottom">
+              <template #activator="{ props }">
+                <v-chip v-bind="props" class="ma-1" size="x-small">
+                  {{ $t(`order.statuses.${status.status}`) }}
+                </v-chip>
+              </template>
+              <span>
+                {{ `${status.user.lastName} ${status.user.firstName}` }}
+                {{ dateTimeHM(status.createdAt) }}
+              </span>
+            </v-tooltip>
+          </template>
+          <template #item.manager="{ item }">
+            <user-view v-if="item.raw.manager" :user="item.raw.manager" />
+            <div v-else>Не назначен</div>
           </template>
         </v-data-table-server>
       </v-card-text>

@@ -152,7 +152,7 @@ type Comment {
 
 type OrderCount {
   statuses: Int!
-  item: Int!
+  items: Int!
   comments: Int!
 }
 
@@ -175,7 +175,7 @@ type Order {
   """Менеджер заказа"""
   manager: User
   statuses: [Status!]
-  item: [Item!]
+  items: [Item!]
   comments: [Comment!]
   _count: OrderCount!
 }
@@ -597,7 +597,7 @@ type OrderConnectionType {
 type Query {
   me: User!
   presignedPutUrl(fileName: String!): FileUploadType!
-  order(orderId: Float!): Order!
+  order(orderId: Int!): Order!
   orders(where: OrderWhereInput, orderBy: [OrderOrderByWithRelationInput!], cursor: OrderWhereUniqueInput, take: Int, skip: Int, distinct: [OrderScalarFieldEnum!], after: String, before: String, first: Int, last: Int): OrderConnectionType!
 }
 
@@ -613,7 +613,7 @@ input OrderWhereInput {
   user: UserRelationFilter
   manager: UserRelationFilter
   statuses: StatusListRelationFilter
-  item: ItemListRelationFilter
+  items: ItemListRelationFilter
   comments: CommentListRelationFilter
 }
 
@@ -1175,7 +1175,7 @@ input OrderOrderByWithRelationInput {
   user: UserOrderByWithRelationInput
   manager: UserOrderByWithRelationInput
   statuses: StatusOrderByRelationAggregateInput
-  item: ItemOrderByRelationAggregateInput
+  items: ItemOrderByRelationAggregateInput
   comments: CommentOrderByRelationAggregateInput
 }
 

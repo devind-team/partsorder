@@ -1,0 +1,6 @@
+fragment StatusFields on Status {
+  id
+  status
+  createdAt
+  __typename
+}

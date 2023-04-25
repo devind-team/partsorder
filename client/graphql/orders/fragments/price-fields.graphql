@@ -1,0 +1,11 @@
+fragment PriceFields on Price {
+  id
+  price
+  duration
+  supplierName
+  country
+  site
+  comment
+  createdAt
+  __typename
+}

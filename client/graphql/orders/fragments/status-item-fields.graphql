@@ -1,0 +1,7 @@
+fragment StatusItemFields on StatusItem {
+  id
+  status
+  createdAt
+
+  __typename
+}

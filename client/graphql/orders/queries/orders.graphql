@@ -1,3 +1,7 @@
+#import "../../auth/fragments/user-fields.graphql"
+#import "../fragments/order-fields.graphql"
+#import "../fragments/status-fields.graphql"
+
 query Orders($first: Int, $after: String) {
   orders(first: $first, after: $after, orderBy: { createdAt: desc }) {
     totalCount
@@ -10,10 +14,16 @@ query Orders($first: Int, $after: String) {
     }
     edges {
       node {
-        id
-        address
-        createdAt
-        __typename
+        ...OrderFields
+        manager {
+          ...UserFields
+        }
+        statuses {
+          ...StatusFields
+          user {
+            ...UserFields
+          }
+        }
       }
       __typename
     }

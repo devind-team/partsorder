@@ -1,0 +1,41 @@
+#import "../../auth/fragments/user-fields.graphql"
+#import "../fragments/order-fields.graphql"
+#import "../fragments/item-fields.graphql"
+#import "../fragments/product-fields.graphql"
+#import "../fragments/price-fields.graphql"
+#import "../fragments/status-fields.graphql"
+#import "../fragments/comment-fields.graphql"
+#import "../fragments/status-item-fields.graphql"
+
+query Order($orderId: Int!) {
+  order(orderId: $orderId) {
+    ...OrderFields
+    statuses {
+      ...StatusFields
+    }
+    comments {
+      ...CommentFields
+    }
+    items {
+      ...ItemFields
+      user {
+        ...UserFields
+      }
+      product {
+        ...ProductFields
+      }
+      statuses {
+        ...StatusItemFields
+      }
+      price {
+        ...PriceFields
+      }
+    }
+    manager {
+      ...UserFields
+    }
+    user {
+      ...UserFields
+    }
+  }
+}

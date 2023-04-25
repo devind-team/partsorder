@@ -1,0 +1,9 @@
+fragment ItemFields on Item {
+  id
+  quantity
+  carNo
+  routeNo
+  deliveryType
+  createdAt
+  __typename
+}

@@ -20,7 +20,20 @@ export class OrdersService {
    */
   async getOrder(orderId: number): Promise<Order> {
     return this.prismaService.order.findUnique({
-      include: { statuses: true, comments: true, manager: true, item: true },
+      include: {
+        statuses: true,
+        comments: true,
+        items: {
+          include: {
+            user: true,
+            product: true,
+            statuses: true,
+            price: true,
+          },
+        },
+        manager: true,
+        user: true,
+      },
       where: { id: orderId },
     })
   }
@@ -36,7 +49,7 @@ export class OrdersService {
     return await findManyCursorConnection(
       (args) =>
         this.prismaService.order.findMany({
-          include: { statuses: true, user: true, manager: true },
+          include: { statuses: { include: { user: true } }, user: true, manager: true },
           where,
           orderBy: params.orderBy,
           ...args,
@@ -47,6 +60,7 @@ export class OrdersService {
   }
   async createOrder(user: User, orderInput: CreateOrderInput): Promise<CreateOrderType> {
     const file = await this.fileService.add(orderInput.file, user)
+    console.log(file)
     // Вытаскиваем файл из minio, через fileService и парсим его
     // Все раскладываем по полочкам
     const order = await this.prismaService.order.create({
