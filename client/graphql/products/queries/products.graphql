@@ -1,0 +1,32 @@
+#import "../../orders/fragments/price-fields.graphql"
+#import "../fragments/product-fields.graphql"
+
+query Products($search: String, $first: Int, $after: String) {
+  products(
+    where: {
+      OR: [
+        { vendorCode: { contains: $search } },
+        { name: { contains: $search} }
+      ]
+    },
+    first: $first,
+    after: $after
+  ) {
+    totalCount
+    pageInfo {
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
+      __typename
+    }
+    edges {
+      node {
+        ...ProductFields
+        prices {
+          ...PriceFields
+        }
+      }
+    }
+  }
+}

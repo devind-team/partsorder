@@ -12,6 +12,7 @@ import { OrdersModule } from '@orders/orders.module'
 import { FilesModule } from '@files/files.module'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
+import { ProductsModule } from './products/products.module'
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AppService } from './app.service'
     UsersModule,
     FilesModule,
     OrdersModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

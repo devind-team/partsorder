@@ -594,11 +594,70 @@ type OrderConnectionType {
   totalCount: Int!
 }
 
+type ProductCountAggregate {
+  id: Int!
+  vendorCode: Int!
+  name: Int!
+  manufacturer: Int!
+  aliases: Int!
+  original: Int!
+  stock: Int!
+  createdAt: Int!
+  updatedAt: Int!
+  _all: Int!
+}
+
+type ProductAvgAggregate {
+  id: Float
+  stock: Float
+}
+
+type ProductSumAggregate {
+  id: Int
+  stock: Int
+}
+
+type ProductMinAggregate {
+  id: Int
+  vendorCode: String
+  name: String
+  manufacturer: String
+  aliases: String
+  original: Boolean
+  stock: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type ProductMaxAggregate {
+  id: Int
+  vendorCode: String
+  name: String
+  manufacturer: String
+  aliases: String
+  original: Boolean
+  stock: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type ProductEdge {
+  cursor: String!
+  node: Product!
+}
+
+type ProductConnectionType {
+  edges: [ProductEdge!]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
 type Query {
   me: User!
   presignedPutUrl(fileName: String!): FileUploadType!
   order(orderId: Int!): Order!
   orders(where: OrderWhereInput, orderBy: [OrderOrderByWithRelationInput!], cursor: OrderWhereUniqueInput, take: Int, skip: Int, distinct: [OrderScalarFieldEnum!], after: String, before: String, first: Int, last: Int): OrderConnectionType!
+  products(where: ProductWhereInput, orderBy: [ProductOrderByWithRelationInput!], cursor: ProductWhereUniqueInput, take: Int, skip: Int, distinct: [ProductScalarFieldEnum!], after: String, before: String, first: Int, last: Int): ProductConnectionType!
 }
 
 input OrderWhereInput {
@@ -1255,6 +1314,47 @@ enum OrderScalarFieldEnum {
   createdAt
   userId
   managerId
+}
+
+input ProductOrderByWithRelationInput {
+  id: SortOrder
+  vendorCode: SortOrder
+  name: SortOrder
+  manufacturer: SortOrder
+  aliases: SortOrder
+  original: SortOrder
+  stock: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+  prices: PriceOrderByRelationAggregateInput
+  attributes: AttributeValueOrderByRelationAggregateInput
+  item: ItemOrderByRelationAggregateInput
+  images: FileOrderByRelationAggregateInput
+}
+
+input PriceOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input AttributeValueOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input ProductWhereUniqueInput {
+  id: Int
+  vendorCode: String
+}
+
+enum ProductScalarFieldEnum {
+  id
+  vendorCode
+  name
+  manufacturer
+  aliases
+  original
+  stock
+  createdAt
+  updatedAt
 }
 
 type Mutation {
