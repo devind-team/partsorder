@@ -3,6 +3,7 @@ mutation CreateOrder($address: String, $file: FileUploadInput!) {
     order {
       id
       address
+      createdAt
       # Добавить необходимых полей
       __typename
     }

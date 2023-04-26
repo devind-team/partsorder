@@ -1,0 +1,6 @@
+fragment OrderFields on Order {
+  id
+  address
+  createdAt
+  __typename
+}

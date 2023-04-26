@@ -1,0 +1,31 @@
+#import "../../auth/fragments/user-fields.graphql"
+#import "../fragments/order-fields.graphql"
+#import "../fragments/status-fields.graphql"
+
+query Orders($first: Int, $after: String) {
+  orders(first: $first, after: $after, orderBy: { createdAt: desc }) {
+    totalCount
+    pageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      __typename
+    }
+    edges {
+      node {
+        ...OrderFields
+        manager {
+          ...UserFields
+        }
+        statuses {
+          ...StatusFields
+          user {
+            ...UserFields
+          }
+        }
+      }
+      __typename
+    }
+  }
+}

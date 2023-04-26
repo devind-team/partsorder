@@ -275,7 +275,7 @@ model Order {
   managerId Int?     @map("manager_id")
 
   statuses Status[]
-  item     Item[]
+  items    Item[]
   comments Comment[]
 
   @@map("orders")

@@ -1,0 +1,10 @@
+fragment ProductFields on Product {
+  id
+  vendorCode
+  name
+  manufacturer
+  aliases
+  original
+  original
+  __typename
+}

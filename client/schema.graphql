@@ -152,7 +152,7 @@ type Comment {
 
 type OrderCount {
   statuses: Int!
-  item: Int!
+  items: Int!
   comments: Int!
 }
 
@@ -175,7 +175,7 @@ type Order {
   """Менеджер заказа"""
   manager: User
   statuses: [Status!]
-  item: [Item!]
+  items: [Item!]
   comments: [Comment!]
   _count: OrderCount!
 }
@@ -576,9 +576,785 @@ type CreateOrderType {
   order: Order!
 }
 
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+}
+
+type OrderEdge {
+  cursor: String!
+  node: Order!
+}
+
+type OrderConnectionType {
+  edges: [OrderEdge!]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type ProductCountAggregate {
+  id: Int!
+  vendorCode: Int!
+  name: Int!
+  manufacturer: Int!
+  aliases: Int!
+  original: Int!
+  stock: Int!
+  createdAt: Int!
+  updatedAt: Int!
+  _all: Int!
+}
+
+type ProductAvgAggregate {
+  id: Float
+  stock: Float
+}
+
+type ProductSumAggregate {
+  id: Int
+  stock: Int
+}
+
+type ProductMinAggregate {
+  id: Int
+  vendorCode: String
+  name: String
+  manufacturer: String
+  aliases: String
+  original: Boolean
+  stock: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type ProductMaxAggregate {
+  id: Int
+  vendorCode: String
+  name: String
+  manufacturer: String
+  aliases: String
+  original: Boolean
+  stock: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type ProductEdge {
+  cursor: String!
+  node: Product!
+}
+
+type ProductConnectionType {
+  edges: [ProductEdge!]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
 type Query {
   me: User!
   presignedPutUrl(fileName: String!): FileUploadType!
+  order(orderId: Int!): Order!
+  orders(where: OrderWhereInput, orderBy: [OrderOrderByWithRelationInput!], cursor: OrderWhereUniqueInput, take: Int, skip: Int, distinct: [OrderScalarFieldEnum!], after: String, before: String, first: Int, last: Int): OrderConnectionType!
+  products(where: ProductWhereInput, orderBy: [ProductOrderByWithRelationInput!], cursor: ProductWhereUniqueInput, take: Int, skip: Int, distinct: [ProductScalarFieldEnum!], after: String, before: String, first: Int, last: Int): ProductConnectionType!
+}
+
+input OrderWhereInput {
+  AND: [OrderWhereInput!]
+  OR: [OrderWhereInput!]
+  NOT: [OrderWhereInput!]
+  id: IntFilter
+  address: StringNullableFilter
+  createdAt: DateTimeFilter
+  userId: IntFilter
+  managerId: IntNullableFilter
+  user: UserRelationFilter
+  manager: UserRelationFilter
+  statuses: StatusListRelationFilter
+  items: ItemListRelationFilter
+  comments: CommentListRelationFilter
+}
+
+input IntFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: NestedIntFilter
+}
+
+input NestedIntFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: NestedIntFilter
+}
+
+input StringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  mode: QueryMode
+  not: NestedStringNullableFilter
+}
+
+enum QueryMode {
+  default
+  insensitive
+}
+
+input NestedStringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: NestedStringNullableFilter
+}
+
+input DateTimeFilter {
+  equals: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  gt: DateTime
+  gte: DateTime
+  not: NestedDateTimeFilter
+}
+
+input NestedDateTimeFilter {
+  equals: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  gt: DateTime
+  gte: DateTime
+  not: NestedDateTimeFilter
+}
+
+input IntNullableFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: NestedIntNullableFilter
+}
+
+input NestedIntNullableFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: NestedIntNullableFilter
+}
+
+input UserRelationFilter {
+  is: UserWhereInput
+  isNot: UserWhereInput
+}
+
+input UserWhereInput {
+  AND: [UserWhereInput!]
+  OR: [UserWhereInput!]
+  NOT: [UserWhereInput!]
+  id: IntFilter
+  username: StringFilter
+  password: StringFilter
+  email: StringFilter
+  avatar: StringNullableFilter
+  lastName: StringFilter
+  firstName: StringFilter
+  sirName: StringNullableFilter
+  active: BoolFilter
+  phone: StringNullableFilter
+  birthday: DateTimeNullableFilter
+  role: EnumRoleFilter
+  gender: EnumGenderFilter
+  createdAt: DateTimeFilter
+  updatedAt: DateTimeFilter
+  managerId: IntNullableFilter
+  manager: UserRelationFilter
+  users: UserListRelationFilter
+  files: FileListRelationFilter
+  orders: OrderListRelationFilter
+  manageOrders: OrderListRelationFilter
+  status: StatusListRelationFilter
+  item: ItemListRelationFilter
+  statusItem: StatusItemListRelationFilter
+  comment: CommentListRelationFilter
+  commentItem: CommentItemListRelationFilter
+}
+
+input StringFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  mode: QueryMode
+  not: NestedStringFilter
+}
+
+input NestedStringFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: NestedStringFilter
+}
+
+input BoolFilter {
+  equals: Boolean
+  not: NestedBoolFilter
+}
+
+input NestedBoolFilter {
+  equals: Boolean
+  not: NestedBoolFilter
+}
+
+input DateTimeNullableFilter {
+  equals: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  gt: DateTime
+  gte: DateTime
+  not: NestedDateTimeNullableFilter
+}
+
+input NestedDateTimeNullableFilter {
+  equals: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  gt: DateTime
+  gte: DateTime
+  not: NestedDateTimeNullableFilter
+}
+
+input EnumRoleFilter {
+  equals: Role
+  in: [Role!]
+  notIn: [Role!]
+  not: NestedEnumRoleFilter
+}
+
+input NestedEnumRoleFilter {
+  equals: Role
+  in: [Role!]
+  notIn: [Role!]
+  not: NestedEnumRoleFilter
+}
+
+input EnumGenderFilter {
+  equals: Gender
+  in: [Gender!]
+  notIn: [Gender!]
+  not: NestedEnumGenderFilter
+}
+
+input NestedEnumGenderFilter {
+  equals: Gender
+  in: [Gender!]
+  notIn: [Gender!]
+  not: NestedEnumGenderFilter
+}
+
+input UserListRelationFilter {
+  every: UserWhereInput
+  some: UserWhereInput
+  none: UserWhereInput
+}
+
+input FileListRelationFilter {
+  every: FileWhereInput
+  some: FileWhereInput
+  none: FileWhereInput
+}
+
+input FileWhereInput {
+  AND: [FileWhereInput!]
+  OR: [FileWhereInput!]
+  NOT: [FileWhereInput!]
+  id: IntFilter
+  name: StringFilter
+  serverUrl: StringFilter
+  bucket: StringFilter
+  key: StringFilter
+  createdAt: DateTimeFilter
+  updatedAt: DateTimeFilter
+  userId: IntNullableFilter
+  user: UserRelationFilter
+  products: ProductListRelationFilter
+}
+
+input ProductListRelationFilter {
+  every: ProductWhereInput
+  some: ProductWhereInput
+  none: ProductWhereInput
+}
+
+input ProductWhereInput {
+  AND: [ProductWhereInput!]
+  OR: [ProductWhereInput!]
+  NOT: [ProductWhereInput!]
+  id: IntFilter
+  vendorCode: StringFilter
+  name: StringNullableFilter
+  manufacturer: StringNullableFilter
+  aliases: StringNullableFilter
+  original: BoolFilter
+  stock: IntFilter
+  createdAt: DateTimeFilter
+  updatedAt: DateTimeFilter
+  prices: PriceListRelationFilter
+  attributes: AttributeValueListRelationFilter
+  item: ItemListRelationFilter
+  images: FileListRelationFilter
+}
+
+input PriceListRelationFilter {
+  every: PriceWhereInput
+  some: PriceWhereInput
+  none: PriceWhereInput
+}
+
+input PriceWhereInput {
+  AND: [PriceWhereInput!]
+  OR: [PriceWhereInput!]
+  NOT: [PriceWhereInput!]
+  id: IntFilter
+  price: DecimalFilter
+  duration: StringNullableFilter
+  supplierName: StringFilter
+  country: StringNullableFilter
+  site: StringNullableFilter
+  comment: StringNullableFilter
+  createdAt: DateTimeFilter
+  updatedAt: DateTimeFilter
+  validAt: DateTimeNullableFilter
+  productId: IntFilter
+  product: ProductRelationFilter
+  item: ItemListRelationFilter
+}
+
+input DecimalFilter {
+  equals: Decimal
+  in: [Decimal!]
+  notIn: [Decimal!]
+  lt: Decimal
+  lte: Decimal
+  gt: Decimal
+  gte: Decimal
+  not: NestedDecimalFilter
+}
+
+input NestedDecimalFilter {
+  equals: Decimal
+  in: [Decimal!]
+  notIn: [Decimal!]
+  lt: Decimal
+  lte: Decimal
+  gt: Decimal
+  gte: Decimal
+  not: NestedDecimalFilter
+}
+
+input ProductRelationFilter {
+  is: ProductWhereInput
+  isNot: ProductWhereInput
+}
+
+input ItemListRelationFilter {
+  every: ItemWhereInput
+  some: ItemWhereInput
+  none: ItemWhereInput
+}
+
+input ItemWhereInput {
+  AND: [ItemWhereInput!]
+  OR: [ItemWhereInput!]
+  NOT: [ItemWhereInput!]
+  id: IntFilter
+  quantity: IntFilter
+  carNo: StringNullableFilter
+  routeNo: StringNullableFilter
+  deliveryType: EnumDeliveryTypeNullableFilter
+  createdAt: DateTimeFilter
+  updatedAt: DateTimeFilter
+  orderId: IntFilter
+  productId: IntFilter
+  priceId: IntNullableFilter
+  userId: IntNullableFilter
+  order: OrderRelationFilter
+  product: ProductRelationFilter
+  price: PriceRelationFilter
+  user: UserRelationFilter
+  statuses: StatusItemListRelationFilter
+  commentItem: CommentItemListRelationFilter
+}
+
+input EnumDeliveryTypeNullableFilter {
+  equals: DeliveryType
+  in: [DeliveryType!]
+  notIn: [DeliveryType!]
+  not: NestedEnumDeliveryTypeNullableFilter
+}
+
+input NestedEnumDeliveryTypeNullableFilter {
+  equals: DeliveryType
+  in: [DeliveryType!]
+  notIn: [DeliveryType!]
+  not: NestedEnumDeliveryTypeNullableFilter
+}
+
+input OrderRelationFilter {
+  is: OrderWhereInput
+  isNot: OrderWhereInput
+}
+
+input PriceRelationFilter {
+  is: PriceWhereInput
+  isNot: PriceWhereInput
+}
+
+input StatusItemListRelationFilter {
+  every: StatusItemWhereInput
+  some: StatusItemWhereInput
+  none: StatusItemWhereInput
+}
+
+input StatusItemWhereInput {
+  AND: [StatusItemWhereInput!]
+  OR: [StatusItemWhereInput!]
+  NOT: [StatusItemWhereInput!]
+  id: IntFilter
+  status: EnumItemStatusFilter
+  createdAt: DateTimeFilter
+  itemId: IntFilter
+  userId: IntNullableFilter
+  item: ItemRelationFilter
+  user: UserRelationFilter
+}
+
+input EnumItemStatusFilter {
+  equals: ItemStatus
+  in: [ItemStatus!]
+  notIn: [ItemStatus!]
+  not: NestedEnumItemStatusFilter
+}
+
+input NestedEnumItemStatusFilter {
+  equals: ItemStatus
+  in: [ItemStatus!]
+  notIn: [ItemStatus!]
+  not: NestedEnumItemStatusFilter
+}
+
+input ItemRelationFilter {
+  is: ItemWhereInput
+  isNot: ItemWhereInput
+}
+
+input CommentItemListRelationFilter {
+  every: CommentItemWhereInput
+  some: CommentItemWhereInput
+  none: CommentItemWhereInput
+}
+
+input CommentItemWhereInput {
+  AND: [CommentItemWhereInput!]
+  OR: [CommentItemWhereInput!]
+  NOT: [CommentItemWhereInput!]
+  id: IntFilter
+  text: StringFilter
+  createdAt: DateTimeFilter
+  itemId: IntFilter
+  userId: IntNullableFilter
+  parentId: IntNullableFilter
+  item: ItemRelationFilter
+  user: UserRelationFilter
+  comment: CommentItemRelationFilter
+  comments: CommentItemListRelationFilter
+}
+
+input CommentItemRelationFilter {
+  is: CommentItemWhereInput
+  isNot: CommentItemWhereInput
+}
+
+input AttributeValueListRelationFilter {
+  every: AttributeValueWhereInput
+  some: AttributeValueWhereInput
+  none: AttributeValueWhereInput
+}
+
+input AttributeValueWhereInput {
+  AND: [AttributeValueWhereInput!]
+  OR: [AttributeValueWhereInput!]
+  NOT: [AttributeValueWhereInput!]
+  id: IntFilter
+  value: StringFilter
+  createdAt: DateTimeFilter
+  productId: IntFilter
+  attributeId: IntFilter
+  product: ProductRelationFilter
+  attribute: AttributeRelationFilter
+}
+
+input AttributeRelationFilter {
+  is: AttributeWhereInput
+  isNot: AttributeWhereInput
+}
+
+input AttributeWhereInput {
+  AND: [AttributeWhereInput!]
+  OR: [AttributeWhereInput!]
+  NOT: [AttributeWhereInput!]
+  id: IntFilter
+  name: StringFilter
+  createdAt: DateTimeFilter
+  products: AttributeValueListRelationFilter
+}
+
+input OrderListRelationFilter {
+  every: OrderWhereInput
+  some: OrderWhereInput
+  none: OrderWhereInput
+}
+
+input StatusListRelationFilter {
+  every: StatusWhereInput
+  some: StatusWhereInput
+  none: StatusWhereInput
+}
+
+input StatusWhereInput {
+  AND: [StatusWhereInput!]
+  OR: [StatusWhereInput!]
+  NOT: [StatusWhereInput!]
+  id: IntFilter
+  status: EnumOrderStatusFilter
+  createdAt: DateTimeFilter
+  orderId: IntFilter
+  userId: IntNullableFilter
+  order: OrderRelationFilter
+  user: UserRelationFilter
+}
+
+input EnumOrderStatusFilter {
+  equals: OrderStatus
+  in: [OrderStatus!]
+  notIn: [OrderStatus!]
+  not: NestedEnumOrderStatusFilter
+}
+
+input NestedEnumOrderStatusFilter {
+  equals: OrderStatus
+  in: [OrderStatus!]
+  notIn: [OrderStatus!]
+  not: NestedEnumOrderStatusFilter
+}
+
+input CommentListRelationFilter {
+  every: CommentWhereInput
+  some: CommentWhereInput
+  none: CommentWhereInput
+}
+
+input CommentWhereInput {
+  AND: [CommentWhereInput!]
+  OR: [CommentWhereInput!]
+  NOT: [CommentWhereInput!]
+  id: IntFilter
+  text: StringFilter
+  createdAt: DateTimeFilter
+  orderId: IntFilter
+  userId: IntNullableFilter
+  parentId: IntNullableFilter
+  order: OrderRelationFilter
+  user: UserRelationFilter
+  comment: CommentRelationFilter
+  comments: CommentListRelationFilter
+}
+
+input CommentRelationFilter {
+  is: CommentWhereInput
+  isNot: CommentWhereInput
+}
+
+input OrderOrderByWithRelationInput {
+  id: SortOrder
+  address: SortOrder
+  createdAt: SortOrder
+  userId: SortOrder
+  managerId: SortOrder
+  user: UserOrderByWithRelationInput
+  manager: UserOrderByWithRelationInput
+  statuses: StatusOrderByRelationAggregateInput
+  items: ItemOrderByRelationAggregateInput
+  comments: CommentOrderByRelationAggregateInput
+}
+
+enum SortOrder {
+  asc
+  desc
+}
+
+input UserOrderByWithRelationInput {
+  id: SortOrder
+  username: SortOrder
+  password: SortOrder
+  email: SortOrder
+  avatar: SortOrder
+  lastName: SortOrder
+  firstName: SortOrder
+  sirName: SortOrder
+  active: SortOrder
+  phone: SortOrder
+  birthday: SortOrder
+  role: SortOrder
+  gender: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+  managerId: SortOrder
+  manager: UserOrderByWithRelationInput
+  users: UserOrderByRelationAggregateInput
+  files: FileOrderByRelationAggregateInput
+  orders: OrderOrderByRelationAggregateInput
+  manageOrders: OrderOrderByRelationAggregateInput
+  status: StatusOrderByRelationAggregateInput
+  item: ItemOrderByRelationAggregateInput
+  statusItem: StatusItemOrderByRelationAggregateInput
+  comment: CommentOrderByRelationAggregateInput
+  commentItem: CommentItemOrderByRelationAggregateInput
+}
+
+input UserOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input FileOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input OrderOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input StatusOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input ItemOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input StatusItemOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input CommentOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input CommentItemOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input OrderWhereUniqueInput {
+  id: Int
+}
+
+enum OrderScalarFieldEnum {
+  id
+  address
+  createdAt
+  userId
+  managerId
+}
+
+input ProductOrderByWithRelationInput {
+  id: SortOrder
+  vendorCode: SortOrder
+  name: SortOrder
+  manufacturer: SortOrder
+  aliases: SortOrder
+  original: SortOrder
+  stock: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+  prices: PriceOrderByRelationAggregateInput
+  attributes: AttributeValueOrderByRelationAggregateInput
+  item: ItemOrderByRelationAggregateInput
+  images: FileOrderByRelationAggregateInput
+}
+
+input PriceOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input AttributeValueOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input ProductWhereUniqueInput {
+  id: Int
+  vendorCode: String
+}
+
+enum ProductScalarFieldEnum {
+  id
+  vendorCode
+  name
+  manufacturer
+  aliases
+  original
+  stock
+  createdAt
+  updatedAt
 }
 
 type Mutation {

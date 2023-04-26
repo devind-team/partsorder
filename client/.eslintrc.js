@@ -28,6 +28,12 @@ module.exports = {
         'vue/multi-word-component-names': 'off',
         'vue/valid-attribute-name': 'off',
         'vue/valid-model-definition': 'off',
+        'vue/valid-v-slot': [
+          'error',
+          {
+            allowModifiers: true,
+          },
+        ],
       },
     },
     {
