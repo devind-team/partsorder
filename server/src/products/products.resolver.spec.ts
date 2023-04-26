@@ -1,12 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { ProductsResolver } from './products.resolver'
+import { PrismaService } from '@common/services/prisma.service'
+import { ProductsService } from './products.service'
 
 describe('ProductsResolver', () => {
   let resolver: ProductsResolver
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ProductsResolver],
+      providers: [PrismaService, ProductsService, ProductsResolver],
+      exports: [ProductsService],
     }).compile()
 
     resolver = module.get<ProductsResolver>(ProductsResolver)

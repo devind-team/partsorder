@@ -47,23 +47,29 @@ const headers = [
         />
       </v-col>
     </v-row>
-    <v-data-table-server
-      v-model:items-per-page="pagination.pageSize.value"
-      :headers="headers"
-      :loading="loading"
-      :items="products"
-      :items-length="pagination.totalCount.value"
-    >
-      <template #[`item.prices`]="{ item }">
-        <v-list density="compact">
-          <v-list-item
-            v-for="price in item.raw.prices"
-            :key="price.id"
-            :title="`${price.price} (${price.duration})`"
-            :subtitle="`${price.supplierName} (${price.country}) - ${date(price.createdAt)}`"
-          />
-        </v-list>
-      </template>
-    </v-data-table-server>
+    <v-row>
+      <v-col>
+        <v-card>
+          <v-data-table-server
+            v-model:items-per-page="pagination.pageSize.value"
+            :headers="headers"
+            :loading="loading"
+            :items="products"
+            :items-length="pagination.totalCount.value"
+          >
+            <template #[`item.prices`]="{ item }">
+              <v-list density="compact">
+                <v-list-item
+                  v-for="price in item.raw.prices"
+                  :key="price.id"
+                  :title="`${price.price} (${price.duration})`"
+                  :subtitle="`${price.supplierName} (${price.country}) - ${date(price.createdAt)}`"
+                />
+              </v-list>
+            </template>
+          </v-data-table-server>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
