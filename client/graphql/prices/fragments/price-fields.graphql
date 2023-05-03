@@ -8,6 +8,5 @@ fragment PriceFields on Price {
   comment
   createdAt
   validAt
-  productId
   __typename
 }

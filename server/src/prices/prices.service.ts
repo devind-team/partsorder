@@ -4,8 +4,10 @@ import { findManyCursorConnection } from '@common/relay/find-many-cursor-connect
 import { PriceConnectionArgs } from '@prices/dto/price-connection.args'
 import { PriceConnectionType } from '@prices/dto/price-connection.type'
 import { CreateUploadPricesType } from '@prices/dto/create-upload-prices.type'
+import { productFields, priceFields } from '@prices/constants'
 import { Price, PriceCreateInput } from '@generated/price'
 import { User } from '@generated/user'
+import { CreateUploadPriceRowType } from '@prices/dto/create-upload-price-row.type'
 
 @Injectable()
 export class PricesService {
@@ -41,13 +43,23 @@ export class PricesService {
 
   /**
    * Создание цен из значений
-   * @param headers: передаваемый список заголовков
+   * @param headers: передаваемый список заголовков, первые символы обызятальные
    * @param values: массив значений
    */
   async addPricesFromValues(headers: string[], values: Map<string, unknown>[]): Promise<CreateUploadPricesType> {
-    return {
-      headers,
-      rows: [],
+    const productIds = values
+      .map((v) => v.get('vendorCode'))
+      .filter((p) => !!p)
+      .map((p) => String(p).trim())
+    const products = await this.prismaService.product.findMany({
+      select: { id: true, vendorCode: true },
+      where: { vendorCode: { in: productIds } },
+    })
+    const productsIndex = new Map<string, number>(products.map((product) => [product.vendorCode, product.id]))
+    const rows: CreateUploadPriceRowType[] = []
+    for (const value of values) {
+      // TODO: пишем логику
     }
+    return { headers, rows }
   }
 }
