@@ -4,6 +4,7 @@ import ordersQuery from '~/graphql/orders/queries/orders.graphql'
 import AddOrder from '~/components/orders/AddOrder.vue'
 import { OrdersQuery, OrdersQueryVariables } from '~/types/graphql'
 import UserView from '~/components/common/UserView.vue'
+import StatusesViewDialog from '~/components/orders/StatusesViewDialog.vue'
 
 const localePath = useLocalePath()
 const { t } = useI18n()
@@ -55,17 +56,12 @@ const headers = [
             {{ dateTimeHM(item.raw.createdAt) }}
           </template>
           <template #item.statuses="{ item }">
-            <v-tooltip v-for="status in item.raw.statuses" :key="status.id" location="bottom">
-              <template #activator="{ props }">
-                <v-chip v-bind="props" class="ma-1" size="x-small">
-                  {{ $t(`order.statuses.${status.status}`) }}
-                </v-chip>
-              </template>
-              <span>
-                {{ `${status.user.lastName} ${status.user.firstName}` }}
-                {{ dateTimeHM(status.createdAt) }}
-              </span>
-            </v-tooltip>
+            <statuses-view-dialog v-if="item.raw.statuses.length" v-slot="{ props }" :statuses="item.raw.statuses">
+              <v-chip v-bind="props" size="small">
+                {{ $t(`order.statuses.${item.raw.statuses[item.raw.statuses.length - 1].status}`) }}
+              </v-chip>
+            </statuses-view-dialog>
+            <template v-else>{{ $t('order.status.noStatus') }}</template>
           </template>
           <template #item.manager="{ item }">
             <user-view v-if="item.raw.manager" :user="item.raw.manager" />

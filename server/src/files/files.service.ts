@@ -1,11 +1,13 @@
 import * as Joi from 'joi'
+import { Readable as ReadableStream } from 'stream'
 import { Injectable, NotAcceptableException } from '@nestjs/common'
 import { PrismaService } from '@common/services/prisma.service'
-import { File } from '@generated/file'
-import { User } from '@generated/user'
 import { MinioService } from '@minio/minio.service'
 import { FileUploadType } from '@files/dto/file-upload.type'
 import { FileUploadInput } from '@files/dto/file-upload.input'
+import { ExcelReader } from '@common/readers/excel.reader'
+import { User } from '@generated/user'
+import { File } from '@generated/file'
 
 @Injectable()
 export class FilesService {
@@ -38,6 +40,13 @@ export class FilesService {
   }
 
   /**
+   * Получение файла для чтения
+   * @param file
+   */
+  async getFileStream(file: File): Promise<ReadableStream> {
+    return await this.minioService.getFileObject(file.key)
+  }
+  /**
    * Проверка правильности файлового имени
    * @param name
    */
@@ -68,5 +77,17 @@ export class FilesService {
       }
     }
     throw new NotAcceptableException('Неверное название файла')
+  }
+
+  /**
+   * Получаем значения из первого листа Excel файла.
+   * Первая строка является заголовочной, остальные строки представляют из себя набор данных.
+   * @param file
+   */
+  async getExcelValues(file: File): Promise<{ headers: string[]; values: Map<string, unknown>[] }> {
+    const stream = await this.getFileStream(file)
+    const excelReader = new ExcelReader(stream)
+    await excelReader.load()
+    return await ExcelReader.getValues(excelReader.workSheet)
   }
 }
