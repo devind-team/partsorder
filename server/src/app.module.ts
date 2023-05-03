@@ -3,13 +3,14 @@ import { MiddlewareConsumer, Module } from '@nestjs/common'
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { GraphQLModule } from '@nestjs/graphql'
 import { ConfigModule } from '@nestjs/config'
-// import GraphQLJSON from 'graphql-type-json'
+import GraphQLJSON from 'graphql-type-json'
 
 import { AuthModule } from '@auth/auth.module'
 import { PrismaService } from '@common/services/prisma.service'
 import { UsersModule } from '@users/users.module'
 import { OrdersModule } from '@orders/orders.module'
 import { FilesModule } from '@files/files.module'
+import { PricesModule } from '@prices/prices.module'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { ProductsModule } from './products/products.module'
@@ -22,11 +23,12 @@ import { ProductsModule } from './products/products.module'
       autoSchemaFile: join(process.cwd(), '../client/schema.graphql'),
       installSubscriptionHandlers: true,
       playground: true,
-      // resolvers: { JSON: GraphQLJSON },
+      resolvers: { JSON: GraphQLJSON },
     }),
     AuthModule,
     UsersModule,
     FilesModule,
+    PricesModule,
     OrdersModule,
     ProductsModule,
   ],

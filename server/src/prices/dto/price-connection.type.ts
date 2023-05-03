@@ -1,6 +1,6 @@
 import Pagination from '@common/relay/pagination'
 import { ObjectType } from '@nestjs/graphql'
-import { Order } from '@generated/order'
+import { Price } from '@generated/price'
 
 @ObjectType()
-export class OrderConnectionType extends Pagination(Order) {}
+export class PriceConnectionType extends Pagination(Price) {}

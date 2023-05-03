@@ -120,6 +120,7 @@
       "@auth/(.*)$": "<rootDir>/auth/$1",
       "@users/(.*)$": "<rootDir>/users/$1",
       "@files/(.*)$": "<rootDir>/files/$1",
+      "@prices/(.*)$": "<rootDir>/prices/$1",
       "@orders/(.*)$": "<rootDir>/orders/$1",
       "@generated/(.*)$": "<rootDir>/@generated/$1"
     }

@@ -41,8 +41,8 @@ export class OrdersService {
   /**
    * Получение relay запросов для пагинации
    * Если роль админ, получаем всех, если роль пользователь, то только свое.
-   * @param user
-   * @param params
+   * @param user: пользователь
+   * @param params: параметры фильтрации
    */
   async getOrderConnection(user: User, params: OrderConnectionArgs): Promise<OrderConnectionType> {
     const where = user.role === Role.USER ? { ...params.where, userId: user.id } : params.where
