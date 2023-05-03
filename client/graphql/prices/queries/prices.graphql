@@ -1,0 +1,22 @@
+#import "../fragments/price-fields.graphql"
+
+query Prices($first: Int, $after: String) {
+  prices(
+    first: $first,
+    after: $after
+  ) {
+    totalCount
+    pageInfo {
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
+      __typename
+    }
+    edges {
+      node {
+        ...PriceFields
+      }
+    }
+  }
+}
