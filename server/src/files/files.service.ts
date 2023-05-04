@@ -1,4 +1,4 @@
-import * as Joi from 'joi'
+import { z } from 'zod'
 import { Readable as ReadableStream } from 'stream'
 import { Injectable, NotAcceptableException } from '@nestjs/common'
 import { PrismaService } from '@common/services/prisma.service'
@@ -51,11 +51,9 @@ export class FilesService {
    * @param name
    */
   async checkFileName(name: string): Promise<boolean> {
-    const nameSchema = Joi.string()
-      .required()
-      .pattern(/^(.+)\.[a-zA-Z0-9]{1,5}$/)
+    const nameSchema = z.string().trim().min(3)
     try {
-      await nameSchema.validateAsync(name)
+      await nameSchema.parseAsync(name)
       return true
     } catch (e) {
       return false

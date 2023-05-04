@@ -4,10 +4,10 @@ import { findManyCursorConnection } from '@common/relay/find-many-cursor-connect
 import { PriceConnectionArgs } from '@prices/dto/price-connection.args'
 import { PriceConnectionType } from '@prices/dto/price-connection.type'
 import { CreateUploadPricesType } from '@prices/dto/create-upload-prices.type'
-import { productFields, priceFields } from '@prices/constants'
-import { Price, PriceCreateInput } from '@generated/price'
-import { User } from '@generated/user'
 import { CreateUploadPriceRowType } from '@prices/dto/create-upload-price-row.type'
+import { CreatePriceInput } from '@prices/dto/create-price.input'
+import { Price } from '@generated/price'
+import { User } from '@generated/user'
 
 @Injectable()
 export class PricesService {
@@ -35,7 +35,7 @@ export class PricesService {
    * Сервис для добавления цены
    * @param price
    */
-  async createPrice(price: PriceCreateInput): Promise<Price> {
+  async createPrice(price: CreatePriceInput): Promise<Price> {
     return this.prismaService.price.create({
       data: price,
     })

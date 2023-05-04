@@ -4,13 +4,13 @@ import { GqlAuthGuard } from '@auth/auth.guard'
 import { PricesService } from '@prices/prices.service'
 import { CreatePriceType } from '@prices/dto/create-price.type'
 import { CurrentUser } from '@auth/auth.decorators'
-import { User } from '@generated/user'
-import { PriceCreateInput } from '@generated/price'
 import { PriceConnectionType } from '@prices/dto/price-connection.type'
 import { PriceConnectionArgs } from '@prices/dto/price-connection.args'
 import { CreateUploadPricesType } from '@prices/dto/create-upload-prices.type'
 import { FileUploadInput } from '@files/dto/file-upload.input'
 import { FilesService } from '@files/files.service'
+import { CreatePriceInput } from '@prices/dto/create-price.input'
+import { User } from '@generated/user'
 
 @UseGuards(GqlAuthGuard)
 @Resolver()
@@ -24,7 +24,7 @@ export class PricesResolver {
 
   @Mutation(() => CreatePriceType)
   async createPrice(
-    @Args({ name: 'price', type: () => PriceCreateInput, nullable: false }) price: PriceCreateInput,
+    @Args({ name: 'price', type: () => CreatePriceInput, nullable: false }) price: CreatePriceInput,
   ): Promise<CreatePriceType> {
     return { price: await this.pricesService.createPrice(price) }
   }
