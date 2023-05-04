@@ -3,6 +3,6 @@ import { Price } from '@generated/price'
 
 @ObjectType()
 export class CreatePriceType {
-  @Field()
-  price: Price
+  @Field({ nullable: false })
+  price!: Price
 }

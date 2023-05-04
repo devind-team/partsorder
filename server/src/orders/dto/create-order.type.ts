@@ -4,5 +4,5 @@ import { Order } from '@generated/order'
 @ObjectType()
 export class CreateOrderType {
   @Field()
-  order: Order
+  order!: Order
 }
