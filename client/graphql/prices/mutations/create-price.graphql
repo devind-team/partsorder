@@ -1,6 +1,6 @@
 #import "../fragments/price-fields.graphql"
 
-mutation CreatePrice($price: PriceCreateInput!) {
+mutation CreatePrice($price: CreatePriceInput!) {
   createPrice(price: $price) {
     price {
       ...PriceFields

@@ -1,7 +1,7 @@
-#import "../../orders/fragments/price-fields.graphql"
+#import "../../prices/fragments/price-fields.graphql"
 #import "../fragments/product-fields.graphql"
 
-query Products($search: String, $first: Int, $after: String) {
+query Products($search: String, $first: Int, $after: String, $offset: Int) {
   products(
     where: {
       OR: [
@@ -9,8 +9,10 @@ query Products($search: String, $first: Int, $after: String) {
         { name: { contains: $search} }
       ]
     },
-    first: $first,
+    orderBy: { id: desc },
+    first: $first
     after: $after
+    skip: $offset
   ) {
     totalCount
     pageInfo {

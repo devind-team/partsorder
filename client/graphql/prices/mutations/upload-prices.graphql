@@ -2,10 +2,10 @@ mutation UploadPrices($fileUpload: FileUploadInput!) {
   uploadPrices(fileUpload: $fileUpload) {
     headers
     rows {
-      rowNo
       success
       productCreate
       data
+      error
       __typename
     }
     __typename

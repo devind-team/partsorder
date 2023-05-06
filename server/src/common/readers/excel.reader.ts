@@ -2,21 +2,22 @@ import * as ExcelJS from 'exceljs'
 import { Readable as ReadableStream } from 'stream'
 
 export class ExcelReader {
-  readonly #stream: ReadableStream
-  readonly #workbook: ExcelJS.Workbook
+  readonly #workbook!: ExcelJS.Workbook
 
-  constructor(stream: ReadableStream) {
-    this.#stream = stream
+  constructor() {
     this.#workbook = new ExcelJS.Workbook()
   }
 
   /**
    * Загрука xlsx файла из стрима.
    */
-  async load() {
-    await this.#workbook.xlsx.read(this.#stream)
+  async load(stream: ReadableStream) {
+    await this.#workbook.xlsx.read(stream)
   }
 
+  get workbook(): ExcelJS.Workbook {
+    return this.#workbook
+  }
   /**
    * Получение листов.
    */
@@ -28,7 +29,7 @@ export class ExcelReader {
    * Получение работчего первого листа.
    */
   get workSheet(): ExcelJS.Worksheet {
-    return this.#workbook.getWorksheet(1)
+    return this.#workbook.getWorksheet(undefined)
   }
 
   /**

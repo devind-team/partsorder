@@ -84,8 +84,8 @@ export class FilesService {
    */
   async getExcelValues(file: File): Promise<{ headers: string[]; values: Map<string, unknown>[] }> {
     const stream = await this.getFileStream(file)
-    const excelReader = new ExcelReader(stream)
-    await excelReader.load()
+    const excelReader = new ExcelReader()
+    await excelReader.load(stream)
     return await ExcelReader.getValues(excelReader.workSheet)
   }
 }

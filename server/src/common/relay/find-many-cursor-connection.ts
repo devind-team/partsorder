@@ -33,8 +33,8 @@ export async function findManyCursorConnection<
     const take = args.first + 1
 
     // Convert `after` into prisma `cursor` & `skip`
-    const cursor = decodeCursor(args.after, options)
-    const skip = cursor ? 1 : undefined
+    const cursor = isOffsetPagination(args) ? undefined : decodeCursor(args.after, options)
+    const skip = isOffsetPagination(args) ? args.skip : cursor ? 1 : undefined
 
     // Execute the underlying query operations
     records = await findMany({ cursor, take, skip })
@@ -130,8 +130,8 @@ function validateArgs(args: ConnectionArguments): args is ConnectionArgumentsUni
 
 type ConnectionArgumentsUnion = ForwardPaginationArguments | BackwardPaginationArguments | NoPaginationArguments
 
-type ForwardPaginationArguments = { first: number; after?: string }
-type BackwardPaginationArguments = { last: number; before?: string }
+type ForwardPaginationArguments = { first: number; after?: string; skip?: number }
+type BackwardPaginationArguments = { last: number; before?: string; skip?: number }
 type NoPaginationArguments = Record<string, unknown>
 
 type MergedOptions<Record, Cursor, Node, CustomEdge extends Edge<Node>> = Required<
@@ -144,7 +144,7 @@ function mergeDefaultOptions<Record, Cursor, Node, CustomEdge extends Edge<Node>
   return {
     getCursor: (record: Record) => ({ id: (record as unknown as { id: string }).id } as unknown as Cursor),
     encodeCursor: (cursor: Cursor) => (cursor as unknown as { id: string }).id,
-    decodeCursor: (cursorString: string) => ({ id: cursorString } as unknown as Cursor),
+    decodeCursor: (cursorString: string) => ({ id: Number(cursorString) + 1 } as unknown as Cursor),
     recordToEdge: (record: Record) => ({ node: record } as unknown as Omit<CustomEdge, 'cursor'>),
     resolveInfo: null,
     ...pOptions,
@@ -153,6 +153,10 @@ function mergeDefaultOptions<Record, Cursor, Node, CustomEdge extends Edge<Node>
 
 function isForwardPagination(args: ConnectionArgumentsUnion): args is ForwardPaginationArguments {
   return 'first' in args && args.first != null
+}
+
+function isOffsetPagination(args: ConnectionArgumentsUnion): boolean {
+  return 'first' in args && 'skip' in args
 }
 
 function isBackwardPagination(args: ConnectionArgumentsUnion): args is BackwardPaginationArguments {

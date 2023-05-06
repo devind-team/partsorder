@@ -54,6 +54,6 @@ export class PricesResolver {
   ): Promise<CreateUploadPricesType> {
     const file = await this.fileService.add(fileUpload, user)
     const { headers, values } = await this.fileService.getExcelValues(file)
-    return await this.pricesService.addPricesFromValues(headers, values)
+    return await this.pricesService.addPricesFromValues(headers.filter(Boolean), values)
   }
 }

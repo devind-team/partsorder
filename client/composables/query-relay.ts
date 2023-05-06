@@ -12,7 +12,7 @@ import { InvariantError } from 'ts-invariant'
 import { useQuery } from '@vue/apollo-composable'
 import { useEventListener } from '@vueuse/core'
 import { getValue, VT } from '~/services/graphql-relay'
-import { useOffsetPagination } from '~/composables/pagination'
+import { useCursorPagination } from '~/composables/pagination'
 import { useResult } from '~/composables/query-result'
 
 import type { PageInfo, PaginationInterface } from '~/types/pagination'
@@ -83,7 +83,7 @@ export function useQueryRelay<
 >(
   queryParams: QueryRelayParams<TResult, TVariables>,
   queryOptions: QueryRelayOptions = {
-    pagination: useOffsetPagination(),
+    pagination: useCursorPagination({ mode: 'paged' }),
   },
 ): QueryRelayResult<TResult, TVariables, TNode> {
   const { document: documentNode, variables = {}, options = {} } = queryParams

@@ -665,9 +665,6 @@ type PriceConnectionType {
 }
 
 type CreateUploadPriceRowType {
-  """Номер строки"""
-  rowNo: String!
-
   """Статус"""
   success: Boolean!
 
@@ -676,6 +673,9 @@ type CreateUploadPriceRowType {
 
   """Строка переданных данных"""
   data: JSON!
+
+  """Ошибка создания объекта"""
+  error: JSON
 }
 
 """
@@ -685,7 +685,7 @@ scalar JSON
 
 type CreateUploadPricesType {
   """Заголовки передаваемого файла"""
-  headers: [String!]!
+  headers: [String!]
 
   """Переданные строки"""
   rows: [CreateUploadPriceRowType!]!

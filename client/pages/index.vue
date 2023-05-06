@@ -2,6 +2,7 @@
 import { useFilters, useHead, useI18n } from '#imports'
 import productsQuery from '~/graphql/products/queries/products.graphql'
 import { ProductsQuery, ProductsQueryVariables } from '~/types/graphql'
+import { useOffsetPagination } from '~/composables/pagination'
 
 const { t } = useI18n()
 const { date } = useFilters()
@@ -15,15 +16,18 @@ const {
   data: products,
   loading,
   pagination,
-} = useQueryRelay<ProductsQuery, ProductsQueryVariables>({
-  document: productsQuery,
-  variables: () => ({
-    search: search.value,
-  }),
-  options: {
-    debounce: 500,
+} = useQueryRelay<ProductsQuery, ProductsQueryVariables>(
+  {
+    document: productsQuery,
+    variables: () => ({
+      search: search.value,
+    }),
+    options: {
+      debounce: 250,
+    },
   },
-})
+  { pagination: useOffsetPagination({ pageSize: 10 }) },
+)
 const headers = [
   { title: '#', key: 'id', sortable: false },
   { title: 'Артикул', key: 'vendorCode', sortable: false },
@@ -52,6 +56,7 @@ const headers = [
         <v-card>
           <v-data-table-server
             v-model:items-per-page="pagination.pageSize.value"
+            v-model:page="pagination.page.value"
             :headers="headers"
             :loading="loading"
             :items="products"
@@ -63,7 +68,7 @@ const headers = [
                   v-for="price in item.raw.prices"
                   :key="price.id"
                   :title="`${price.price} (${price.duration})`"
-                  :subtitle="`${price.supplierName} (${price.country}) - ${date(price.createdAt)}`"
+                  :subtitle="`${price.supplierName} - ${date(price.createdAt)}`"
                 />
               </v-list>
             </template>

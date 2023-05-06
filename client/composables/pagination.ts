@@ -19,7 +19,7 @@ export function useOffsetPagination(paginationOptions: PaginationOptions = {}): 
   const defaultOptions: PaginationOptions = {
     page: 1,
     pageSize: 30,
-    mode: 'fetch',
+    mode: 'paged',
   }
   const options: PaginationOptions = defu(paginationOptions, defaultOptions)
 
@@ -28,14 +28,14 @@ export function useOffsetPagination(paginationOptions: PaginationOptions = {}): 
   const count = ref<number>(0)
   const totalCount = ref<number>(0)
 
+  /**
+   * Расширение переменных в зависимости от типа пагинации
+   */
   const extendVariables = computed<PaginationVariablesType>(() => ({
     first: pageSize.value,
     offset: (page.value - 1) * pageSize.value,
   }))
 
-  /**
-   * Расширение переменных в зависимости от типа пагинации
-   */
   const variables: ComputedRef<PaginationVariablesType> =
     options.mode === 'fetch'
       ? computed<PaginationVariablesType>(() => ({

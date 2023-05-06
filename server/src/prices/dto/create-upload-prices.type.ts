@@ -3,9 +3,9 @@ import { CreateUploadPriceRowType } from '@prices/dto/create-upload-price-row.ty
 
 @ObjectType()
 export class CreateUploadPricesType {
-  @Field(() => [String], { description: 'Заголовки передаваемого файла' })
-  headers!: string[]
+  @Field(() => [String], { nullable: true, description: 'Заголовки передаваемого файла' })
+  headers: string[]
 
   @Field(() => [CreateUploadPriceRowType], { description: 'Переданные строки' })
-  rows!: CreateUploadPriceRowType[]
+  rows: CreateUploadPriceRowType[]
 }

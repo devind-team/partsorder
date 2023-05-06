@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useFilters, useHead, useI18n, useLocalePath } from '#imports'
+import { definePageMeta, useFilters, useHead, useI18n, useLocalePath } from '#imports'
 import ordersQuery from '~/graphql/orders/queries/orders.graphql'
 import AddOrder from '~/components/orders/AddOrder.vue'
 import { OrdersQuery, OrdersQueryVariables } from '~/types/graphql'
@@ -8,11 +8,11 @@ import StatusesViewDialog from '~/components/orders/StatusesViewDialog.vue'
 
 const localePath = useLocalePath()
 const { t } = useI18n()
-
-useHead({
-  title: t('order.title'),
-})
 const { dateTimeHM } = useFilters()
+
+definePageMeta({ middleware: 'auth' })
+useHead({ title: t('order.title') })
+
 const {
   data: orders,
   pagination,
