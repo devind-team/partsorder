@@ -18,6 +18,8 @@
       "@auth/*": ["src/auth/*"],
       "@users/*": ["src/users/*"],
       "@files/*": ["src/files/*"],
+      "@prices/*": ["src/prices/*"],
+      "@products/*": ["src/products/*"],
       "@orders/*": ["src/orders/*"],
       "@generated/*": ["src/@generated/*"]
     }

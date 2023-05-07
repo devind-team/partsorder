@@ -7,5 +7,6 @@ fragment PriceFields on Price {
   site
   comment
   createdAt
+  validAt
   __typename
 }

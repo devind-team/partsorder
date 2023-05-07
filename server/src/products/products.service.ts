@@ -25,4 +25,16 @@ export class ProductsService {
       params,
     )
   }
+
+  /**
+   * Поиск идентификаторов продуктов по из артикулам
+   * @param vendorCodes
+   */
+  async findIdsByVendorCodes(vendorCodes: string[]): Promise<Map<string, number>> {
+    const findProducts = await this.prismaService.product.findMany({
+      select: { id: true, vendorCode: true },
+      where: { vendorCode: { in: vendorCodes } },
+    })
+    return new Map<string, number>(findProducts.map((product) => [product.vendorCode, product.id]))
+  }
 }

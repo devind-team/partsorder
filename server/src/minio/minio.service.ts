@@ -5,6 +5,7 @@ import { InjectMinioClient } from '@minio/minio.decorators'
 import { MinioClient } from '@minio/minio.interfaces'
 import { ConfigService } from '@nestjs/config'
 import { GraphQLError } from 'graphql'
+import { Readable as ReadableStream } from 'stream'
 
 @Injectable()
 export class MinioService {
@@ -45,6 +46,13 @@ export class MinioService {
     return await this.minioClient.listBuckets()
   }
 
+  /**
+   * Получение потока на чтение файла.
+   * @param objectName - имя объекта
+   */
+  async getFileObject(objectName: string): Promise<ReadableStream> {
+    return await this.minioClient.getObject(this.getBucket(), objectName)
+  }
   /**
    * Загружаем файл в S3
    * @param file

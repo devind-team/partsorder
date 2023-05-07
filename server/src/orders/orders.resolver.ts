@@ -20,9 +20,6 @@ export class OrdersResolver {
     return await this.ordersService.getOrder(orderId)
   }
 
-  /**
-   * Запрос заказов пользователя
-   */
   @Query(() => OrderConnectionType)
   async orders(@CurrentUser() user: User, @Args() params: OrderConnectionArgs): Promise<OrderConnectionType> {
     return await this.ordersService.getOrderConnection(user, params)

@@ -3,14 +3,14 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class FileUploadType {
   @Field()
-  fileName: string
+  fileName!: string
 
   @Field()
-  bucket: string
+  bucket!: string
 
   @Field()
-  name: string
+  name!: string
 
   @Field()
-  presignedUrl: string
+  presignedUrl!: string
 }

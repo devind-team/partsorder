@@ -1,0 +1,10 @@
+#import "../fragments/price-fields.graphql"
+
+mutation CreatePrice($price: CreatePriceInput!) {
+  createPrice(price: $price) {
+    price {
+      ...PriceFields
+    }
+    __typename
+  }
+}

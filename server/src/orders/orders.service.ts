@@ -41,15 +41,15 @@ export class OrdersService {
   /**
    * Получение relay запросов для пагинации
    * Если роль админ, получаем всех, если роль пользователь, то только свое.
-   * @param user
-   * @param params
+   * @param user: пользователь
+   * @param params: параметры фильтрации
    */
   async getOrderConnection(user: User, params: OrderConnectionArgs): Promise<OrderConnectionType> {
     const where = user.role === Role.USER ? { ...params.where, userId: user.id } : params.where
     return await findManyCursorConnection(
       (args) =>
         this.prismaService.order.findMany({
-          include: { statuses: { include: { user: true } }, user: true, manager: true },
+          include: { statuses: { include: { user: true }, orderBy: { createdAt: 'asc' } }, user: true, manager: true },
           where,
           orderBy: params.orderBy,
           ...args,
@@ -60,9 +60,9 @@ export class OrdersService {
   }
   async createOrder(user: User, orderInput: CreateOrderInput): Promise<CreateOrderType> {
     const file = await this.fileService.add(orderInput.file, user)
-    console.log(file)
-    // Вытаскиваем файл из minio, через fileService и парсим его
-    // Все раскладываем по полочкам
+    const { headers, values } = await this.fileService.getExcelValues(file)
+    console.log(headers, values)
+
     const order = await this.prismaService.order.create({
       data: {
         address: orderInput.address,

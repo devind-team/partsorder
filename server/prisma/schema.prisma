@@ -157,13 +157,13 @@ model Product {
   /// Артикул
   /// @Validator.MinLength(3)
   /// @Validator.MaxLength(30)
-  vendorCode   String  @unique @map("verndor_code") @db.VarChar(50)
+  vendorCode   String  @unique @map("verndor_code") @db.VarChar(128)
   /// Название
   /// @Validator.MinLength(2)
   /// @Validator.MaxLength(30)
-  name         String? @db.VarChar(100)
+  name         String? @db.VarChar(256)
   /// Производитель
-  manufacturer String? @map("manufacturer") @db.VarChar(50)
+  manufacturer String? @map("manufacturer") @db.VarChar(256)
   /// Псевдонимы через запятую
   aliases      String? @db.VarChar(500)
   /// Оригинальность товара

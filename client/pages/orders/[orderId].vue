@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import { useHead, useRoute } from '#imports'
+import { definePageMeta, useHead, useRoute } from '#imports'
 import orderQuery from '~/graphql/orders/queries/order.graphql'
 import { OrderQuery, OrderQueryVariables } from '~/types/graphql'
 
 const route = useRoute()
 const { t } = useI18n()
 
+definePageMeta({ middleware: 'auth' })
 useHead({
   title: t('order.detail.title', { number: route.params.orderId }),
 })

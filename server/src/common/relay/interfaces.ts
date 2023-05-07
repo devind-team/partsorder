@@ -25,6 +25,7 @@ export interface ConnectionArguments {
   after?: string | null
   last?: number | null
   before?: string | null
+  skip?: number | null
 }
 
 // Relay Response
