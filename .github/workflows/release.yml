@@ -143,3 +143,21 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    name: Deploy application
+    runs-on: ubuntu-latest
+    needs: [build-client, build-server]
+    steps:
+      - name: Settings ssh
+        run: |
+          apt-get install openssh-client
+          eval $(ssh-agent -s)
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo -e "$DEPLOY_KEY_PRIVATE" > ~/.ssh/id_rsa
+          chmod 700 ~/.ssh/id_rsa
+          echo "$DEPLOY_KEY_PRIVATE" | tr -d '\r' | ssh-add -
+      - name: Deploy application
+        run: |
+          ssh -o StrictHostKeyChecking=no "$DEPLOY_USER@$DEPLOY_HOST" ""$DEPLOY_COMMAND""
