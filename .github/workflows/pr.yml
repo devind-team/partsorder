@@ -17,12 +17,16 @@ jobs:
         run: |
           sudo apt-get install openssh-client -y
           eval $(ssh-agent -s)
-          echo 'create folder'
-          /bin/mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          echo -e ${{ secrets.DEPLOY_KEY_PRIVATE }} > ~/.ssh/id_rsa
-          chmod 700 ~/.ssh/id_rsa
-          echo ${{ secrets.DEPLOY_KEY_PRIVATE }} | tr -d '\r' | ssh-add -
+      - name: Create folder
+        run: /bin/mkdir -p ~/.ssh
+      - name: chmod
+        run: chmod 700 ~/.ssh
+      - name: echo key
+        run: echo -e "${{ secrets.DEPLOY_KEY_PRIVATE }}" > ~/.ssh/id_rsa
+      - name: chmod
+        run: chmod 700 ~/.ssh/id_rsa
+      - name: echo secret key
+        run: echo "${{ secrets.DEPLOY_KEY_PRIVATE }}" | tr -d '\r' | ssh-add -
       - name: Deploy application
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} ${{ secrets.DEPLOY_COMMAND }}
