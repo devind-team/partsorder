@@ -151,9 +151,9 @@ jobs:
     steps:
       - name: Settings ssh
         run: |
-          sudo apt-get install openssh-client
+          sudo apt-get install openssh-client -y
           eval $(ssh-agent -s)
-          mkdir -p ~/.ssh
+          /bin/mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           echo -e ${{ secrets.DEPLOY_KEY_PRIVATE }} > ~/.ssh/id_rsa
           chmod 700 ~/.ssh/id_rsa
