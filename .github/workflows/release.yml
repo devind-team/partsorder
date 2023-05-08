@@ -156,4 +156,4 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY_PRIVATE }}
           port: ${{ secrets.DEPLOY_PORT }}
-          script: ${{ secrets.DEPLOY_DEPLOY_COMMAND }}
+          script: ${{ secrets.DEPLOY_COMMAND }}
