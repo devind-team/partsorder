@@ -26,7 +26,9 @@ jobs:
       - name: chmod
         run: chmod 700 ~/.ssh/id_rsa
       - name: echo secret key
-        run: echo "${{ secrets.DEPLOY_KEY_PRIVATE }}" | tr -d '\r' | ssh-add -
+        run: |
+          eval `ssh-agent -s`
+          echo "${{ secrets.DEPLOY_KEY_PRIVATE }}" | tr -d '\r' | ssh-add -
       - name: Deploy application
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} ${{ secrets.DEPLOY_COMMAND }}
