@@ -83,14 +83,6 @@ const headers = [
                       </v-list>
                     </v-col>
                   </v-row>
-                  <v-list density="compact">
-                    <v-list-item
-                      v-for="price in item.raw.prices"
-                      :key="price.id"
-                      :title="`${price.price} (${price.duration})`"
-                      :subtitle="`${price.supplierName} - ${date(price.createdAt)}`"
-                    />
-                  </v-list>
                 </td>
               </tr>
             </template>
