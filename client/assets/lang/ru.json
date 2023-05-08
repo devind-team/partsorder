@@ -1,5 +1,6 @@
 {
   "title": "Best Trans Parts",
+  "open": "Открыть",
   "cancel": "Отменить",
   "close": "Закрыть",
   "auth": {
@@ -76,6 +77,14 @@
       "manufacturer": "Производитель",
       "error": "Ошибка"
     }
+  },
+  "products": {
+    "title": "Поиск продуктов",
+    "vendorCode": "Артикул",
+    "name": "Название",
+    "manufacturer": "Производитель",
+    "attributes": "Атрибуты",
+    "prices": "Цены"
   },
   "index": {
     "header": "Запчасти для грузовой техники из Европы",
