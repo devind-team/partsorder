@@ -33,14 +33,14 @@ export function useOffsetPagination(paginationOptions: PaginationOptions = {}): 
    */
   const extendVariables = computed<PaginationVariablesType>(() => ({
     first: pageSize.value,
-    offset: (page.value - 1) * pageSize.value,
+    skip: (page.value - 1) * pageSize.value,
   }))
 
   const variables: ComputedRef<PaginationVariablesType> =
     options.mode === 'fetch'
       ? computed<PaginationVariablesType>(() => ({
           first: pageSize.value,
-          offset: 0,
+          skip: 0,
         }))
       : extendVariables
 

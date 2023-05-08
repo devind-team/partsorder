@@ -1,9 +1,9 @@
 #import "../fragments/price-fields.graphql"
 
-query Prices($first: Int, $after: String) {
+query Prices($first: Int, $skip: Int) {
   prices(
     first: $first,
-    after: $after
+    skip: $skip
   ) {
     totalCount
     pageInfo {
