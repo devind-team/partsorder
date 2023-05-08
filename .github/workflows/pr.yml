@@ -17,6 +17,7 @@ jobs:
         run: |
           sudo apt-get install openssh-client -y
           eval $(ssh-agent -s)
+          echo 'create folder'
           /bin/mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           echo -e ${{ secrets.DEPLOY_KEY_PRIVATE }} > ~/.ssh/id_rsa
