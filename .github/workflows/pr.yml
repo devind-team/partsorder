@@ -9,30 +9,6 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  deploy:
-    name: Deploy application
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy application
-        uses: appleboy/ssh-action@v0.1.10
-        env:
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_USER: ${{ secrets.DB_USER }}
-          COMPOSE_INTERACTIVE_NO_CLI: 1
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_KEY_PRIVATE }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          envs: DB_PASSWORD,DB_USER
-          script: ${{ secrets.DEPLOY_COMMAND }}
-#          script: |
-#            cd /home/partsorder
-#            docker compose run -T -e PGPASSWORD="$DB_PASSWORD" postgres pg_dumpall -c -U "$DB_USER" -h postgres > ./dumps/dump_$(date +%d-%m-%Y"_"%H_%M_%S).sql
-#            docker compose pull -q
-#            docker compose run server npm run migrate:prod
-#            docker compose up -d --remove-orphans
-
   eslint-client:
     name: EsLint client
     runs-on: ubuntu-latest
