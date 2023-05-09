@@ -147,6 +147,7 @@ jobs:
   deploy:
     name: Deploy application
     runs-on: ubuntu-latest
+    needs: [build-server, build-client]
     steps:
       - name: Deploy application
         uses: appleboy/ssh-action@v0.1.10
