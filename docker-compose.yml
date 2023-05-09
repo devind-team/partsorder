@@ -73,6 +73,7 @@ x-minio-variables: &minio-variables
 x-server-environment: &server-environment
   <<: [*secret-common-variables, *database-variables, *minio-variables, *smtp-variables]
   MINIO_END_POINT: "minio"
+  MINIO_USE_SSL: "${MINIO_USE_SSL}"
   REDIS_URL: "${REDIS_URL}"
 
 networks:
