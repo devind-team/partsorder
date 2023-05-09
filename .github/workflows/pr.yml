@@ -27,7 +27,7 @@ jobs:
           envs: DB_PASSWORD,DB_USER,COMPOSE_INTERACTIVE_NO_CLI
           script: |
             cd /home/partsorder
-            docker compose run -it -T -e PGPASSWORD="$DB_PASSWORD" postgres pg_dumpall -c -U "$DB_USER" -h postgres > ./dumps/dump_$(date +%d-%m-%Y"_"%H_%M_%S).sql
+            docker compose run -T -e PGPASSWORD="$DB_PASSWORD" postgres pg_dumpall -c -U "$DB_USER" -h postgres > ./dumps/dump_$(date +%d-%m-%Y"_"%H_%M_%S).sql
             docker compose pull
             docker compose run -it server npm run migrate:prod
             docker compose up -d --remove-orphans
