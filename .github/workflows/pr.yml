@@ -31,7 +31,7 @@ jobs:
           echo "${{ secrets.DEPLOY_KEY_PRIVATE }}" | tr -d '\r' | ssh-add -
       - name: Deploy application
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} ${{ secrets.DEPLOY_COMMAND }}
+          ssh -o StrictHostKeyChecking=no -t ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} "${{ secrets.DEPLOY_COMMAND }}"
       - name: Deploy application
         uses: appleboy/ssh-action@v0.1.10
         with:
