@@ -79,7 +79,21 @@ const handleCreateOrder = async (
             <v-text-field v-bind="field" :label="$t('order.address')" :error-messages="errors" type="input" />
           </Field>
           <Field v-slot="{ field, errors }" name="file" type="file">
-            <v-file-input v-bind="field" :label="$t('order.file')" :error-messages="errors" accept="*" />
+            <v-file-input
+              v-bind="field"
+              :label="$t('order.file')"
+              :error-messages="errors"
+              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            >
+              <template #append>
+                <v-tooltip>
+                  <template #activator="{ props: propsFileTooltip }">
+                    <v-icon v-bind="propsFileTooltip" icon="mdi-information" />
+                  </template>
+                  <span>vendorCode, quantity, name?, manufacturer?</span>
+                </v-tooltip>
+              </template>
+            </v-file-input>
           </Field>
         </v-card-text>
         <v-card-actions>

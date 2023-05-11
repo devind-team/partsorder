@@ -26,7 +26,7 @@ const {
       debounce: 250,
     },
   },
-  { pagination: useOffsetPagination({ pageSize: 10 }) },
+  { pagination: useOffsetPagination({ pageSize: 10, mode: 'paged' }) },
 )
 const headers = [
   { title: '#', key: 'id', sortable: false },

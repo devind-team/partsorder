@@ -73,6 +73,11 @@ export function useOffsetPagination(paginationOptions: PaginationOptions = {}): 
     totalCount.value = tc
   }
 
+  const setOptions = ({ page, itemsPerPage }: { page: number; itemsPerPage: number }) => {
+    setPage(page)
+    pageSize.value = itemsPerPage
+  }
+
   return {
     mode: options.mode as PaginationMode,
     page,
@@ -85,6 +90,7 @@ export function useOffsetPagination(paginationOptions: PaginationOptions = {}): 
     setPage,
     setQueryInfo,
     recountPage,
+    setOptions,
   }
 }
 
@@ -92,7 +98,7 @@ export function useOffsetPagination(paginationOptions: PaginationOptions = {}): 
  * Пагинация, основанная на cursor подходе
  * @param paginationOptions
  */
-export function useCursorPagination(paginationOptions: PaginationOptions = {}): PaginationInterface {
+export function _useCursorPagination(paginationOptions: PaginationOptions = {}): PaginationInterface {
   const {
     page,
     setPage,
@@ -101,6 +107,7 @@ export function useCursorPagination(paginationOptions: PaginationOptions = {}): 
     totalCount,
     count,
     setQueryInfo: setQueryInfoParent,
+    setOptions,
   } = useOffsetPagination(paginationOptions)
 
   const pageInfo = ref<PageInfo>({
@@ -146,5 +153,6 @@ export function useCursorPagination(paginationOptions: PaginationOptions = {}): 
     pageInfo,
     setPage,
     setQueryInfo,
+    setOptions,
   }
 }

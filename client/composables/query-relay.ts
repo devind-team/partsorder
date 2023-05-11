@@ -12,8 +12,8 @@ import { InvariantError } from 'ts-invariant'
 import { useQuery } from '@vue/apollo-composable'
 import { useEventListener } from '@vueuse/core'
 import { getValue, VT } from '~/services/graphql-relay'
-import { useCursorPagination } from '~/composables/pagination'
 import { useResult } from '~/composables/query-result'
+import { useOffsetPagination } from '~/composables/pagination'
 
 import type { PageInfo, PaginationInterface } from '~/types/pagination'
 
@@ -51,6 +51,7 @@ export type QueryRelayResult<
   dataQuery: UseResultReturn<UseResultDefaultValueType<TNode> | ExtractSingleKey<NonNullable<TResult>>>
   data: ComputedRef<TNode[]>
   pagination: PaginationInterface
+  setOptions: (options: { page: number; itemsPerPage: number }) => void
   fetchMoreAvailable: ComputedRef<boolean>
   fetchMoreData: () => void
   update: <TResultMutation>(
@@ -83,7 +84,7 @@ export function useQueryRelay<
 >(
   queryParams: QueryRelayParams<TResult, TVariables>,
   queryOptions: QueryRelayOptions = {
-    pagination: useCursorPagination({ mode: 'paged' }),
+    pagination: useOffsetPagination({ mode: 'paged' }),
   },
 ): QueryRelayResult<TResult, TVariables, TNode> {
   const { document: documentNode, variables = {}, options = {} } = queryParams
@@ -113,13 +114,25 @@ export function useQueryRelay<
       edges: { node: TNode }[]
       pageInfo?: PageInfo
     }
-    pagination.setQueryInfo(totalCount, edges.length, pageInfo)
-    if (pagination.mode === 'fetch' && pagination.recountPage) {
-      pagination.recountPage()
+    if (!q.loading.value) {
+      pagination.setQueryInfo(totalCount, edges.length, pageInfo)
+      if (pagination.mode === 'fetch' && pagination.recountPage) {
+        pagination.recountPage()
+      }
     }
     return edges.map((e) => e.node)
   })
-
+  /**
+   * Установка параметров пагинации только в том случае, если загрузка не идет
+   * @param page - страница
+   * @param itemsPerPage - количество записей на страницы
+   */
+  const setOptions = ({ page, itemsPerPage }: { page: number; itemsPerPage: number }) => {
+    if (!q.loading.value) {
+      pagination.setPage(page)
+      pagination.pageSize.value = itemsPerPage
+    }
+  }
   /**
    * Могу ли я подгружать еще записи
    */
@@ -338,6 +351,7 @@ export function useQueryRelay<
     data,
     pagination,
     fetchMoreAvailable,
+    setOptions,
     fetchMoreData,
     update,
     addUpdate,
