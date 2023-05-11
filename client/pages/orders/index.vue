@@ -39,13 +39,14 @@ const headers = [
         </add-order>
       </v-card-actions>
       <v-card-text>
+        <pre>{{ pagination.page.value }}</pre>
         <v-data-table-server
-          v-model:page="pagination.page.value"
           v-model:items-per-page="pagination.pageSize.value"
-          :items-length="pagination.count.value"
+          :items-length="pagination.totalCount.value"
           :headers="headers"
           :items="orders"
           :loading="loading"
+          @update:options="pagination.setOptions"
         >
           <template #item.id="{ item }">
             <nuxt-link :to="localePath({ name: 'orders-orderId', params: { orderId: item.raw.id } })">
