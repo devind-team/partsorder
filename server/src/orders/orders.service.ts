@@ -9,10 +9,16 @@ import { OrderConnectionArgs } from '@orders/dto/order-connection.args'
 import { OrderConnectionType } from '@orders/dto/order-connection.type'
 import { findManyCursorConnection } from '@common/relay/find-many-cursor-connection'
 import { Role } from '@generated/prisma'
+import { ProductsService } from '@products/products.service'
+import { orderItemValidator } from '@orders/validators'
 
 @Injectable()
 export class OrdersService {
-  constructor(private readonly prismaService: PrismaService, private readonly fileService: FilesService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly productsService: ProductsService,
+    private readonly fileService: FilesService,
+  ) {}
 
   /**
    * Выбираем заказа по идентификатору
@@ -58,16 +64,47 @@ export class OrdersService {
       params,
     )
   }
+
   async createOrder(user: User, orderInput: CreateOrderInput): Promise<CreateOrderType> {
     const file = await this.fileService.add(orderInput.file, user)
-    const { headers, values } = await this.fileService.getExcelValues(file)
-    console.log(headers, values)
-
+    const { values } = await this.fileService.getExcelValues(file)
+    const { products, createdProducts } = await this.productsService.getOrCreateProducts(values)
     const order = await this.prismaService.order.create({
       data: {
         address: orderInput.address,
         userId: user.id,
+        statuses: {
+          create: {
+            userId: user.id,
+          },
+        },
       },
+    })
+    const makeOrderItemsForWrite = async () => {
+      return values
+        .map((value) =>
+          orderItemValidator.safeParse({
+            ...Object.fromEntries(value),
+            orderId: order.id,
+            userId: user.id,
+            productId:
+              products.get(String(value.get('vendorCode'))) || createdProducts.get(String(value.get('vendorCode'))),
+          }),
+        )
+        .filter((validationResult) => validationResult.success)
+        .map((validationResult) => validationResult['data'])
+    }
+    const orderItemForWrite = await makeOrderItemsForWrite()
+    await this.prismaService.item.createMany({ data: orderItemForWrite })
+    const createdItems = await this.prismaService.item.findMany({
+      select: { id: true },
+      where: { order },
+    })
+    await this.prismaService.statusItem.createMany({
+      data: createdItems.map((createdItem) => ({
+        itemId: createdItem.id,
+        userId: user.id,
+      })),
     })
     return { order }
   }

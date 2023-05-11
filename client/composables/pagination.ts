@@ -92,7 +92,7 @@ export function useOffsetPagination(paginationOptions: PaginationOptions = {}): 
  * Пагинация, основанная на cursor подходе
  * @param paginationOptions
  */
-export function useCursorPagination(paginationOptions: PaginationOptions = {}): PaginationInterface {
+export function _useCursorPagination(paginationOptions: PaginationOptions = {}): PaginationInterface {
   const {
     page,
     setPage,

@@ -10,7 +10,6 @@ import { CreatePriceInput } from '@prices/dto/create-price.input'
 import { Price, PriceCreateManyInput } from '@generated/price'
 import { User } from '@generated/user'
 import { ProductsService } from '@products/products.service'
-import { productValidator } from '@products/validators'
 import { priceValidator } from '@prices/validators'
 
 @Injectable()
@@ -51,31 +50,8 @@ export class PricesService {
    * @param values: массив значений
    */
   async addPricesFromValues(headers: string[], values: Map<string, unknown>[]): Promise<CreateUploadPricesType> {
-    const vendorCodes = values
-      .map((v) => v.get('vendorCode'))
-      .filter(Boolean)
-      .map(String)
-    const productsIndex = await this.productsService.findIdsByVendorCodes(vendorCodes)
-
-    const makeProductsForWrite = async (vs: Map<string, unknown>[]) => {
-      return vs
-        .filter((v) => Boolean(v.get('vendorCode')))
-        .map((v) =>
-          productValidator.safeParse({
-            ...Object.fromEntries(v),
-            vendorCode: String(v.get('vendorCode')),
-          }),
-        )
-        .filter((validationResult) => validationResult.success)
-        .map((validationResult) => validationResult['data'])
-        .filter((createProductData) => !productsIndex.has(createProductData.vendorCode))
-    }
-    const createProductsData = await makeProductsForWrite(values)
-    await this.prismaService.product.createMany({ data: createProductsData, skipDuplicates: true })
-    const createdProductIndex = await this.productsService.findIdsByVendorCodes(
-      createProductsData.map((createProductData) => createProductData.vendorCode),
-    )
-    const { data, rows } = await this.#makePricesForWrite(values, productsIndex, createdProductIndex)
+    const { products, createdProducts } = await this.productsService.getOrCreateProducts(values)
+    const { data, rows } = await this.#makePricesForWrite(values, products, createdProducts)
     await this.prismaService.price.createMany({ data })
     return { headers, rows }
   }
