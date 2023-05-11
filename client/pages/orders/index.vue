@@ -22,10 +22,10 @@ const {
 
 const headers = [
   { title: '#', key: 'id', sortable: false },
-  { title: 'Адрес доставки', key: 'address', sortable: false },
-  { title: 'Дата создания', key: 'createdAt', sortable: false },
-  { title: 'Статус', key: 'statuses', sortable: false },
-  { title: 'Менеджер', key: 'manager', sortable: false },
+  { title: t('order.address'), key: 'address', sortable: false },
+  { title: t('create'), key: 'createdAt', sortable: false },
+  { title: t('statuses.statuses'), key: 'statuses', sortable: false },
+  { title: t('order.manager'), key: 'manager', sortable: false },
 ]
 </script>
 <template>
@@ -39,7 +39,6 @@ const headers = [
         </add-order>
       </v-card-actions>
       <v-card-text>
-        <pre>{{ pagination.page.value }}</pre>
         <v-data-table-server
           v-model:items-per-page="pagination.pageSize.value"
           :items-length="pagination.totalCount.value"
@@ -66,7 +65,7 @@ const headers = [
           </template>
           <template #item.manager="{ item }">
             <user-view v-if="item.raw.manager" :user="item.raw.manager" />
-            <div v-else>Не назначен</div>
+            <div v-else>{{ $t('order.notSet') }}</div>
           </template>
         </v-data-table-server>
       </v-card-text>
