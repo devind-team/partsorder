@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { definePageMeta, useHead, useRoute } from '#imports'
+import { definePageMeta, useHead, useRoute, useI18n, useCommonQuery } from '#imports'
 import orderQuery from '~/graphql/orders/queries/order.graphql'
 import { OrderQuery, OrderQueryVariables } from '~/types/graphql'
 
