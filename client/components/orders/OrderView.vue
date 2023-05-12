@@ -43,9 +43,9 @@ const finalBill = computed<number | undefined>(() => {
     .reduce((a, c) => a + c.price?.price * c.quantity * c.coefficient, 0)
 })
 
-const makePrice = (price: Price | null, quantity: number, coeff: number): number | null => {
+const makePrice = (price: Price | null, quantity: number, coefficient: number): number | null => {
   if (price) {
-    return price.price * quantity * coeff
+    return price.price * quantity * coefficient
   }
   return 0
 }
