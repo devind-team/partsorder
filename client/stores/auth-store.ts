@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { User } from '~/types/graphql'
 
 export type AuthStoreStateType = {
-  user?: User | null
+  user: User | null
 }
 
 export type AuthStoreGettersType = {

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { definePageMeta, useHead, useRoute, useI18n, useCommonQuery } from '#imports'
+import OrderView from '~/components/orders/OrderView.vue'
 import orderQuery from '~/graphql/orders/queries/order.graphql'
 import { OrderQuery, OrderQueryVariables } from '~/types/graphql'
 
@@ -17,12 +18,6 @@ const { data: order, loading } = useCommonQuery<OrderQuery, OrderQueryVariables>
 })
 </script>
 <template>
-  <v-container>
-    <v-card :loading="loading">
-      <v-card-title>{{ t('order.detail.title', { number: route.params.orderId }) }}</v-card-title>
-      <v-card-text>
-        <pre>{{ order }}</pre>
-      </v-card-text>
-    </v-card>
-  </v-container>
+  <v-progress-circular v-if="loading" indeterminate />
+  <order-view v-else :order="order" />
 </template>
