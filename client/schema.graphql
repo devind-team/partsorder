@@ -254,6 +254,9 @@ type Item {
   """Количество"""
   quantity: Int!
 
+  """Коэффициент наценки"""
+  coefficient: Int!
+
   """Номер машины"""
   carNo: String
 
@@ -1014,6 +1017,7 @@ input ItemWhereInput {
   NOT: [ItemWhereInput!]
   id: IntFilter
   quantity: IntFilter
+  coefficient: IntFilter
   carNo: StringNullableFilter
   routeNo: StringNullableFilter
   deliveryType: EnumDeliveryTypeNullableFilter

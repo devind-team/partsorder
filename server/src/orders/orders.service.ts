@@ -27,14 +27,20 @@ export class OrdersService {
   async getOrder(orderId: number): Promise<Order> {
     return this.prismaService.order.findUnique({
       include: {
-        statuses: true,
+        statuses: {
+          include: { user: true },
+          orderBy: { createdAt: 'asc' },
+        },
         comments: true,
         items: {
           include: {
             user: true,
             product: true,
-            statuses: true,
             price: true,
+            statuses: {
+              include: { user: true },
+              orderBy: { createdAt: 'asc' },
+            },
           },
         },
         manager: true,

@@ -12,6 +12,9 @@ query Order($orderId: Int!) {
     ...OrderFields
     statuses {
       ...StatusFields
+      user {
+        ...UserFields
+      }
     }
     comments {
       ...CommentFields
@@ -26,6 +29,9 @@ query Order($orderId: Int!) {
       }
       statuses {
         ...StatusItemFields
+        user {
+          ...UserFields
+        }
       }
       price {
         ...PriceFields

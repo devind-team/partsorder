@@ -346,6 +346,8 @@ model Item {
   id           Int           @id @default(autoincrement())
   /// Количество
   quantity     Int           @default(1)
+  /// Коэффициент наценки
+  coefficient  Int           @default(2)
   /// Номер машины
   carNo        String?       @map("car_no") @db.VarChar(50)
   /// Номер рейса

@@ -1,4 +1,4 @@
-FROM node:19.8.1 as builder
+FROM node:19.9.0 as builder
 
 ENV HOST 0.0.0.0
 

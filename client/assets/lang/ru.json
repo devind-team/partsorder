@@ -4,6 +4,7 @@
   "cancel": "Отменить",
   "close": "Закрыть",
   "create": "Дата создания",
+  "search": "Поиск",
   "auth": {
     "title": "Авторизация",
     "register": "Регистрация",
@@ -50,11 +51,15 @@
       "APPROVAL": "Принят",
       "APPROVED": "Согласован",
       "PURCHASING": "Оплачен",
+      "PURCHASED": "Оплачен",
       "DELIVERY": "В пути",
+      "EUSTOCK": "На складе в Европе",
+      "RUSTOCK": "На складе в России",
+      "COMPLETED": "Доставлен",
       "CLOSED": "Закрыт"
     },
     "detail": {
-      "title": "Детализация заказа #{number}"
+      "title": "Детализация заказа #{number} ({date})"
     }
   },
   "prices": {
