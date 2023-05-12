@@ -32,25 +32,31 @@ const headers = computed<DataTableHeader[]>(() => {
     h.push({ title: 'Наценка', key: 'coefficient' })
   }
   h.push({ title: 'Поставщик', key: 'supplierName' })
-  h.push({ title: 'Цена', key: 'finalPrice' })
-  h.push({ title: 'Оплачено', key: 'paid' })
   h.push({ title: 'Статус', key: 'statuses' })
-  h.push({ title: 'Стоимость', key: 'bill' })
+  h.push({ title: 'Цена', key: 'finalPrice' })
   return h
 })
 
-const makePrice = (price: Price | null, coeff: number): number | string => {
+const finalBill = computed<number | undefined>(() => {
+  return props.order.items
+    ?.filter((item) => item.price)
+    .reduce((a, c) => a + c.price?.price * c.quantity * c.coefficient, 0)
+})
+
+const makePrice = (price: Price | null, quantity: number, coeff: number): number | null => {
   if (price) {
-    return price.price * coeff
+    return price.price * quantity * coeff
   }
-  return '&mdash;'
+  return 0
 }
 </script>
 <template>
   <v-container fluid>
     <h1 class="my-4">{{ t('order.detail.title', { number: props.order.id, date: dateTimeHM(order.createdAt) }) }}</h1>
     <v-row>
-      <v-col></v-col>
+      <v-col>
+        <h2>Цена заказа: {{ finalBill }}&euro;</h2>
+      </v-col>
       <v-col>
         <v-text-field
           v-model="search"
@@ -83,9 +89,6 @@ const makePrice = (price: Price | null, coeff: number): number | string => {
               <template #[`item.supplierName`]="{ item }">
                 {{ (item.raw.price && item.raw.price.supplierName) || 'Не указан' }}
               </template>
-              <template #[`item.paid`]="{ item }">
-                {{ item.raw.statuses.map((status) => status.status).includes('PURCHASED') ? 'Оплачен' : 'Не оплачен' }}
-              </template>
               <template #[`item.statuses`]="{ item }">
                 <statuses-view-dialog
                   v-if="item.raw.statuses.length"
@@ -98,7 +101,9 @@ const makePrice = (price: Price | null, coeff: number): number | string => {
                 </statuses-view-dialog>
                 <template v-else>{{ $t('order.status.noStatus') }}</template>
               </template>
-              <template #[`item.bill`]="{ item }">{{ makePrice(item.raw.price, item.raw.coefficient) }}&euro;</template>
+              <template #[`item.finalPrice`]="{ item }">
+                {{ makePrice(item.raw.price, item.raw.quantity, item.raw.coefficient) }}&euro;
+              </template>
             </v-data-table>
           </v-card-text>
         </v-card>
