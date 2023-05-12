@@ -101,9 +101,6 @@ const makePrice = (price: Price | null, coeff: number): number | string => {
               <template #[`item.bill`]="{ item }">{{ makePrice(item.raw.price, item.raw.coefficient) }}&euro;</template>
             </v-data-table>
           </v-card-text>
-          <v-card-text>
-            <pre>{{ order }}</pre>
-          </v-card-text>
         </v-card>
       </v-col>
     </v-row>
