@@ -2,7 +2,6 @@
 import { useFilters, useHead, useI18n } from '#imports'
 import productsQuery from '~/graphql/products/queries/products.graphql'
 import { ProductsQuery, ProductsQueryVariables } from '~/types/graphql'
-import { useOffsetPagination } from '~/composables/pagination'
 
 const { t } = useI18n()
 const { date } = useFilters()
@@ -16,23 +15,22 @@ const {
   data: products,
   loading,
   pagination,
-} = useQueryRelay<ProductsQuery, ProductsQueryVariables>(
-  {
-    document: productsQuery,
-    variables: () => ({
-      search: search.value,
-    }),
-    options: {
-      debounce: 250,
-    },
+} = useQueryRelay<ProductsQuery, ProductsQueryVariables>({
+  document: productsQuery,
+  variables: () => ({
+    search: search.value,
+  }),
+  options: {
+    debounce: 250,
   },
-  { pagination: useOffsetPagination({ pageSize: 10, mode: 'paged' }) },
-)
+})
 const headers = [
   { title: '#', key: 'id', sortable: false },
-  { title: 'Артикул', key: 'vendorCode', sortable: false },
-  { title: 'Название', key: 'name', sortable: false },
-  { title: 'Производитель', key: 'manufacturer', sortable: false },
+  ...['vendorCode', 'name', 'manufacturer'].map((key) => ({
+    title: t(`products.${key}`),
+    key,
+    sortable: false,
+  })),
 ]
 </script>
 <template>
@@ -61,6 +59,7 @@ const headers = [
             :items="products"
             :items-length="pagination.totalCount.value"
             show-expand
+            density="compact"
           >
             <template #expanded-row="{ columns, item }">
               <tr>
@@ -68,18 +67,18 @@ const headers = [
                   <v-row>
                     <v-col>
                       <v-list density="compact">
-                        <v-list-subheader>Цены</v-list-subheader>
+                        <v-list-subheader>{{ $t('products.prices') }}</v-list-subheader>
                         <v-list-item
                           v-for="price in item.raw.prices"
                           :key="price.id"
-                          :title="`${price.price} (${price.duration})`"
+                          :title="`&euro;${price.price * 2} ${$t('prices.withoutVAT')}`"
                           :subtitle="`${price.supplierName} - ${date(price.createdAt)}`"
                         />
                       </v-list>
                     </v-col>
                     <v-col>
                       <v-list>
-                        <v-list-subheader>Атрибуты</v-list-subheader>
+                        <v-list-subheader>{{ $t('products.attributes') }}</v-list-subheader>
                       </v-list>
                     </v-col>
                   </v-row>
