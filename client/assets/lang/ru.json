@@ -85,7 +85,8 @@
       "name": "Название",
       "manufacturer": "Производитель",
       "error": "Ошибка"
-    }
+    },
+    "withoutVAT": "без НДС"
   },
   "products": {
     "title": "Поиск продуктов",

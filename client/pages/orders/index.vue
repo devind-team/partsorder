@@ -47,15 +47,15 @@ const headers = [
           :loading="loading"
           @update:options="pagination.setOptions"
         >
-          <template #item.id="{ item }">
+          <template #[`item.id`]="{ item }">
             <nuxt-link :to="localePath({ name: 'orders-orderId', params: { orderId: item.raw.id } })">
               {{ item.raw.id }}
             </nuxt-link>
           </template>
-          <template #item.createdAt="{ item }">
+          <template #[`item.createdAt`]="{ item }">
             {{ dateTimeHM(item.raw.createdAt) }}
           </template>
-          <template #item.statuses="{ item }">
+          <template #[`item.statuses`]="{ item }">
             <statuses-view-dialog v-if="item.raw.statuses.length" v-slot="{ props }" :statuses="item.raw.statuses">
               <v-chip v-bind="props" size="small">
                 {{ $t(`order.statuses.${item.raw.statuses[item.raw.statuses.length - 1].status}`) }}
@@ -63,7 +63,7 @@ const headers = [
             </statuses-view-dialog>
             <template v-else>{{ $t('order.status.noStatus') }}</template>
           </template>
-          <template #item.manager="{ item }">
+          <template #[`item.manager`]="{ item }">
             <user-view v-if="item.raw.manager" :user="item.raw.manager" />
             <div v-else>{{ $t('order.notSet') }}</div>
           </template>
