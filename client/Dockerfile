@@ -1,4 +1,4 @@
-FROM node:19.9.0 as builder
+FROM node:20.1.0 as builder
 
 ENV HOST 0.0.0.0
 
@@ -15,7 +15,7 @@ RUN pnpm i && \
     rm -rf $(ls -A | grep -v .output)
 
 
-FROM node:19.8.1
+FROM node:20.1.0
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app

@@ -1,4 +1,4 @@
-FROM node:19.9.0 as builder
+FROM node:20.1.0 as builder
 
 RUN apt-get update -y && \
     apt-get upgrade -y && \
@@ -10,13 +10,13 @@ WORKDIR /usr/src/app
 COPY . .
 
 RUN npm i -g npm --upgrade && \
-    npm i && \
+    npm i --force && \
     npm update && \
     npm run prebuild && \
     npm run generate && \
     npm run build
 
-FROM node:19.8.1
+FROM node:20.1.0
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
