@@ -597,6 +597,77 @@ type OrderConnectionType {
   totalCount: Int!
 }
 
+type DeleteOrderItemsType {
+  """Идентификаторы удаленных записей"""
+  deleteIds: [Float!]!
+}
+
+type ItemCountAggregate {
+  id: Int!
+  quantity: Int!
+  coefficient: Int!
+  carNo: Int!
+  routeNo: Int!
+  deliveryType: Int!
+  createdAt: Int!
+  updatedAt: Int!
+  orderId: Int!
+  productId: Int!
+  priceId: Int!
+  userId: Int!
+  _all: Int!
+}
+
+type ItemAvgAggregate {
+  id: Float
+  quantity: Float
+  coefficient: Float
+  orderId: Float
+  productId: Float
+  priceId: Float
+  userId: Float
+}
+
+type ItemSumAggregate {
+  id: Int
+  quantity: Int
+  coefficient: Int
+  orderId: Int
+  productId: Int
+  priceId: Int
+  userId: Int
+}
+
+type ItemMinAggregate {
+  id: Int
+  quantity: Int
+  coefficient: Int
+  carNo: String
+  routeNo: String
+  deliveryType: DeliveryType
+  createdAt: DateTime
+  updatedAt: DateTime
+  orderId: Int
+  productId: Int
+  priceId: Int
+  userId: Int
+}
+
+type ItemMaxAggregate {
+  id: Int
+  quantity: Int
+  coefficient: Int
+  carNo: String
+  routeNo: String
+  deliveryType: DeliveryType
+  createdAt: DateTime
+  updatedAt: DateTime
+  orderId: Int
+  productId: Int
+  priceId: Int
+  userId: Int
+}
+
 type PriceCountAggregate {
   id: Int!
   price: Int!
@@ -1500,6 +1571,11 @@ type Mutation {
   createPrice(price: CreatePriceInput!): CreatePriceType!
   uploadPrices(fileUpload: FileUploadInput!): CreateUploadPricesType!
   createOrder(order: CreateOrderInput!): CreateOrderType!
+  deleteOrderItems(
+    """Идентификатор заказа"""
+    orderId: Int!
+    where: ItemWhereInput
+  ): DeleteOrderItemsType!
 }
 
 input UserLoginInput {

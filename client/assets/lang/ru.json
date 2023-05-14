@@ -5,6 +5,8 @@
   "close": "Закрыть",
   "create": "Дата создания",
   "search": "Поиск",
+  "add": "Добавить",
+  "delete": "Удалить",
   "auth": {
     "title": "Авторизация",
     "register": "Регистрация",
@@ -60,6 +62,13 @@
     },
     "detail": {
       "title": "Детализация заказа #{number} ({date})"
+    },
+    "items": {
+      "recount": "Проценить заново",
+      "changeCoefficient": "Задать коэффициент наценки",
+      "changeStatus": "Изменить статус",
+      "uploadXlsx": "Выгрузить в Excel",
+      "uploadOffer": "Выгрузить коммерческое предложение"
     }
   },
   "prices": {

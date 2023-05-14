@@ -1,11 +1,14 @@
 <script lang="ts" setup>
+import { Ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { ExtractSingleKey } from '@vue/apollo-composable/dist/util/ExtractSingleKey'
 import { useFilters, useI18n } from '#imports'
 import { OrderQuery, Price } from '~/types/graphql'
-import { ExtractSingleKey } from '@vue/apollo-composable/dist/util/ExtractSingleKey'
 import { useAuthStore } from '~/stores'
-import { storeToRefs } from 'pinia'
+import { UpdateType } from '~/composables/query-common'
 import StatusesViewDialog from '~/components/orders/StatusesViewDialog.vue'
 import { DataTableHeader } from '~/types/vuetify'
+import OrderItemsMenu from '~/components/orders/OrderItemsMenu.vue'
 
 const authStore = useAuthStore()
 const { t } = useI18n()
@@ -14,10 +17,11 @@ const { user } = storeToRefs(authStore)
 
 const props = defineProps<{
   order: ExtractSingleKey<OrderQuery, 'order'>
+  update: UpdateType
 }>()
 
-const selectedItems = ref([])
-const search = ref('')
+const selectedItems: Ref<number[]> = ref<number[]>([])
+const search = ref<string>('')
 
 const headers = computed<DataTableHeader[]>(() => {
   const h = [
@@ -52,10 +56,27 @@ const makePrice = (price: Price | null, quantity: number, coefficient: number): 
 </script>
 <template>
   <v-container fluid>
-    <h1 class="my-4">{{ t('order.detail.title', { number: props.order.id, date: dateTimeHM(order.createdAt) }) }}</h1>
     <v-row>
       <v-col>
-        <h2>Цена заказа: {{ finalBill }}&euro;</h2>
+        <h1>
+          {{ t('order.detail.title', { number: props.order.id, date: dateTimeHM(order.createdAt) }) }}
+        </h1>
+      </v-col>
+      <v-col>
+        <h2 class="text-right">Цена заказа: {{ finalBill }}&euro;</h2>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <order-items-menu
+          v-slot="{ props: propsOrderItemsMenu }"
+          :order-id="Number(order.id)"
+          :update="props.update"
+          :selected-items="selectedItems"
+          @close="selectedItems = []"
+        >
+          <v-btn v-bind="propsOrderItemsMenu" color="primary">Действия</v-btn>
+        </order-items-menu>
       </v-col>
       <v-col>
         <v-text-field

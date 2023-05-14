@@ -12,12 +12,16 @@ useHead({
   title: t('order.detail.title', { number: route.params.orderId }),
 })
 
-const { data: order, loading } = useCommonQuery<OrderQuery, OrderQueryVariables>({
+const {
+  data: order,
+  loading,
+  update,
+} = useCommonQuery<OrderQuery, OrderQueryVariables>({
   document: orderQuery,
   variables: { orderId: +route.params.orderId },
 })
 </script>
 <template>
   <v-progress-circular v-if="loading" indeterminate />
-  <order-view v-else :order="order" />
+  <order-view v-else :update="update" :order="order" />
 </template>

@@ -11,6 +11,8 @@ import { findManyCursorConnection } from '@common/relay/find-many-cursor-connect
 import { Role } from '@generated/prisma'
 import { ProductsService } from '@products/products.service'
 import { orderItemValidator } from '@orders/validators'
+import { DeleteOrderItemsType } from '@orders/dto/delete-order-items.type'
+import { DeleteManyItemArgs } from '@generated/item'
 
 @Injectable()
 export class OrdersService {
@@ -113,5 +115,30 @@ export class OrdersService {
       })),
     })
     return { order }
+  }
+
+  /**
+   * Удаление элементво из заказа
+   * @param user: пользователь
+   * @param orderId: идентификатор заказа
+   * @param deleteManyItemArgs: условие даления
+   */
+  async deleteItems(
+    user: User,
+    orderId: number,
+    deleteManyItemArgs: DeleteManyItemArgs,
+  ): Promise<DeleteOrderItemsType> {
+    const where = { ...deleteManyItemArgs.where, orderId, ...(user.role === 'ADMIN' ? {} : { userId: user.id }) }
+    const items = await this.prismaService.item.findMany({
+      where,
+      select: {
+        id: true,
+      },
+    })
+    const deleteIds = items.map((item) => item.id)
+    await this.prismaService.item.deleteMany({
+      where: { id: { in: deleteIds } },
+    })
+    return { deleteIds }
   }
 }
