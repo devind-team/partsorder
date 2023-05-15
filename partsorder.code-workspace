@@ -1,0 +1,32 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "client"
+    },
+    {
+      "path": "server"
+    }
+  ],
+  "settings": {
+    "editor.tabSize": 2,
+    "prettier.configPath": "package.json",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true,
+    },
+    "editor.formatOnSave": true,
+    /*"[typescript]": {
+      "editor.tabSize": 2
+    },
+    "[javascript]": {
+      "editor.tabSize": 2,
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascriptreact]": {
+      "editor.tabSize": 2,
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }*/
+  }
+}
