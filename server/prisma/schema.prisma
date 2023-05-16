@@ -107,6 +107,9 @@ model User {
 
 enum Role {
   USER
+  SELLER
+  BUYER
+  LOGIST
   ADMIN
 }
 
