@@ -103,5 +103,21 @@
     "searchTitle": "Введите артикул запасной части для поиска",
     "search": "Искать",
     "vendorCode": "Артикул или название"
+  },
+  "items": {
+    "filterStatus": {
+      "noFiltrationMessage": "Фильтр товаров по статусам",
+      "filtrationMessage": "Фильтрация по статусу ",
+      "title": "Статус",
+      "statuses": {
+        "CREATED": "Создан",
+        "APPROVED": "Согласован",
+        "PURCHASED": "Оплачен",
+        "DELIVERY": "В пути",
+        "EUSTOCK": "На складе в Европе",
+        "RUSTOCK": "На складе в России",
+        "COMPLETED": "Доставлен"
+      }
+    }
   }
 }

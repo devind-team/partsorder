@@ -1,12 +1,10 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia'
-import { useAuthStore } from '~/stores'
+import StatusesItemsFilter from '~/components/items/StatusesItemsFilter.vue'
 
 definePageMeta({ middleware: 'auth' })
-const authStore = useAuthStore()
-const { user } = storeToRefs(authStore)
 
 const selectedItems = ref([])
+const selectedStatus = ref<string>('')
 const search = ref('')
 
 const headers = [
@@ -29,6 +27,18 @@ const headers = [
     <v-row>
       <v-col>
         <h2>Товары</h2>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <statuses-items-filter
+          v-slot="{ props: propsStatusesItemFilter }"
+          v-model="selectedStatus"
+          :title="$t(`items.filterStatus.title`)"
+        >
+          <v-chip v-bind="propsStatusesItemFilter">Фильтр товаров по статусам</v-chip>
+        </statuses-items-filter>
+        <pre>{{ selectedStatus }}</pre>
       </v-col>
       <v-col>
         <v-text-field
