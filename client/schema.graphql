@@ -1568,14 +1568,34 @@ type Mutation {
   login(userLoginInput: UserLoginInput!): UserLoginType!
   register(userRegisterInput: UserRegisterInput!): UserLoginType
   uploadAvatar(fileUpload: FileUploadInput!): User!
-  createPrice(price: CreatePriceInput!): CreatePriceType!
-  uploadPrices(fileUpload: FileUploadInput!): CreateUploadPricesType!
-  createOrder(order: CreateOrderInput!): CreateOrderType!
+  addStatuses(
+    """Идентификатор заказа"""
+    orderId: Int!
+
+    """Идентификаторы позиций"""
+    itemIds: [Int!]!
+
+    """Статус заказа"""
+    status: ItemStatus!
+  ): [Item!]!
+  changeCoefficientItems(
+    """Идентификатор заказа"""
+    orderId: Int!
+
+    """Идентификаторы позиций"""
+    itemIds: [Int!]!
+
+    """Коэффициент"""
+    coefficient: Float!
+  ): [Item!]!
   deleteOrderItems(
     """Идентификатор заказа"""
     orderId: Int!
     where: ItemWhereInput
   ): DeleteOrderItemsType!
+  createPrice(price: CreatePriceInput!): CreatePriceType!
+  uploadPrices(fileUpload: FileUploadInput!): CreateUploadPricesType!
+  createOrder(order: CreateOrderInput!): CreateOrderType!
 }
 
 input UserLoginInput {

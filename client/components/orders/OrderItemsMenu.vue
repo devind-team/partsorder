@@ -15,12 +15,17 @@ const emit = defineEmits<{
 
 const active = ref<boolean>(false)
 
+const close = () => {
+  active.value = false
+  emit('close')
+}
+
 const { mutate: deleteOrderItems } = useMutation<DeleteOrderItemsMutation, DeleteOrderItemsMutationVariables>(
   deleteOrderItemsMutation,
   {
     update: (cache, result) => {
       props.update(cache, result, (dataCache) => {
-        emit('close')
+        close()
         if (!result.data) {
           return dataCache
         }
