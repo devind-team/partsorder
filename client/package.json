@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@mdi/font": "^7.2.96",
-    "@nuxt/devtools": "^0.4.6",
+    "@nuxt/devtools": "^0.5.0",
     "@nuxt/types": "^2.16.3",
     "@nuxtjs/apollo": "^5.0.0-alpha.6",
     "@nuxtjs/color-mode": "^3.2.0",
