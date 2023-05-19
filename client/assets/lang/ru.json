@@ -107,7 +107,7 @@
   "items": {
     "filterStatus": {
       "noFiltrationMessage": "Фильтр товаров по статусам",
-      "filtrationMessage": "Фильтрация по статусу ",
+      "filtrationMessage": "Фильтрация по статусу: {status}",
       "title": "Статус",
       "statuses": {
         "CREATED": "Создан",

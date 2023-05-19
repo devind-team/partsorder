@@ -2,9 +2,10 @@
 import StatusesItemsFilter from '~/components/items/StatusesItemsFilter.vue'
 
 definePageMeta({ middleware: 'auth' })
+const { t } = useI18n()
 
 const selectedItems = ref([])
-const selectedStatus = ref<string>('')
+const selectedStatus = ref<string | null>(null)
 const search = ref('')
 
 const headers = [
@@ -20,6 +21,22 @@ const headers = [
   { title: 'Статус отправки', key: 'statuses.status' },
   { title: 'Комментарий', key: 'commentItem.text' },
 ]
+
+const messageFiter = computed(() => {
+  if (selectedStatus.value) {
+    return String(
+      t(`items.filterStatus.filtrationMessage`, {
+        status: String(t(`items.filterStatus.statuses.${selectedStatus.value}`)),
+      }),
+    )
+  } else {
+    return String(t(`items.filterStatus.noFiltrationMessage`))
+  }
+})
+
+const close = () => {
+  selectedStatus.value = null
+}
 </script>
 
 <template>
@@ -36,9 +53,11 @@ const headers = [
           v-model="selectedStatus"
           :title="$t(`items.filterStatus.title`)"
         >
-          <v-chip v-bind="propsStatusesItemFilter">Фильтр товаров по статусам</v-chip>
+          <v-chip v-bind="propsStatusesItemFilter" :closable="!!selectedStatus" @click:close="close">{{
+            messageFiter
+          }}</v-chip>
         </statuses-items-filter>
-        <pre>{{ selectedStatus }}</pre>
+        <pre>{{ !!selectedStatus?.length }}</pre>
       </v-col>
       <v-col>
         <v-text-field
