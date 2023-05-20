@@ -9,6 +9,7 @@ import { OrderConnectionType } from '@orders/dto/order-connection.type'
 import { OrderConnectionArgs } from '@orders/dto/order-connection.args'
 import { User } from '@generated/user'
 import { Order } from '@generated/order'
+import { DeleteOrderType } from '@orders/dto/delete-order.type'
 
 @UseGuards(GqlAuthGuard)
 @Resolver()
@@ -25,6 +26,11 @@ export class OrdersResolver {
     return await this.ordersService.getOrderConnection(user, params)
   }
 
+  /**
+   * Мутация для создания заказа
+   * @param user: пользователь
+   * @param order: данные заказа
+   */
   @Mutation(() => CreateOrderType)
   async createOrder(
     @CurrentUser() user: User,
@@ -35,5 +41,18 @@ export class OrdersResolver {
     order: CreateOrderInput,
   ): Promise<CreateOrderType> {
     return await this.ordersService.createOrder(user, order)
+  }
+
+  /**
+   * Мутация для удаления заказа
+   * @param user: пользователь
+   * @param orderId: иднетификатор заказа
+   */
+  @Mutation(() => DeleteOrderType)
+  async deleteOrder(
+    @CurrentUser() user: User,
+    @Args({ type: () => Number, name: 'orderId', description: 'Идентификатор заказа' }) orderId: number,
+  ): Promise<DeleteOrderType> {
+    return { deleteId: await this.ordersService.deleteOrder(user, orderId) }
   }
 }

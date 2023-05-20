@@ -3,9 +3,9 @@ import { Args, Float, Int, Mutation, Resolver } from '@nestjs/graphql'
 import { CurrentUser } from '@auth/auth.decorators'
 import { GqlAuthGuard } from '@auth/auth.guard'
 import { DeleteOrderItemsType } from '@items/dto/delete-order-items.type'
+import { ItemsService } from '@items/items.service'
 import { User } from '@generated/user'
 import { DeleteManyItemArgs, Item } from '@generated/item'
-import { ItemsService } from './items.service'
 import { ItemStatus } from '@generated/prisma'
 
 @UseGuards(GqlAuthGuard)

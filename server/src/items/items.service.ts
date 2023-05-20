@@ -77,7 +77,11 @@ export class ItemsService {
     orderId: number,
     deleteManyItemArgs: DeleteManyItemArgs,
   ): Promise<DeleteOrderItemsType> {
-    const where = { ...deleteManyItemArgs.where, orderId, ...(user.role === 'ADMIN' ? {} : { userId: user.id }) }
+    const where = {
+      ...deleteManyItemArgs.where,
+      orderId,
+      ...(user.role === 'ADMIN' ? {} : { userId: user.id }),
+    } as Prisma.ItemWhereInput
     const items = await this.prismaService.item.findMany({
       where,
       select: {
