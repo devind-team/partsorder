@@ -3,13 +3,30 @@ import { User } from '@generated/user'
 import { DeleteManyItemArgs } from '@generated/item'
 import { DeleteOrderItemsType } from '@items/dto/delete-order-items.type'
 import { PrismaService } from '@common/services/prisma.service'
-import { Item } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { ItemStatus } from '@generated/prisma'
 
 @Injectable()
 export class ItemsService {
   constructor(private readonly prismaService: PrismaService) {}
 
+  /**
+   * Получение позиций в заказе
+   * @param orderId
+   * @param include
+   */
+  async getItems(
+    orderId: number,
+    include?: Prisma.ItemInclude,
+  ): Promise<Array<Prisma.ItemGetPayload<{ include: Prisma.ItemInclude; where: { orderId: number } }>>> {
+    return this.prismaService.item.findMany({ include, where: { orderId } })
+  }
+
+  /**
+   * Получение идентификаторов позиций, привязанных к заказу
+   * @param orderId: идентификатор заказа
+   * @param itemsId: идентификаторы записей
+   */
   async getOrderItems(orderId: number, itemsId: number[]): Promise<number[]> {
     const items = await this.prismaService.item.findMany({
       select: { id: true },
@@ -23,21 +40,14 @@ export class ItemsService {
 
   /**
    * Изменение коэффицнетов заказа
-   * @param user: пользователь
-   * @param orderId: идентификатор заказа
    * @param itemsId: идентификаторы позиций
    * @param coefficient: значение коэффициента
    */
-  async changeCoefficients(user: User, orderId: number, itemsId: number[], coefficient: number): Promise<Item[]> {
-    await this.prismaService.item.updateMany({
-      where: {
-        orderId,
-        id: { in: itemsId },
-        ...(user.role === 'ADMIN' ? {} : { userId: user.id }),
-      },
+  async changeCoefficients(itemsId: number[], coefficient: number): Promise<Prisma.BatchPayload> {
+    return this.prismaService.item.updateMany({
+      where: { id: { in: itemsId } },
       data: { coefficient },
     })
-    return this.prismaService.item.findMany({ where: { orderId } })
   }
 
   /**
@@ -46,19 +56,16 @@ export class ItemsService {
    * @param itemsId: идентификаторы записей
    * @param status: тип добавляемого статуса
    */
-  async addStatuses(user: User, itemsId: number[], status: ItemStatus): Promise<Item[]> {
-    await this.prismaService.statusItem.createMany({
+  async addStatuses(user: User, itemsId: number[], status: ItemStatus): Promise<Prisma.BatchPayload> {
+    return this.prismaService.statusItem.createMany({
       data: itemsId.map((itemId) => ({
         itemId,
         status,
         userId: user.id,
       })),
     })
-    return this.prismaService.item.findMany({
-      include: { statuses: true },
-      where: { id: { in: itemsId } },
-    })
   }
+
   /**
    * Удаление элементво из заказа
    * @param user: пользователь

@@ -20,7 +20,8 @@ export class ItemsResolver {
     @Args({ type: () => [Int], name: 'itemIds', description: 'Идентификаторы позиций' }) itemsId: number[],
     @Args({ type: () => ItemStatus, name: 'status', description: 'Статус заказа' }) status: ItemStatus,
   ): Promise<Item[]> {
-    return this.itemsService.addStatuses(user, await this.itemsService.getOrderItems(orderId, itemsId), status)
+    await this.itemsService.addStatuses(user, await this.itemsService.getOrderItems(orderId, itemsId), status)
+    return await this.itemsService.getItems(orderId, { statuses: true })
   }
   /**
    * Мутация для изменения наценки заказа
@@ -36,7 +37,8 @@ export class ItemsResolver {
     @Args({ type: () => [Int], name: 'itemIds', description: 'Идентификаторы позиций' }) itemsId: number[],
     @Args({ type: () => Float, name: 'coefficient', description: 'Коэффициент' }) coefficient: number,
   ): Promise<Item[]> {
-    return await this.itemsService.changeCoefficients(user, orderId, itemsId, coefficient)
+    await this.itemsService.changeCoefficients(await this.itemsService.getOrderItems(orderId, itemsId), coefficient)
+    return await this.itemsService.getItems(orderId)
   }
   /**
    * Удаление элементов из заказа
