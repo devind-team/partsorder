@@ -142,4 +142,45 @@ export class OrdersService {
     })
     return { deleteIds }
   }
+
+  /**
+   * Выгрузка заказа
+   * @param user
+   * @param orderId
+   * @param fileType
+   */
+  async unloadOrder(
+    user: User,
+    orderId: number,
+    fileType: string,
+    ):Promise<Order> { 
+      const сurrentOrder: Order = await this.getOrder(orderId) 
+      var flatten = require( 'flat' )
+      let data: { } = flatten( сurrentOrder )
+      console.log( await this.prismaService.item.findMany( {
+        include: {
+          coefficient: true,
+          quantity: true,
+          price: true, 
+          product: {
+            vendorCode: true,
+            manufacturer: true
+          }
+        },
+        where: { 
+          orderId 
+        } 
+      }))
+      // await this.fileService.getExcelFile('hello',[
+      //     { header: 'Id', key: 'id'},
+      //     { header: 'Name', key: 'name'},
+      //     { header: 'Status.id.', key: 'status.id'},
+      //     { header: 'Status.name.', key: 'status.name'}
+      //   ],[
+      //     {id: 1, name: 1, 'status.id': 1, 'status.name': 1},
+      //     {id: 2, name: 2, 'status.id': 2, 'status.name': 2},
+      //     {id: 3, name: 3, 'status.id': 3, 'status.name': 3}
+      //   ])
+      return 
+    }
 }
