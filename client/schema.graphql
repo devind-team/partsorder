@@ -63,6 +63,9 @@ scalar DateTime
 
 enum Role {
   USER
+  SELLER
+  BUYER
+  LOGIST
   ADMIN
 }
 
@@ -595,6 +598,11 @@ type OrderConnectionType {
   edges: [OrderEdge!]
   pageInfo: PageInfo!
   totalCount: Int!
+}
+
+type DeleteOrderType {
+  """Идентификатор удаленного заказа"""
+  deleteId: Float!
 }
 
 type DeleteOrderItemsType {
@@ -1596,6 +1604,10 @@ type Mutation {
   createPrice(price: CreatePriceInput!): CreatePriceType!
   uploadPrices(fileUpload: FileUploadInput!): CreateUploadPricesType!
   createOrder(order: CreateOrderInput!): CreateOrderType!
+  deleteOrder(
+    """Идентификатор заказа"""
+    orderId: Float!
+  ): DeleteOrderType!
 }
 
 input UserLoginInput {

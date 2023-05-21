@@ -39,18 +39,6 @@ export class ItemsService {
   }
 
   /**
-   * Изменение коэффицнетов заказа
-   * @param itemsId: идентификаторы позиций
-   * @param coefficient: значение коэффициента
-   */
-  async changeCoefficients(itemsId: number[], coefficient: number): Promise<Prisma.BatchPayload> {
-    return this.prismaService.item.updateMany({
-      where: { id: { in: itemsId } },
-      data: { coefficient },
-    })
-  }
-
-  /**
    * Добавляем статус к записям
    * @param user: пользователь
    * @param itemsId: идентификаторы записей
@@ -63,6 +51,18 @@ export class ItemsService {
         status,
         userId: user.id,
       })),
+    })
+  }
+
+  /**
+   * Изменение коэффицнетов заказа
+   * @param itemsId: идентификаторы позиций
+   * @param coefficient: значение коэффициента
+   */
+  async changeCoefficients(itemsId: number[], coefficient: number): Promise<Prisma.BatchPayload> {
+    return this.prismaService.item.updateMany({
+      where: { id: { in: itemsId } },
+      data: { coefficient },
     })
   }
 
