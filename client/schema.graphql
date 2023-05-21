@@ -1586,6 +1586,13 @@ type Mutation {
     """Статус заказа"""
     status: ItemStatus!
   ): [Item!]!
+  recountPrices(
+    """Идентификатор заказа"""
+    orderId: Int!
+
+    """Идентификаторы позиций"""
+    itemIds: [Int!]!
+  ): [Item!]!
   changeCoefficientItems(
     """Идентификатор заказа"""
     orderId: Int!

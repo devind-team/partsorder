@@ -23,6 +23,16 @@ export class ItemsResolver {
     await this.itemsService.addStatuses(user, await this.itemsService.getOrderItems(orderId, itemsId), status)
     return await this.itemsService.getItems(orderId, { statuses: true })
   }
+
+  @Mutation(() => [Item])
+  async recountPrices(
+    @CurrentUser() user: User,
+    @Args({ type: () => Int, name: 'orderId', description: 'Идентификатор заказа' }) orderId: number,
+    @Args({ type: () => [Int], name: 'itemIds', description: 'Идентификаторы позиций' }) itemsId: number[],
+  ): Promise<Item[]> {
+    await this.itemsService.recountPrices(user, await this.itemsService.getOrderItems(orderId, itemsId))
+    return await this.itemsService.getItems(orderId, { price: true })
+  }
   /**
    * Мутация для изменения наценки заказа
    * @param user: Пользователь

@@ -65,7 +65,7 @@
       "title": "Детализация заказа #{number} ({date})"
     },
     "items": {
-      "recount": "Проценить заново",
+      "recountPrices": "Проценить",
       "changeCoefficient": "Задать коэффициент наценки",
       "changeStatus": "Изменить статус",
       "uploadXlsx": "Выгрузить в Excel",

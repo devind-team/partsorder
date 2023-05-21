@@ -1,7 +1,16 @@
 <script lang="ts" setup>
-import deleteOrderItemsMutation from '~/graphql/orders/mutations/delete-order-items.graphql'
+import { useMutation } from '@vue/apollo-composable'
 import { UpdateType } from '~/composables/query-common'
-import { DeleteOrderItemsMutation, DeleteOrderItemsMutationVariables, Item } from '~/types/graphql'
+import changePricesMutation from '~/graphql/items/mutations/recount-prices.graphql'
+import deleteOrderItemsMutation from '~/graphql/orders/mutations/delete-order-items.graphql'
+import {
+  RecountPricesMutation,
+  RecountPricesMutationVariables,
+  DeleteOrderItemsMutation,
+  DeleteOrderItemsMutationVariables,
+  Item,
+  Price,
+} from '~/types/graphql'
 
 const props = defineProps<{
   orderId: number
@@ -19,6 +28,34 @@ const close = () => {
   active.value = false
   emit('close')
 }
+
+const { mutate: recountPrices } = useMutation<RecountPricesMutation, RecountPricesMutationVariables>(
+  changePricesMutation,
+  {
+    update: (cache, result) => {
+      props.update(cache, result, (dataCache) => {
+        close()
+        if (!result.data) {
+          return dataCache
+        }
+        const itemPrices: Record<string, Price> = result.data.recountPrices.reduce(
+          (ac, item) => ({
+            ...ac,
+            [item.id]: item.price,
+          }),
+          {},
+        )
+        return {
+          ...dataCache,
+          order: {
+            ...dataCache.order,
+            items: dataCache.order.items.map((item: Item) => ({ ...item, price: itemPrices[item.id] || item.price })),
+          },
+        }
+      })
+    },
+  },
+)
 
 const { mutate: deleteOrderItems } = useMutation<DeleteOrderItemsMutation, DeleteOrderItemsMutationVariables>(
   deleteOrderItemsMutation,
@@ -52,7 +89,11 @@ const { mutate: deleteOrderItems } = useMutation<DeleteOrderItemsMutation, Delet
       <v-list-item :title="$t('order.items.uploadXlsx')" prepend-icon="mdi-file-excel-box-outline" />
       <v-list-item :title="$t('order.items.uploadOffer')" prepend-icon="mdi-file-pdf-box" />
       <v-list-item :title="$t('add')" prepend-icon="mdi-plus" />
-      <v-list-item :title="$t('order.items.recount')" prepend-icon="mdi-ballot-recount-outline" />
+      <v-list-item
+        :title="$t('order.items.recountPrices')"
+        prepend-icon="mdi-ballot-recount-outline"
+        @click="recountPrices({ orderId: props.orderId, itemIds: selectedItems.map(Number) })"
+      />
       <v-list-item :title="$t('order.items.changeStatus')" prepend-icon="mdi-list-status" />
       <v-list-item :title="$t('order.items.changeCoefficient')" prepend-icon="mdi-circle-multiple-outline" />
       <v-list-item

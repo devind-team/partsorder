@@ -12,7 +12,7 @@ import OrderItemsMenu from '~/components/orders/OrderItemsMenu.vue'
 
 const authStore = useAuthStore()
 const { t } = useI18n()
-const { dateTimeHM } = useFilters()
+const { dateTimeHM, money } = useFilters()
 const { user } = storeToRefs(authStore)
 
 const props = defineProps<{
@@ -47,9 +47,9 @@ const finalBill = computed<number | undefined>(() => {
     .reduce((a, c) => a + c.price?.price * c.quantity * c.coefficient, 0)
 })
 
-const makePrice = (price: Price | null, quantity: number, coefficient: number): number | null => {
+const makePrice = (price: Price | null, quantity: number, coefficient: number): string | number | null => {
   if (price) {
-    return price.price * quantity * coefficient
+    return money(price.price * quantity * coefficient)
   }
   return 0
 }
@@ -63,7 +63,7 @@ const makePrice = (price: Price | null, quantity: number, coefficient: number): 
         </h1>
       </v-col>
       <v-col>
-        <h2 class="text-right">Цена заказа: {{ finalBill }}&euro;</h2>
+        <h2 class="text-right">Цена заказа: {{ money(finalBill) }}&euro;</h2>
       </v-col>
     </v-row>
     <v-row>
@@ -105,7 +105,7 @@ const makePrice = (price: Price | null, quantity: number, coefficient: number): 
               hide-pagination
             >
               <template #[`item.price`]="{ item }">
-                {{ (item.raw.price && item.raw.price.price) || 'Не указан' }} (Изменить/Задать)
+                {{ (item.raw.price && money(item.raw.price.price)) || 'Не указана' }}
               </template>
               <template #[`item.supplierName`]="{ item }">
                 {{ (item.raw.price && item.raw.price.supplierName) || 'Не указан' }}

@@ -55,6 +55,45 @@ export class ItemsService {
   }
 
   /**
+   * Алгоритм автоматического проценивания
+   * @param user: пользователь
+   * @param itemsId: идентификаторы записей
+   */
+  async recountPrices(user: User, itemsId: number[]): Promise<void> {
+    const itemPrices = await this.prismaService.$queryRaw<{ price: number; item: number }[]>`
+        select pi.id as price, pi.item_id as item
+        from (select pr.id,
+                     pr.item_id,
+                     pr.price,
+                     pr.product_id,
+                     min(pr.price) over (partition by pr.product_id) as min_price
+              from (select p.id,
+                           i.id                                                                as item_id,
+                           p.price,
+                           p.created_at,
+                           p.product_id,
+                           p.supplier_name,
+                           max(p.created_at) over (partition by p.product_id, p.supplier_name) as created_at_max,
+                           min(p.price) over (partition by p.product_id, p.supplier_name)      as price_min
+                    from prices p
+                             left join products product on product.id = p.product_id
+                             left join items i on product.id = i.product_id
+                    where i.id in (${Prisma.join(itemsId)})) pr
+              where pr.created_at = pr.created_at_max
+                and pr.price = pr.price_min) pi
+        where pi.price = pi.min_price
+    `
+    await this.prismaService.$transaction(
+      itemPrices.map(({ price, item }) =>
+        this.prismaService.item.update({
+          where: { id: item },
+          data: { priceId: price },
+        }),
+      ),
+    )
+  }
+
+  /**
    * Изменение коэффицнетов заказа
    * @param itemsId: идентификаторы позиций
    * @param coefficient: значение коэффициента
