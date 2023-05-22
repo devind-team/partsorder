@@ -166,6 +166,6 @@ export class OrdersService {
         orderId,
       },
     })
-    return await this.fileService.getExcelFile('order', orderItem, user)
+    return await this.fileService.getExcelFile(`order#${orderId}`, orderItem, user)
   }
 }

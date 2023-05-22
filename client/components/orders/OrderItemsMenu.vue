@@ -1,7 +1,14 @@
 <script lang="ts" setup>
+import unloadOrderMutation from '~/graphql/orders/mutations/unload-order.graphql'
 import deleteOrderItemsMutation from '~/graphql/orders/mutations/delete-order-items.graphql'
 import { UpdateType } from '~/composables/query-common'
-import { DeleteOrderItemsMutation, DeleteOrderItemsMutationVariables, Item } from '~/types/graphql'
+import {
+  UnloadOrderMutation,
+  UnloadOrderMutationVariables,
+  DeleteOrderItemsMutation,
+  DeleteOrderItemsMutationVariables,
+  Item,
+} from '~/types/graphql'
 
 const props = defineProps<{
   orderId: number
@@ -14,6 +21,18 @@ const emit = defineEmits<{
 }>()
 
 const active = ref<boolean>(false)
+
+const { mutate: unloadOrder, onDone: onDoneUnloadOrder } = useMutation<
+  UnloadOrderMutation,
+  UnloadOrderMutationVariables
+>(unloadOrderMutation)
+onDoneUnloadOrder(({ data }) => {
+  if (data) {
+    const { serverUrl, bucket, key } = data.unloadOrder
+    const url = new URL(`${bucket}/${key}`, serverUrl)
+    window.location.href = url.href
+  }
+})
 
 const { mutate: deleteOrderItems } = useMutation<DeleteOrderItemsMutation, DeleteOrderItemsMutationVariables>(
   deleteOrderItemsMutation,
@@ -44,7 +63,11 @@ const { mutate: deleteOrderItems } = useMutation<DeleteOrderItemsMutation, Delet
       <slot :props="propsMenu" />
     </template>
     <v-list density="compact">
-      <v-list-item :title="$t('order.items.uploadXlsx')" prepend-icon="mdi-file-excel-box-outline" />
+      <v-list-item
+        :title="$t('order.items.uploadXlsx')"
+        prepend-icon="mdi-file-excel-box-outline"
+        @click="unloadOrder({ orderId: props.orderId })"
+      />
       <v-list-item :title="$t('order.items.uploadOffer')" prepend-icon="mdi-file-pdf-box" />
       <v-list-item :title="$t('add')" prepend-icon="mdi-plus" />
       <v-list-item :title="$t('order.items.recount')" prepend-icon="mdi-ballot-recount-outline" />

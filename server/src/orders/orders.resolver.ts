@@ -1,7 +1,6 @@
 import { File } from '@generated/file'
-import { FilesService } from '@files/files.service'
 import { Args, Mutation, Resolver, Query, Int } from '@nestjs/graphql'
-import { UploadedFile, UseGuards, flatten } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { GqlAuthGuard } from '@auth/auth.guard'
 import { CurrentUser } from '@auth/auth.decorators'
 import { OrdersService } from '@orders/orders.service'
