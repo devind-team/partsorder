@@ -16,6 +16,7 @@ const {
   data: order,
   loading,
   update,
+  changePartialUpdate,
 } = useCommonQuery<OrderQuery, OrderQueryVariables>({
   document: orderQuery,
   variables: { orderId: +route.params.orderId },
@@ -23,5 +24,5 @@ const {
 </script>
 <template>
   <v-progress-circular v-if="loading" indeterminate />
-  <order-view v-else :update="update" :order="order" />
+  <order-view v-else :update="update" :change-partial-update="changePartialUpdate" :order="order" />
 </template>

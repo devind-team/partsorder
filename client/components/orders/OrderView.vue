@@ -5,7 +5,7 @@ import { ExtractSingleKey } from '@vue/apollo-composable/dist/util/ExtractSingle
 import { useFilters, useI18n } from '#imports'
 import { OrderQuery, Price } from '~/types/graphql'
 import { useAuthStore } from '~/stores'
-import { UpdateType } from '~/composables/query-common'
+import { ChangePartialUpdate, UpdateType } from '~/composables/query-common'
 import StatusesViewDialog from '~/components/orders/StatusesViewDialog.vue'
 import { DataTableHeader } from '~/types/vuetify'
 import OrderItemsMenu from '~/components/orders/OrderItemsMenu.vue'
@@ -18,6 +18,7 @@ const { user } = storeToRefs(authStore)
 const props = defineProps<{
   order: ExtractSingleKey<OrderQuery, 'order'>
   update: UpdateType
+  changePartialUpdate: ChangePartialUpdate
 }>()
 
 const selectedItems: Ref<number[]> = ref<number[]>([])
@@ -55,7 +56,7 @@ const makePrice = (price: Price | null, quantity: number, coefficient: number): 
 }
 </script>
 <template>
-  <v-container fluid>
+  <v-container :fluid="true">
     <v-row>
       <v-col>
         <h1>
@@ -72,6 +73,7 @@ const makePrice = (price: Price | null, quantity: number, coefficient: number): 
           v-slot="{ props: propsOrderItemsMenu }"
           :order-id="Number(order.id)"
           :update="props.update"
+          :change-partial-update="props.changePartialUpdate"
           :selected-items="selectedItems"
           @close="selectedItems = []"
         >

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useMutation } from '@vue/apollo-composable'
-import { UpdateType } from '~/composables/query-common'
+import { ChangePartialUpdate, UpdateType } from '~/composables/query-common'
 import changePricesMutation from '~/graphql/items/mutations/recount-prices.graphql'
 import deleteOrderItemsMutation from '~/graphql/orders/mutations/delete-order-items.graphql'
 import {
@@ -9,13 +9,13 @@ import {
   DeleteOrderItemsMutation,
   DeleteOrderItemsMutationVariables,
   Item,
-  Price,
 } from '~/types/graphql'
 
 const props = defineProps<{
   orderId: number
   selectedItems: number[]
   update: UpdateType
+  changePartialUpdate: ChangePartialUpdate
 }>()
 
 const emit = defineEmits<{
@@ -32,28 +32,7 @@ const close = () => {
 const { mutate: recountPrices } = useMutation<RecountPricesMutation, RecountPricesMutationVariables>(
   changePricesMutation,
   {
-    update: (cache, result) => {
-      props.update(cache, result, (dataCache) => {
-        close()
-        if (!result.data) {
-          return dataCache
-        }
-        const itemPrices: Record<string, Price> = result.data.recountPrices.reduce(
-          (ac, item) => ({
-            ...ac,
-            [item.id]: item.price,
-          }),
-          {},
-        )
-        return {
-          ...dataCache,
-          order: {
-            ...dataCache.order,
-            items: dataCache.order.items.map((item: Item) => ({ ...item, price: itemPrices[item.id] || item.price })),
-          },
-        }
-      })
-    },
+    update: (cache, result) => props.changePartialUpdate(cache, result, 'items', 'price'),
   },
 )
 
