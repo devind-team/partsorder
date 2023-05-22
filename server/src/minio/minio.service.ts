@@ -53,6 +53,9 @@ export class MinioService {
   async getFileObject(objectName: string): Promise<ReadableStream> {
     return await this.minioClient.getObject(this.getBucket(), objectName)
   }
+
+  
+
   /**
    * Загружаем файл в S3
    * @param file

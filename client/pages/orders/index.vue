@@ -24,7 +24,7 @@ const headers = [
   { title: '#', key: 'id', sortable: false },
   { title: t('order.address'), key: 'address', sortable: false },
   { title: t('create'), key: 'createdAt', sortable: false },
-  { title: t('statuses.statuses'), key: 'statuses', sortable: false },
+  { title: t('order.status.index'), key: 'statuses', sortable: false },
   { title: t('order.manager'), key: 'manager', sortable: false },
 ]
 </script>

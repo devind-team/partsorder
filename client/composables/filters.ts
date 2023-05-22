@@ -2,7 +2,7 @@ import path from 'path'
 import accounting from 'accounting'
 
 export function useFilters() {
-  const money = (s: string): string => accounting.formatNumber(Number(s), 2, ' ', '.')
+  const money = (s: string | number): string => accounting.formatNumber(Number(s), 2, ' ', '.')
 
   const basename = (name: string): string => path.basename(name)
 

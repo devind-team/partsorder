@@ -5,6 +5,8 @@
   "close": "Закрыть",
   "create": "Дата создания",
   "search": "Поиск",
+  "add": "Добавить",
+  "delete": "Удалить",
   "auth": {
     "title": "Авторизация",
     "register": "Регистрация",
@@ -42,6 +44,7 @@
     "notSet": "Не назначен",
     "file": "Файл заказа",
     "status": {
+      "index": "Статус",
       "title": "Изменение статусов",
       "noStatus": "Не указаны"
     },
@@ -60,6 +63,13 @@
     },
     "detail": {
       "title": "Детализация заказа #{number} ({date})"
+    },
+    "items": {
+      "recountPrices": "Проценить",
+      "changeCoefficient": "Задать коэффициент наценки",
+      "changeStatus": "Изменить статус",
+      "uploadXlsx": "Выгрузить в Excel",
+      "uploadOffer": "Выгрузить коммерческое предложение"
     }
   },
   "prices": {

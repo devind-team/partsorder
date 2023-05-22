@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common'
-import { User } from '@generated/user'
+import { Prisma } from '@prisma/client'
 import { CreateOrderInput } from '@orders/dto/create-order.input'
 import { PrismaService } from '@common/services/prisma.service'
 import { FilesService } from '@files/files.service'
 import { CreateOrderType } from '@orders/dto/create-order.type'
-import { Order } from '@generated/order'
 import { OrderConnectionArgs } from '@orders/dto/order-connection.args'
 import { OrderConnectionType } from '@orders/dto/order-connection.type'
 import { findManyCursorConnection } from '@common/relay/find-many-cursor-connection'
-import { Role } from '@generated/prisma'
 import { ProductsService } from '@products/products.service'
-import { orderItemValidator } from '@orders/validators'
+import { orderItemValidator } from '@items/validators'
+import { Order } from '@generated/order'
+import { Role } from '@generated/prisma'
+import { User } from '@generated/user'
 
 @Injectable()
 export class OrdersService {
@@ -57,7 +58,9 @@ export class OrdersService {
    * @param params: параметры фильтрации
    */
   async getOrderConnection(user: User, params: OrderConnectionArgs): Promise<OrderConnectionType> {
-    const where = user.role === Role.USER ? { ...params.where, userId: user.id } : params.where
+    const where = (
+      user.role === Role.USER ? { ...params.where, userId: user.id } : params.where
+    ) as Prisma.OrderWhereInput
     return await findManyCursorConnection(
       (args) =>
         this.prismaService.order.findMany({
@@ -114,4 +117,52 @@ export class OrdersService {
     })
     return { order }
   }
+
+  /**
+   * Удаление заказа
+   * Удаляем заказ если пользователь сам его создал или пользователь админ
+   * @param user: пользователь
+   * @param orderId: идентификатор заказа
+   */
+  async deleteOrder(user: User, orderId: number): Promise<number> {
+    const order = await this.prismaService.order.findUnique({
+      select: { id: true, userId: true },
+      where: { id: orderId },
+    })
+    if (order.userId === user.id || user.role === 'ADMIN') {
+      await this.prismaService.order.delete({ where: { id: orderId } })
+    }
+    return orderId
+  }
+
+  /**
+   * Выгрузка заказа
+   * @param user
+   * @param orderId
+   * @param fileType
+   */
+  // async unloadOrder(
+  //   user: User,
+  //   orderId: number,
+  //   fileType: string,
+  //   ):Promise<Order> {
+  //     const сurrentOrder: Order = await this.getOrder(orderId)
+  //     var flatten = require( 'flat' )
+  //     let data: { } = flatten( сurrentOrder )
+  //     console.log( await this.prismaService.item.findMany( {
+  //       include: {
+  //         coefficient: true,
+  //         quantity: true,
+  //         price: true,
+  //         product: {
+  //           vendorCode: true,
+  //           manufacturer: true
+  //         }
+  //       },
+  //       where: {
+  //         orderId
+  //       }
+  //     }))
+  //     return
+  //   }
 }
