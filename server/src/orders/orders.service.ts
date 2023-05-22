@@ -5,6 +5,7 @@ import { PrismaService } from '@common/services/prisma.service'
 import { FilesService } from '@files/files.service'
 import { CreateOrderType } from '@orders/dto/create-order.type'
 import { Order } from '@generated/order'
+import { File } from '@generated/file'
 import { OrderConnectionArgs } from '@orders/dto/order-connection.args'
 import { OrderConnectionType } from '@orders/dto/order-connection.type'
 import { findManyCursorConnection } from '@common/relay/find-many-cursor-connection'
@@ -27,7 +28,7 @@ export class OrdersService {
    * @param orderId
    */
   async getOrder(orderId: number): Promise<Order> {
-    // 
+    //
     return this.prismaService.order.findUnique({
       include: {
         statuses: {
@@ -147,44 +148,24 @@ export class OrdersService {
    * Выгрузка заказа
    * @param user
    * @param orderId
-   * @param fileType
    */
-  async unloadOrder(
-    user: User,
-    orderId: number,
-    fileType: string,
-    ):Promise<Order> { 
-      const сurrentOrder: Order = await this.getOrder(orderId) 
-      
-      const orderItem = await this.prismaService.item.findMany( {
-        select: {
-          coefficient: true,
-          quantity: true,
-          price: true, 
-          product: {
-            select:{
-              vendorCode: true,
-              manufacturer: true,
-            }
-          }
+  async unloadOrder(user: User, orderId: number): Promise<File> {
+    const orderItem = await this.prismaService.item.findMany({
+      select: {
+        coefficient: true,
+        quantity: true,
+        price: true,
+        product: {
+          select: {
+            vendorCode: true,
+            manufacturer: true,
+          },
         },
-        where: { 
-          orderId 
-        } 
-      })
-      await this.fileService.getExcelFile('order',[{},{}],orderItem)
-      return
-
-      // await this.fileService.getExcelFile('hello',[
-      //     { header: 'Id', key: 'id'},
-      //     { header: 'Name', key: 'name'},
-      //     { header: 'Status.id.', key: 'status.id'},
-      //     { header: 'Status.name.', key: 'status.name'}
-      //   ],[
-      //     {id: 1, name: 1, 'status.id': 1, 'status.name': 1},
-      //     {id: 2, name: 2, 'status.id': 2, 'status.name': 2},
-      //     {id: 3, name: 3, 'status.id': 3, 'status.name': 3}
-      //   ])
-      return 
-    }
+      },
+      where: {
+        orderId,
+      },
+    })
+    return await this.fileService.getExcelFile('order', orderItem, user)
+  }
 }

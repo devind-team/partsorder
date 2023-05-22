@@ -1,5 +1,6 @@
 import * as ExcelJS from 'exceljs'
-import { z } from 'zod'
+import { object, z } from 'zod'
+import { flatten } from 'flat'
 import { Readable as ReadableStream } from 'stream'
 import { Injectable, NotAcceptableException } from '@nestjs/common'
 import { PrismaService } from '@common/services/prisma.service'
@@ -9,8 +10,6 @@ import { FileUploadInput } from '@files/dto/file-upload.input'
 import { ExcelReader } from '@common/readers/excel.reader'
 import { User } from '@generated/user'
 import { File } from '@generated/file'
-import { Order } from '@prisma/client'
-import { ExcelWriter } from '@common/writers/excel.writer'
 
 @Injectable()
 export class FilesService {
@@ -95,34 +94,27 @@ export class FilesService {
   /**
    * Записываем значения из заказа в Excel файл.
    * @param sheetName: string
-   * @param headers: Array<{}> - [{ header: 'Id', key: 'id'}, { header: 'Name', key: 'name'}]
    * @param values: Array<{}> - [{id: 1, name: 1, 'status.id': 1, 'status.name': 1}, {}]
    */
-  async getExcelFile(sheetName:string ,headers: Array<{}>, values: Array<{}>): Promise<void> {
-    const workbook = createAndFillWorkbook(sheetName,headers, values)
-    const filename: string = `UnloadOrder_${(new Date().toJSON().slice(0,10))}.xlsx`
-    const file = { filename, mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer: await workbook.xlsx.writeBuffer() }
-    const objectName = await this.minioService.uploadObject(file)
-    return 
+  async getExcelFile(sheetName: string, values: Array<Record<string, unknown>>, user?: User): Promise<File> {
+    const workbook = await this.createAndFillWorkbook(sheetName, values)
+    const fileName = `UnloadOrder_${new Date().toJSON().slice(0, 10)}.xlsx`
+    const name = await this.minioService.uploadObject({
+      fileName,
+      mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      buffer: await workbook.xlsx.writeBuffer(),
+    })
+    return await this.add({ fileName, name, bucket: this.minioService.getBucket() }, user)
+  }
+
+  async createAndFillWorkbook(sheetName: string, values: Array<Record<string, unknown>>): Promise<ExcelJS.Workbook> {
+    const data: Array<Record<string, string>> = values.map((item) => flatten(item))
+    const headers = Object.keys(data[0]).map((key) => ({ header: key, key }))
+    const wb = new ExcelJS.Workbook()
+    const ws = wb.addWorksheet(sheetName)
+    ws.columns = headers
+    const rows = data
+    ws.addRows(rows)
+    return wb
   }
 }
-
-function createAndFillWorkbook(sheetName:string, headers: Array<{}>, values: Array<{}>): ExcelJS.Workbook {
-  var flatten = require( 'flat' )
-  let data: Array<{}> = values.map((item) => flatten(item))
-  console.log(data)
-  headers = [
-        { header: 'vendorCode', key: 'product.vendorCode'},
-        { header: 'manufacturer', key: 'product.manufacturer'},
-        { header: 'price.', key: 'price'},
-        { header: 'quantity.', key: 'quantity'},
-        { header: 'coefficent', key: 'coefficient'}
-      ]
-  const wb = new ExcelJS.Workbook()
-  const ws = wb.addWorksheet(sheetName)
-  ws.columns = headers;
-  const rows = data
-  ws.addRows(rows)
-  return wb
-}
-
