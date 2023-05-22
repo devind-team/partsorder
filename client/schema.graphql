@@ -538,50 +538,6 @@ type UserLoginType {
   user: User!
 }
 
-type FileCountAggregate {
-  id: Int!
-  name: Int!
-  serverUrl: Int!
-  bucket: Int!
-  key: Int!
-  createdAt: Int!
-  updatedAt: Int!
-  userId: Int!
-  _all: Int!
-}
-
-type FileAvgAggregate {
-  id: Float
-  userId: Float
-}
-
-type FileSumAggregate {
-  id: Int
-  userId: Int
-}
-
-type FileMinAggregate {
-  id: Int
-  name: String
-  serverUrl: String
-  bucket: String
-  key: String
-  createdAt: DateTime
-  updatedAt: DateTime
-  userId: Int
-}
-
-type FileMaxAggregate {
-  id: Int
-  name: String
-  serverUrl: String
-  bucket: String
-  key: String
-  createdAt: DateTime
-  updatedAt: DateTime
-  userId: Int
-}
-
 type OrderCountAggregate {
   id: Int!
   address: Int!
@@ -1626,7 +1582,7 @@ type Mutation {
 
     """Тип выгружаемого файла"""
     fileType: String!
-  ): File!
+  ): Order!
 }
 
 input UserLoginInput {

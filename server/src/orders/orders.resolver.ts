@@ -64,7 +64,7 @@ export class OrdersResolver {
    * @param orderId
    * @param fileType
    */
-  @Mutation(() => File)
+  @Mutation(() => Order)
   async unloadOrder(
     @CurrentUser() user: User,
     @Args({type: () => Int, name: 'orderId', description: 'Идентификатор заказа'}) orderId: number,

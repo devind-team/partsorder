@@ -108,10 +108,20 @@ export class FilesService {
 }
 
 function createAndFillWorkbook(sheetName:string, headers: Array<{}>, values: Array<{}>): ExcelJS.Workbook {
+  var flatten = require( 'flat' )
+  let data: Array<{}> = values.map((item) => flatten(item))
+  console.log(data)
+  headers = [
+        { header: 'vendorCode', key: 'product.vendorCode'},
+        { header: 'manufacturer', key: 'product.manufacturer'},
+        { header: 'price.', key: 'price'},
+        { header: 'quantity.', key: 'quantity'},
+        { header: 'coefficent', key: 'coefficient'}
+      ]
   const wb = new ExcelJS.Workbook()
   const ws = wb.addWorksheet(sheetName)
   ws.columns = headers;
-  const rows = values
+  const rows = data
   ws.addRows(rows)
   return wb
 }

@@ -155,22 +155,26 @@ export class OrdersService {
     fileType: string,
     ):Promise<Order> { 
       const сurrentOrder: Order = await this.getOrder(orderId) 
-      var flatten = require( 'flat' )
-      let data: { } = flatten( сurrentOrder )
-      console.log( await this.prismaService.item.findMany( {
-        include: {
+      
+      const orderItem = await this.prismaService.item.findMany( {
+        select: {
           coefficient: true,
           quantity: true,
           price: true, 
           product: {
-            vendorCode: true,
-            manufacturer: true
+            select:{
+              vendorCode: true,
+              manufacturer: true,
+            }
           }
         },
         where: { 
           orderId 
         } 
-      }))
+      })
+      await this.fileService.getExcelFile('order',[{},{}],orderItem)
+      return
+
       // await this.fileService.getExcelFile('hello',[
       //     { header: 'Id', key: 'id'},
       //     { header: 'Name', key: 'name'},
