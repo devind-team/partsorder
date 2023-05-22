@@ -31,9 +31,7 @@ const close = () => {
 
 const { mutate: recountPrices } = useMutation<RecountPricesMutation, RecountPricesMutationVariables>(
   changePricesMutation,
-  {
-    update: (cache, result) => props.changePartialUpdate(cache, result, 'items', 'price'),
-  },
+  { update: (cache, result) => props.changePartialUpdate(cache, result, 'items', 'price') },
 )
 
 const { mutate: deleteOrderItems } = useMutation<DeleteOrderItemsMutation, DeleteOrderItemsMutationVariables>(
@@ -66,9 +64,10 @@ const { mutate: deleteOrderItems } = useMutation<DeleteOrderItemsMutation, Delet
     </template>
     <v-list density="compact">
       <v-list-item :title="$t('order.items.uploadXlsx')" prepend-icon="mdi-file-excel-box-outline" />
-      <v-list-item :title="$t('order.items.uploadOffer')" prepend-icon="mdi-file-pdf-box" />
+      <!-- <v-list-item :title="$t('order.items.uploadOffer')" prepend-icon="mdi-file-pdf-box" /> -->
       <v-list-item :title="$t('add')" prepend-icon="mdi-plus" />
       <v-list-item
+        :disabled="!props.selectedItems.length"
         :title="$t('order.items.recountPrices')"
         prepend-icon="mdi-ballot-recount-outline"
         @click="recountPrices({ orderId: props.orderId, itemIds: selectedItems.map(Number) })"
