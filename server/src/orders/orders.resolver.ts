@@ -8,10 +8,9 @@ import { CreateOrderInput } from '@orders/dto/create-order.input'
 import { CreateOrderType } from '@orders/dto/create-order.type'
 import { OrderConnectionType } from '@orders/dto/order-connection.type'
 import { OrderConnectionArgs } from '@orders/dto/order-connection.args'
-import { DeleteOrderItemsType } from '@orders/dto/delete-order-items.type'
 import { User } from '@generated/user'
 import { Order } from '@generated/order'
-import { DeleteManyItemArgs } from '@generated/item'
+import { DeleteOrderType } from '@orders/dto/delete-order.type'
 
 @UseGuards(GqlAuthGuard)
 @Resolver()
@@ -28,6 +27,11 @@ export class OrdersResolver {
     return await this.ordersService.getOrderConnection(user, params)
   }
 
+  /**
+   * Мутация для создания заказа
+   * @param user: пользователь
+   * @param order: данные заказа
+   */
   @Mutation(() => CreateOrderType)
   async createOrder(
     @CurrentUser() user: User,
@@ -41,18 +45,16 @@ export class OrdersResolver {
   }
 
   /**
-   * Удаление элементов из заказа
-   * @param user
-   * @param orderId
-   * @param deleteManyItemArgs
+   * Мутация для удаления заказа
+   * @param user: пользователь
+   * @param orderId: иднетификатор заказа
    */
-  @Mutation(() => DeleteOrderItemsType)
-  async deleteOrderItems(
+  @Mutation(() => DeleteOrderType)
+  async deleteOrder(
     @CurrentUser() user: User,
-    @Args({ type: () => Int, name: 'orderId', description: 'Идентификатор заказа' }) orderId: number,
-    @Args() deleteManyItemArgs: DeleteManyItemArgs,
-  ): Promise<DeleteOrderItemsType> {
-    return await this.ordersService.deleteItems(user, orderId, deleteManyItemArgs)
+    @Args({ type: () => Number, name: 'orderId', description: 'Идентификатор заказа' }) orderId: number,
+  ): Promise<DeleteOrderType> {
+    return { deleteId: await this.ordersService.deleteOrder(user, orderId) }
   }
 
   /**

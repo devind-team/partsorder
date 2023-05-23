@@ -44,6 +44,7 @@
     "notSet": "Не назначен",
     "file": "Файл заказа",
     "status": {
+      "index": "Статус",
       "title": "Изменение статусов",
       "noStatus": "Не указаны"
     },
@@ -52,7 +53,7 @@
       "CREATED": "Создан",
       "APPROVAL": "Принят",
       "APPROVED": "Согласован",
-      "PURCHASING": "Оплачен",
+      "PURCHASING": "В закупке",
       "PURCHASED": "Оплачен",
       "DELIVERY": "В пути",
       "EUSTOCK": "На складе в Европе",
@@ -64,7 +65,7 @@
       "title": "Детализация заказа #{number} ({date})"
     },
     "items": {
-      "recount": "Проценить заново",
+      "recountPrices": "Проценить",
       "changeCoefficient": "Задать коэффициент наценки",
       "changeStatus": "Изменить статус",
       "uploadXlsx": "Выгрузить в Excel",

@@ -113,8 +113,7 @@ export class FilesService {
     const wb = new ExcelJS.Workbook()
     const ws = wb.addWorksheet(sheetName)
     ws.columns = headers
-    const rows = data
-    ws.addRows(rows)
+    ws.addRows(data)
     return wb
   }
 }

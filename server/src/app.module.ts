@@ -10,10 +10,11 @@ import { PrismaService } from '@common/services/prisma.service'
 import { UsersModule } from '@users/users.module'
 import { OrdersModule } from '@orders/orders.module'
 import { FilesModule } from '@files/files.module'
+import { ItemsModule } from '@items/items.module'
 import { PricesModule } from '@prices/prices.module'
+import { ProductsModule } from '@products/products.module'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { ProductsModule } from './products/products.module'
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ProductsModule } from './products/products.module'
     AuthModule,
     UsersModule,
     FilesModule,
+    ItemsModule,
     PricesModule,
     OrdersModule,
     ProductsModule,

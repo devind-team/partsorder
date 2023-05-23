@@ -120,6 +120,43 @@ export function useCommonQuery<
     })
   }
   /**
+   * Частичное изменение объекта
+   * собирает по id и полю, которое нужно изменить.
+   * @param cache
+   * @param result
+   * @param field
+   * @param key
+   */
+  const changePartialUpdate = <TResultMutation>(
+    cache: DataProxy,
+    result: Omit<FetchResult<TResultMutation>, 'context'>,
+    field: string,
+    key: string,
+  ): void => {
+    update(cache, result, (dataCache) => {
+      const mutationResult = getMutationResult(result)
+      if (mutationResult) {
+        const dataKey: keyof typeof dataCache = Object.keys(dataCache)[0]
+        const mapMutationsResult: Record<string, any> = Array.isArray(mutationResult)
+          ? mutationResult.reduce((a, i) => ({ ...a, [i.id]: i[key] }), {})
+          : mutationResult
+        return {
+          ...dataCache,
+          [dataKey]: {
+            ...dataCache[dataKey],
+            [field]: Array.isArray(dataCache[dataKey][field])
+              ? dataCache[dataKey][field].map((el: { id: string | number; [k: string]: any }) => ({
+                  ...el,
+                  [key]: mapMutationsResult[el.id] || el[key],
+                }))
+              : { ...dataCache[dataKey][field], [field]: mapMutationsResult },
+          },
+        }
+      }
+      return dataCache
+    })
+  }
+  /**
    * Замена записей на новые
    * @param cache - хранилище
    * @param result - результат выполнения мутации
@@ -171,6 +208,7 @@ export function useCommonQuery<
     changeUpdate,
     resetUpdate,
     deleteUpdate,
+    changePartialUpdate,
   }
 }
 
@@ -180,6 +218,7 @@ export type UpdateType<TResult = any> = <TResultMutation>(
   transform: TransformUpdate<TResult, TResultMutation>,
 ) => void
 export type AddUpdateType = ReturnType<typeof useCommonQuery>['addUpdate']
+export type ChangePartialUpdate = ReturnType<typeof useCommonQuery>['changePartialUpdate']
 export type ChangeUpdateType = ReturnType<typeof useCommonQuery>['changeUpdate']
 export type ResetUpdateType = ReturnType<typeof useCommonQuery>['resetUpdate']
 export type DeleteUpdateType = ReturnType<typeof useCommonQuery>['deleteUpdate']

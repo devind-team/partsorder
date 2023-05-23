@@ -1,19 +1,18 @@
 import { Injectable } from '@nestjs/common'
-import { User } from '@generated/user'
+import { Prisma } from '@prisma/client'
 import { CreateOrderInput } from '@orders/dto/create-order.input'
 import { PrismaService } from '@common/services/prisma.service'
 import { FilesService } from '@files/files.service'
 import { CreateOrderType } from '@orders/dto/create-order.type'
-import { Order } from '@generated/order'
-import { File } from '@generated/file'
 import { OrderConnectionArgs } from '@orders/dto/order-connection.args'
 import { OrderConnectionType } from '@orders/dto/order-connection.type'
 import { findManyCursorConnection } from '@common/relay/find-many-cursor-connection'
-import { Role } from '@generated/prisma'
 import { ProductsService } from '@products/products.service'
-import { orderItemValidator } from '@orders/validators'
-import { DeleteOrderItemsType } from '@orders/dto/delete-order-items.type'
-import { DeleteManyItemArgs } from '@generated/item'
+import { orderItemValidator } from '@items/validators'
+import { Order } from '@generated/order'
+import { Role } from '@generated/prisma'
+import { User } from '@generated/user'
+import { File } from '@generated/file'
 
 @Injectable()
 export class OrdersService {
@@ -28,7 +27,6 @@ export class OrdersService {
    * @param orderId
    */
   async getOrder(orderId: number): Promise<Order> {
-    //
     return this.prismaService.order.findUnique({
       include: {
         statuses: {
@@ -61,7 +59,9 @@ export class OrdersService {
    * @param params: параметры фильтрации
    */
   async getOrderConnection(user: User, params: OrderConnectionArgs): Promise<OrderConnectionType> {
-    const where = user.role === Role.USER ? { ...params.where, userId: user.id } : params.where
+    const where = (
+      user.role === Role.USER ? { ...params.where, userId: user.id } : params.where
+    ) as Prisma.OrderWhereInput
     return await findManyCursorConnection(
       (args) =>
         this.prismaService.order.findMany({
@@ -120,28 +120,20 @@ export class OrdersService {
   }
 
   /**
-   * Удаление элементво из заказа
+   * Удаление заказа
+   * Удаляем заказ если пользователь сам его создал или пользователь админ
    * @param user: пользователь
    * @param orderId: идентификатор заказа
-   * @param deleteManyItemArgs: условие даления
    */
-  async deleteItems(
-    user: User,
-    orderId: number,
-    deleteManyItemArgs: DeleteManyItemArgs,
-  ): Promise<DeleteOrderItemsType> {
-    const where = { ...deleteManyItemArgs.where, orderId, ...(user.role === 'ADMIN' ? {} : { userId: user.id }) }
-    const items = await this.prismaService.item.findMany({
-      where,
-      select: {
-        id: true,
-      },
+  async deleteOrder(user: User, orderId: number): Promise<number> {
+    const order = await this.prismaService.order.findUnique({
+      select: { id: true, userId: true },
+      where: { id: orderId },
     })
-    const deleteIds = items.map((item) => item.id)
-    await this.prismaService.item.deleteMany({
-      where: { id: { in: deleteIds } },
-    })
-    return { deleteIds }
+    if (order.userId === user.id || user.role === 'ADMIN') {
+      await this.prismaService.order.delete({ where: { id: orderId } })
+    }
+    return orderId
   }
 
   /**
