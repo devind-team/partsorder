@@ -1,23 +1,28 @@
 <script lang="ts" setup>
+import { Ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { ExtractSingleKey } from '@vue/apollo-composable/dist/util/ExtractSingleKey'
 import { useFilters, useI18n } from '#imports'
 import { OrderQuery, Price } from '~/types/graphql'
-import { ExtractSingleKey } from '@vue/apollo-composable/dist/util/ExtractSingleKey'
 import { useAuthStore } from '~/stores'
-import { storeToRefs } from 'pinia'
+import { ChangePartialUpdate, UpdateType } from '~/composables/query-common'
 import StatusesViewDialog from '~/components/orders/StatusesViewDialog.vue'
 import { DataTableHeader } from '~/types/vuetify'
+import OrderItemsMenu from '~/components/orders/OrderItemsMenu.vue'
 
 const authStore = useAuthStore()
 const { t } = useI18n()
-const { dateTimeHM } = useFilters()
+const { dateTimeHM, money } = useFilters()
 const { user } = storeToRefs(authStore)
 
 const props = defineProps<{
   order: ExtractSingleKey<OrderQuery, 'order'>
+  update: UpdateType
+  changePartialUpdate: ChangePartialUpdate
 }>()
 
-const selectedItems = ref([])
-const search = ref('')
+const selectedItems: Ref<number[]> = ref<number[]>([])
+const search = ref<string>('')
 
 const headers = computed<DataTableHeader[]>(() => {
   const h = [
@@ -43,19 +48,37 @@ const finalBill = computed<number | undefined>(() => {
     .reduce((a, c) => a + c.price?.price * c.quantity * c.coefficient, 0)
 })
 
-const makePrice = (price: Price | null, quantity: number, coefficient: number): number | null => {
+const makePrice = (price: Price | null, quantity: number, coefficient: number): string | number | null => {
   if (price) {
-    return price.price * quantity * coefficient
+    return money(price.price * quantity * coefficient)
   }
   return 0
 }
 </script>
 <template>
-  <v-container fluid>
-    <h1 class="my-4">{{ t('order.detail.title', { number: props.order.id, date: dateTimeHM(order.createdAt) }) }}</h1>
+  <v-container :fluid="true">
     <v-row>
       <v-col>
-        <h2>Цена заказа: {{ finalBill }}&euro;</h2>
+        <h1>
+          {{ t('order.detail.title', { number: props.order.id, date: dateTimeHM(order.createdAt) }) }}
+        </h1>
+      </v-col>
+      <v-col>
+        <h2 class="text-right">Цена заказа: {{ money(finalBill) }}&euro;</h2>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <order-items-menu
+          v-slot="{ props: propsOrderItemsMenu }"
+          :order-id="Number(order.id)"
+          :update="props.update"
+          :change-partial-update="props.changePartialUpdate"
+          :selected-items="selectedItems"
+          @close="selectedItems = []"
+        >
+          <v-btn v-bind="propsOrderItemsMenu" color="primary">Действия</v-btn>
+        </order-items-menu>
       </v-col>
       <v-col>
         <v-text-field
@@ -84,7 +107,7 @@ const makePrice = (price: Price | null, quantity: number, coefficient: number): 
               hide-pagination
             >
               <template #[`item.price`]="{ item }">
-                {{ (item.raw.price && item.raw.price.price) || 'Не указан' }} (Изменить/Задать)
+                {{ (item.raw.price && money(item.raw.price.price)) || 'Не указана' }}
               </template>
               <template #[`item.supplierName`]="{ item }">
                 {{ (item.raw.price && item.raw.price.supplierName) || 'Не указан' }}

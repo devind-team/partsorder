@@ -1,11 +1,11 @@
 #import "../../auth/fragments/user-fields.graphql"
 #import "../../prices/fragments/price-fields.graphql"
 #import "../../products/fragments/product-fields.graphql"
+#import "../../items/fragments/item-fields.graphql"
+#import "../../items/fragments/status-item-fields.graphql"
 #import "../fragments/order-fields.graphql"
-#import "../fragments/item-fields.graphql"
 #import "../fragments/status-fields.graphql"
 #import "../fragments/comment-fields.graphql"
-#import "../fragments/status-item-fields.graphql"
 
 query Order($orderId: Int!) {
   order(orderId: $orderId) {

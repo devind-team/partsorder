@@ -63,6 +63,9 @@ scalar DateTime
 
 enum Role {
   USER
+  SELLER
+  BUYER
+  LOGIST
   ADMIN
 }
 
@@ -538,6 +541,50 @@ type UserLoginType {
   user: User!
 }
 
+type FileCountAggregate {
+  id: Int!
+  name: Int!
+  serverUrl: Int!
+  bucket: Int!
+  key: Int!
+  createdAt: Int!
+  updatedAt: Int!
+  userId: Int!
+  _all: Int!
+}
+
+type FileAvgAggregate {
+  id: Float
+  userId: Float
+}
+
+type FileSumAggregate {
+  id: Int
+  userId: Int
+}
+
+type FileMinAggregate {
+  id: Int
+  name: String
+  serverUrl: String
+  bucket: String
+  key: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  userId: Int
+}
+
+type FileMaxAggregate {
+  id: Int
+  name: String
+  serverUrl: String
+  bucket: String
+  key: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  userId: Int
+}
+
 type OrderCountAggregate {
   id: Int!
   address: Int!
@@ -595,6 +642,82 @@ type OrderConnectionType {
   edges: [OrderEdge!]
   pageInfo: PageInfo!
   totalCount: Int!
+}
+
+type DeleteOrderType {
+  """Идентификатор удаленного заказа"""
+  deleteId: Float!
+}
+
+type DeleteOrderItemsType {
+  """Идентификаторы удаленных записей"""
+  deleteIds: [Float!]!
+}
+
+type ItemCountAggregate {
+  id: Int!
+  quantity: Int!
+  coefficient: Int!
+  carNo: Int!
+  routeNo: Int!
+  deliveryType: Int!
+  createdAt: Int!
+  updatedAt: Int!
+  orderId: Int!
+  productId: Int!
+  priceId: Int!
+  userId: Int!
+  _all: Int!
+}
+
+type ItemAvgAggregate {
+  id: Float
+  quantity: Float
+  coefficient: Float
+  orderId: Float
+  productId: Float
+  priceId: Float
+  userId: Float
+}
+
+type ItemSumAggregate {
+  id: Int
+  quantity: Int
+  coefficient: Int
+  orderId: Int
+  productId: Int
+  priceId: Int
+  userId: Int
+}
+
+type ItemMinAggregate {
+  id: Int
+  quantity: Int
+  coefficient: Int
+  carNo: String
+  routeNo: String
+  deliveryType: DeliveryType
+  createdAt: DateTime
+  updatedAt: DateTime
+  orderId: Int
+  productId: Int
+  priceId: Int
+  userId: Int
+}
+
+type ItemMaxAggregate {
+  id: Int
+  quantity: Int
+  coefficient: Int
+  carNo: String
+  routeNo: String
+  deliveryType: DeliveryType
+  createdAt: DateTime
+  updatedAt: DateTime
+  orderId: Int
+  productId: Int
+  priceId: Int
+  userId: Int
 }
 
 type PriceCountAggregate {
@@ -1497,9 +1620,49 @@ type Mutation {
   login(userLoginInput: UserLoginInput!): UserLoginType!
   register(userRegisterInput: UserRegisterInput!): UserLoginType
   uploadAvatar(fileUpload: FileUploadInput!): User!
+  addStatuses(
+    """Идентификатор заказа"""
+    orderId: Int!
+
+    """Идентификаторы позиций"""
+    itemIds: [Int!]!
+
+    """Статус заказа"""
+    status: ItemStatus!
+  ): [Item!]!
+  recountPrices(
+    """Идентификатор заказа"""
+    orderId: Int!
+
+    """Идентификаторы позиций"""
+    itemIds: [Int!]!
+  ): [Item!]!
+  changeCoefficientItems(
+    """Идентификатор заказа"""
+    orderId: Int!
+
+    """Идентификаторы позиций"""
+    itemIds: [Int!]!
+
+    """Коэффициент"""
+    coefficient: Float!
+  ): [Item!]!
+  deleteOrderItems(
+    """Идентификатор заказа"""
+    orderId: Int!
+    where: ItemWhereInput
+  ): DeleteOrderItemsType!
   createPrice(price: CreatePriceInput!): CreatePriceType!
   uploadPrices(fileUpload: FileUploadInput!): CreateUploadPricesType!
   createOrder(order: CreateOrderInput!): CreateOrderType!
+  deleteOrder(
+    """Идентификатор заказа"""
+    orderId: Float!
+  ): DeleteOrderType!
+  unloadOrder(
+    """Идентификатор заказа"""
+    orderId: Int!
+  ): File!
 }
 
 input UserLoginInput {
