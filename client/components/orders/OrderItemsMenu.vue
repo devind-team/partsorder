@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { useMutation } from '@vue/apollo-composable'
 import { ChangePartialUpdate, UpdateType } from '~/composables/query-common'
-import { UpdateType } from '~/composables/query-common'
 import {
   UnloadOrderMutation,
   UnloadOrderMutationVariables,
