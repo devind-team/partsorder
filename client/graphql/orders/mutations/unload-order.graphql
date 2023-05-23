@@ -1,0 +1,9 @@
+mutation UnloadOrder($orderId: Int!) {
+  unloadOrder(orderId: $orderId) {
+    id
+    serverUrl
+    bucket
+    key
+    __typename
+  }
+}

@@ -1,4 +1,6 @@
+import * as ExcelJS from 'exceljs'
 import { z } from 'zod'
+import { flatten } from 'flat'
 import { Readable as ReadableStream } from 'stream'
 import { Injectable, NotAcceptableException } from '@nestjs/common'
 import { PrismaService } from '@common/services/prisma.service'
@@ -87,5 +89,31 @@ export class FilesService {
     const excelReader = new ExcelReader()
     await excelReader.load(stream)
     return await ExcelReader.getValues(excelReader.workSheet)
+  }
+
+  /**
+   * Записываем значения из заказа в Excel файл.
+   * @param sheetName: string
+   * @param values: Array<{}> - [{id: 1, name: 1, 'status.id': 1, 'status.name': 1}, {}]
+   */
+  async getExcelFile(sheetName: string, values: Array<Record<string, unknown>>, user?: User): Promise<File> {
+    const workbook = await this.createAndFillWorkbook(sheetName, values)
+    const fileName = `UnloadOrder_${new Date().toJSON().slice(0, 10)}.xlsx`
+    const name = await this.minioService.uploadObject({
+      fileName,
+      mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      buffer: await workbook.xlsx.writeBuffer(),
+    })
+    return await this.add({ fileName, name, bucket: this.minioService.getBucket() }, user)
+  }
+
+  async createAndFillWorkbook(sheetName: string, values: Array<Record<string, unknown>>): Promise<ExcelJS.Workbook> {
+    const data: Array<Record<string, string>> = values.map((item) => flatten(item))
+    const headers = Object.keys(data[0]).map((key) => ({ header: key, key }))
+    const wb = new ExcelJS.Workbook()
+    const ws = wb.addWorksheet(sheetName)
+    ws.columns = headers
+    ws.addRows(data)
+    return wb
   }
 }

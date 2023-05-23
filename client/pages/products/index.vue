@@ -4,7 +4,7 @@ import productsQuery from '~/graphql/products/queries/products.graphql'
 import { ProductsQuery, ProductsQueryVariables } from '~/types/graphql'
 
 const { t } = useI18n()
-const { date } = useFilters()
+const { date, money } = useFilters()
 useHead({
   title: t('products.title'),
 })
@@ -71,7 +71,7 @@ const headers = [
                         <v-list-item
                           v-for="price in item.raw.prices"
                           :key="price.id"
-                          :title="`&euro;${price.price * 2} ${$t('prices.withoutVAT')}`"
+                          :title="`&euro;${money(price.price * 2)} ${$t('prices.withoutVAT')}`"
                           :subtitle="`${price.supplierName} - ${date(price.createdAt)}`"
                         />
                       </v-list>

@@ -12,6 +12,7 @@ import { orderItemValidator } from '@items/validators'
 import { Order } from '@generated/order'
 import { Role } from '@generated/prisma'
 import { User } from '@generated/user'
+import { File } from '@generated/file'
 
 @Injectable()
 export class OrdersService {
@@ -139,30 +140,24 @@ export class OrdersService {
    * Выгрузка заказа
    * @param user
    * @param orderId
-   * @param fileType
    */
-  // async unloadOrder(
-  //   user: User,
-  //   orderId: number,
-  //   fileType: string,
-  //   ):Promise<Order> {
-  //     const сurrentOrder: Order = await this.getOrder(orderId)
-  //     var flatten = require( 'flat' )
-  //     let data: { } = flatten( сurrentOrder )
-  //     console.log( await this.prismaService.item.findMany( {
-  //       include: {
-  //         coefficient: true,
-  //         quantity: true,
-  //         price: true,
-  //         product: {
-  //           vendorCode: true,
-  //           manufacturer: true
-  //         }
-  //       },
-  //       where: {
-  //         orderId
-  //       }
-  //     }))
-  //     return
-  //   }
+  async unloadOrder(user: User, orderId: number): Promise<File> {
+    const orderItem = await this.prismaService.item.findMany({
+      select: {
+        coefficient: true,
+        quantity: true,
+        price: true,
+        product: {
+          select: {
+            vendorCode: true,
+            manufacturer: true,
+          },
+        },
+      },
+      where: {
+        orderId,
+      },
+    })
+    return await this.fileService.getExcelFile(`order#${orderId}`, orderItem, user)
+  }
 }
