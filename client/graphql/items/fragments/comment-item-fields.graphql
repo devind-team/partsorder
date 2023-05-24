@@ -1,0 +1,7 @@
+fragment CommentItemFields on CommentItem {
+  id
+  text
+  createdAt
+
+  __typename
+}

@@ -1,17 +1,24 @@
-import { UseGuards } from '@nestjs/common'
-import { Args, Float, Int, Mutation, Resolver } from '@nestjs/graphql'
 import { CurrentUser } from '@auth/auth.decorators'
 import { GqlAuthGuard } from '@auth/auth.guard'
-import { DeleteOrderItemsType } from '@items/dto/delete-order-items.type'
-import { ItemsService } from '@items/items.service'
-import { User } from '@generated/user'
 import { DeleteManyItemArgs, Item } from '@generated/item'
 import { ItemStatus } from '@generated/prisma'
+import { User } from '@generated/user'
+import { DeleteOrderItemsType } from '@items/dto/delete-order-items.type'
+import { ItemsService } from '@items/items.service'
+import { UseGuards } from '@nestjs/common'
+import { Args, Float, Int, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { ItemConnectionArgs } from './dto/item-connection.args'
+import { ItemConnectionType } from './dto/item-connection.type'
 
 @UseGuards(GqlAuthGuard)
 @Resolver()
 export class ItemsResolver {
   constructor(private readonly itemsService: ItemsService) {}
+
+  @Query(() => ItemConnectionType)
+  async items(@Args() params: ItemConnectionArgs): Promise<ItemConnectionType> {
+    return await this.itemsService.getItemConnection(params)
+  }
 
   @Mutation(() => [Item])
   async addStatuses(

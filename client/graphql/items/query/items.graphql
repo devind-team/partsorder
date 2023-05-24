@@ -1,0 +1,39 @@
+#import "../../orders/fragments/order-fields.graphql"
+#import "../../products/fragments/product-fields.graphql"
+#import "../../prices/fragments/price-fields.graphql"
+#import "../fragments/status-item-fields.graphql"
+#import "../fragments/comment-item-fields.graphql"
+#import "../fragments/item-fields.graphql"
+
+query Items($first: Int, $after: String, $skip: Int) {
+  items(first: $first, after: $after, skip: $skip) {
+    totalCount
+    pageInfo {
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
+      __typename
+    }
+    edges {
+      node {
+        ...ItemFields
+        order {
+          ...OrderFields
+        }
+        product {
+          ...ProductFields
+        }
+        price {
+          ...PriceFields
+        }
+        statuses {
+          ...StatusItemFields
+        }
+        commentItem {
+          ...CommentItemFields
+        }
+      }
+    }
+  }
+}

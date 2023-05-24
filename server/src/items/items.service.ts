@@ -1,14 +1,41 @@
-import { Injectable } from '@nestjs/common'
-import { User } from '@generated/user'
-import { DeleteManyItemArgs } from '@generated/item'
-import { DeleteOrderItemsType } from '@items/dto/delete-order-items.type'
+import { findManyCursorConnection } from '@common/relay/find-many-cursor-connection'
 import { PrismaService } from '@common/services/prisma.service'
-import { Prisma } from '@prisma/client'
+import { DeleteManyItemArgs } from '@generated/item'
 import { ItemStatus } from '@generated/prisma'
+import { User } from '@generated/user'
+import { DeleteOrderItemsType } from '@items/dto/delete-order-items.type'
+import { Injectable } from '@nestjs/common'
+import { Prisma } from '@prisma/client'
+import { ItemConnectionArgs } from './dto/item-connection.args'
+import { ItemConnectionType } from './dto/item-connection.type'
 
 @Injectable()
 export class ItemsService {
   constructor(private readonly prismaService: PrismaService) {}
+
+  /**
+   * Получение relay запросов для пагинации
+   * @param params: параметры фильтрации
+   */
+  async getItemConnection(params: ItemConnectionArgs): Promise<ItemConnectionType> {
+    return await findManyCursorConnection(
+      (args) =>
+        this.prismaService.item.findMany({
+          include: {
+            order: true,
+            product: true,
+            statuses: { orderBy: { createdAt: 'desc' } },
+            price: true,
+            commentItem: { orderBy: { createdAt: 'desc' } },
+          },
+          where: params.where,
+          orderBy: params.orderBy,
+          ...args,
+        }),
+      () => this.prismaService.item.count({ where: params.where }),
+      params,
+    )
+  }
 
   /**
    * Получение позиций в заказе

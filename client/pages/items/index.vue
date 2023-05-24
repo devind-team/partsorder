@@ -1,25 +1,35 @@
 <script lang="ts" setup>
 import StatusesItemsFilter from '~/components/items/StatusesItemsFilter.vue'
+import { ItemsQuery, ItemsQueryVariables } from '~/types/graphql'
+import itemsQuery from '~/graphql/items/query/items.graphql'
 
 definePageMeta({ middleware: 'auth' })
 const { t } = useI18n()
+const { dateTimeHM } = useFilters()
 
-const selectedItems = ref([])
-const selectedStatus = ref<string | null>(null)
+const selectedStatus = ref<string>('APPROVED')
 const search = ref('')
+
+const {
+  data: items,
+  pagination,
+  loading,
+} = useQueryRelay<ItemsQuery, ItemsQueryVariables>({
+  document: itemsQuery,
+})
 
 const headers = [
   { title: '#', key: 'id' },
   { title: 'Номер заказа', key: 'order.id' },
-  { title: 'Дата создания', key: 'order.createAt' },
+  { title: 'Дата создания', key: 'order.createdAt' },
   { title: 'Производитель', key: 'product.manufacturer' },
   { title: 'Артикул', key: 'product.vendorCode' },
   { title: 'Количество', key: 'quantity' },
   { title: 'Поставщик', key: 'pricre.supplierName' },
   { title: 'Цена', key: 'price.price' },
   { title: 'Статус оплаты', key: 'paymentStatus' },
-  { title: 'Статус отправки', key: 'statuses.status' },
-  { title: 'Комментарий', key: 'commentItem.text' },
+  { title: 'Статус отправки', key: 'statuses[0].status' },
+  { title: 'Комментарий', key: 'commentItem[0].text' },
 ]
 
 const messageFiter = computed(() => {
@@ -34,8 +44,8 @@ const messageFiter = computed(() => {
   }
 })
 
-const close = () => {
-  selectedStatus.value = null
+const reset = () => {
+  selectedStatus.value = 'APPROVED'
 }
 </script>
 
@@ -53,11 +63,12 @@ const close = () => {
           v-model="selectedStatus"
           :title="$t(`items.filterStatus.title`)"
         >
-          <v-chip v-bind="propsStatusesItemFilter" :closable="!!selectedStatus" @click:close="close">{{
+          <v-chip v-bind="propsStatusesItemFilter" :closable="!!selectedStatus" @click:close="reset">{{
             messageFiter
           }}</v-chip>
         </statuses-items-filter>
-        <pre>{{ !!selectedStatus?.length }}</pre>
+        <v-chip :closable="!!selectedStatus" :text="messageFiter" @click:close="reset" />
+        <v-btn color="warning" @click="reset">test</v-btn>
       </v-col>
       <v-col>
         <v-text-field
@@ -74,15 +85,19 @@ const close = () => {
       <v-col>
         <v-card>
           <v-card-text>
-            <v-data-table
-              v-model="selectedItems"
+            <pre>{{ items[0].statuses }}</pre>
+            <pre>{{ `${dateTimeHM(items[0].createdAt)}` }}</pre>
+            <v-data-table-server
+              v-model:items-per-page="pagination.pageSize.value"
+              v-model:page="pagination.page.value"
               :headers="headers"
+              :loading="loading"
+              :items="items"
+              :items-length="pagination.totalCount.value"
               density="compact"
-              item-value="id"
-              show-select
-              hide-pagination
             >
-            </v-data-table>
+              <template #item.order="{ item }">{{ dateTimeHM(item.value) }}</template>
+            </v-data-table-server>
           </v-card-text>
         </v-card>
       </v-col>
