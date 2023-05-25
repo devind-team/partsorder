@@ -5,10 +5,10 @@ import itemsQuery from '~/graphql/items/query/items.graphql'
 
 definePageMeta({ middleware: 'auth' })
 const { t } = useI18n()
-const { dateTimeHM } = useFilters()
+const { dateTimeHM, money } = useFilters()
 
 const selectedStatus = ref<string>('APPROVED')
-const search = ref('')
+const search = ref(null)
 
 const {
   data: items,
@@ -16,20 +16,24 @@ const {
   loading,
 } = useQueryRelay<ItemsQuery, ItemsQueryVariables>({
   document: itemsQuery,
+  /*variables: () => ({
+    search: search.value,
+    //filter: selectedStatus.value,
+  }),*/
 })
 
 const headers = [
   { title: '#', key: 'id' },
-  { title: 'Номер заказа', key: 'order.id' },
-  { title: 'Дата создания', key: 'order.createdAt' },
-  { title: 'Производитель', key: 'product.manufacturer' },
-  { title: 'Артикул', key: 'product.vendorCode' },
-  { title: 'Количество', key: 'quantity' },
-  { title: 'Поставщик', key: 'pricre.supplierName' },
-  { title: 'Цена', key: 'price.price' },
-  { title: 'Статус оплаты', key: 'paymentStatus' },
-  { title: 'Статус отправки', key: 'statuses[0].status' },
-  { title: 'Комментарий', key: 'commentItem[0].text' },
+  { title: t('items.tableHeaders.orderId'), key: 'order.id', sortable: false },
+  { title: t('items.tableHeaders.orderCreatedAt'), key: 'order.createdAt', sortable: false },
+  { title: t('items.tableHeaders.manufacturer'), key: 'product.manufacturer', sortable: false },
+  { title: t('items.tableHeaders.vendorCode'), key: 'product.vendorCode', sortable: false },
+  { title: t('items.tableHeaders.quantity'), key: 'quantity', sortable: false },
+  { title: t('items.tableHeaders.supplierName'), key: 'price.supplierName', sortable: false },
+  { title: t('items.tableHeaders.price'), key: 'price.price', sortable: false },
+  { title: t('items.tableHeaders.paymentStatus'), key: 'paymentStatus', sortable: false },
+  { title: t('items.tableHeaders.status'), key: 'statuses.status', sortable: false },
+  { title: t('items.tableHeaders.commentItem'), key: 'commentItem[0].text', sortable: false },
 ]
 
 const messageFiter = computed(() => {
@@ -44,7 +48,8 @@ const messageFiter = computed(() => {
   }
 })
 
-const reset = () => {
+const reset = (e: MouseEvent) => {
+  e.stopPropagation()
   selectedStatus.value = 'APPROVED'
 }
 </script>
@@ -63,12 +68,13 @@ const reset = () => {
           v-model="selectedStatus"
           :title="$t(`items.filterStatus.title`)"
         >
-          <v-chip v-bind="propsStatusesItemFilter" :closable="!!selectedStatus" @click:close="reset">{{
-            messageFiter
-          }}</v-chip>
+          <v-chip v-bind="propsStatusesItemFilter">
+            <template #append>
+              <v-icon v-if="!!selectedStatus" @click="reset">mdi-close</v-icon>
+            </template>
+            {{ messageFiter }}
+          </v-chip>
         </statuses-items-filter>
-        <v-chip :closable="!!selectedStatus" :text="messageFiter" @click:close="reset" />
-        <v-btn color="warning" @click="reset">test</v-btn>
       </v-col>
       <v-col>
         <v-text-field
@@ -85,8 +91,6 @@ const reset = () => {
       <v-col>
         <v-card>
           <v-card-text>
-            <pre>{{ items[0].statuses }}</pre>
-            <pre>{{ `${dateTimeHM(items[0].createdAt)}` }}</pre>
             <v-data-table-server
               v-model:items-per-page="pagination.pageSize.value"
               v-model:page="pagination.page.value"
@@ -96,7 +100,13 @@ const reset = () => {
               :items-length="pagination.totalCount.value"
               density="compact"
             >
-              <template #item.order="{ item }">{{ dateTimeHM(item.value) }}</template>
+              <template #[`item.order.createdAt`]="{ item }">{{ dateTimeHM(item.raw.order.createdAt) }}</template>
+              <template #[`item.price.price`]="{ item }">{{
+                `&euro; ${item.raw.price == null ? money(0) : money(item.raw.price.price)}`
+              }}</template>
+              <template #[`item.statuses.status`]="{ item }"
+                >{{ $t(`items.filterStatus.statuses.${item.raw.statuses[0].status}`) }}
+              </template>
             </v-data-table-server>
           </v-card-text>
         </v-card>

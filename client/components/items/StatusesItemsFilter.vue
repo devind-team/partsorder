@@ -49,9 +49,6 @@ const reset = () => {
           </template>
         </v-radio-group>
       </v-card-text>
-      <v-card-actions class="justify-center">
-        <v-btn color="warning" @click="reset">Сбросить</v-btn>
-      </v-card-actions>
     </v-card>
   </v-menu>
 </template>
