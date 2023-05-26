@@ -5,8 +5,19 @@
 #import "../fragments/comment-item-fields.graphql"
 #import "../fragments/item-fields.graphql"
 
-query Items($first: Int, $after: String, $skip: Int) {
-  items(first: $first, after: $after, skip: $skip) {
+query Items($filter: [ItemStatus!], $search: String, $first: Int, $after: String, $skip: Int) {
+  items(
+    where: {
+      statuses: { some: { status: { in: $filter } } }
+      OR: [
+        { product: { is: { vendorCode: { contains: $search } } } }
+        { product: { is: { manufacturer: { contains: $search } } } }
+      ]
+    }
+    first: $first
+    after: $after
+    skip: $skip
+  ) {
     totalCount
     pageInfo {
       hasPreviousPage

@@ -8,7 +8,7 @@ const { t } = useI18n()
 const { dateTimeHM, money } = useFilters()
 
 const selectedStatus = ref<string>('APPROVED')
-const search = ref(null)
+const search = ref('')
 
 const {
   data: items,
@@ -16,10 +16,10 @@ const {
   loading,
 } = useQueryRelay<ItemsQuery, ItemsQueryVariables>({
   document: itemsQuery,
-  /*variables: () => ({
+  variables: () => ({
     search: search.value,
-    //filter: selectedStatus.value,
-  }),*/
+    filter: selectedStatus.value,
+  }),
 })
 
 const headers = [

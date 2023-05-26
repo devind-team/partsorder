@@ -2,7 +2,6 @@
 const props = defineProps<{
   modelValue: string | null
   title: string
-  //message: { type: string; required: true }
 }>()
 
 const emit = defineEmits<{
@@ -26,11 +25,6 @@ const selectStatus = computed({
     emit('update:modelValue', newValue)
   },
 })
-
-const reset = () => {
-  active.value = false
-  selectStatus.value = null
-}
 </script>
 
 <template>
