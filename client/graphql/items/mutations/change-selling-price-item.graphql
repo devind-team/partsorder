@@ -1,0 +1,7 @@
+mutation ChangeSellingPriceItem($itemId: Int!, $price: Float!) {
+  changeSellingPriceItem(itemId: $itemId, price: $price) {
+    id
+    coefficient
+    __typename
+  }
+}

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { object, string } from 'yup'
 import { Field, Form, FormActions } from 'vee-validate'
-import { useI18n, useHead } from '#imports'
+import { useI18n } from '#imports'
 import {
   PresignedPutObjectQuery,
   PresignedPutObjectQueryVariables,
@@ -17,10 +17,6 @@ const props = defineProps({
 
 const { t } = useI18n()
 const { resolveClient } = useApolloClient()
-
-useHead({
-  title: t('order.title'),
-})
 
 const active = ref<boolean>(false)
 

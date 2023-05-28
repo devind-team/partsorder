@@ -12,7 +12,13 @@ import { ItemStatus } from '@generated/prisma'
 @Resolver()
 export class ItemsResolver {
   constructor(private readonly itemsService: ItemsService) {}
-
+  /**
+   * Добавление статуса к заказу
+   * @param user: пользователь
+   * @param orderId: идентификатор заказа
+   * @param itemsId: идентификаторы позиций
+   * @param status: добавляемый статус
+   */
   @Mutation(() => [Item])
   async addStatuses(
     @CurrentUser() user: User,
@@ -23,7 +29,12 @@ export class ItemsResolver {
     await this.itemsService.addStatuses(user, await this.itemsService.getOrderItems(orderId, itemsId), status)
     return await this.itemsService.getItems(orderId, { statuses: true })
   }
-
+  /**
+   * Мутация для автоматического проценивания
+   * @param user: пользователь
+   * @param orderId: идентификтор заказа
+   * @param itemsId: идентификаторы позиций
+   */
   @Mutation(() => [Item])
   async recountPrices(
     @CurrentUser() user: User,
@@ -47,8 +58,31 @@ export class ItemsResolver {
     @Args({ type: () => [Int], name: 'itemIds', description: 'Идентификаторы позиций' }) itemsId: number[],
     @Args({ type: () => Float, name: 'coefficient', description: 'Коэффициент' }) coefficient: number,
   ): Promise<Item[]> {
+    console.log(coefficient)
     await this.itemsService.changeCoefficients(await this.itemsService.getOrderItems(orderId, itemsId), coefficient)
     return await this.itemsService.getItems(orderId)
+  }
+  /**
+   * Мутация дл изменение цены прожади
+   * @param user
+   * @param itemId
+   * @param price
+   */
+  @Mutation(() => Item)
+  async changeSellingPriceItem(
+    @CurrentUser() user: User,
+    @Args({ type: () => Int, name: 'itemId', description: 'Идентификатор позиции' }) itemId: number,
+    @Args({ type: () => Float, name: 'price', description: 'Цена продажи' }) price: number,
+  ): Promise<Item> {
+    return await this.itemsService.changeSellingPriceItem(itemId, price)
+  }
+  @Mutation(() => Item)
+  async changeQuantityItem(
+    @CurrentUser() user: User,
+    @Args({ type: () => Int, name: 'itemId', description: 'Идентификатор позиции' }) itemId: number,
+    @Args({ type: () => Int, name: 'quantity', description: 'Количество позиций' }) quantity: number,
+  ): Promise<Item> {
+    return await this.itemsService.changeQuantityItem(itemId, quantity)
   }
   /**
    * Удаление элементов из заказа

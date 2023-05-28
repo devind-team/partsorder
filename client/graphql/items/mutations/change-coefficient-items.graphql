@@ -1,0 +1,7 @@
+mutation ChangeCoefficientItems($orderId: Int!, $itemsId: [Int!]!, $coefficient: Float!) {
+  changeCoefficientItems(orderId: $orderId, itemIds: $itemsId, coefficient: $coefficient) {
+    id
+    coefficient
+    __typename
+  }
+}

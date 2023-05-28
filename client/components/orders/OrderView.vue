@@ -35,10 +35,11 @@ const headers = computed<DataTableHeader[]>(() => {
   if (user.value?.role === 'ADMIN') {
     h.push({ title: 'Цена закупки', key: 'price' })
     h.push({ title: 'Наценка', key: 'coefficient' })
+    h.push({ title: 'Цена продажи', key: 'sellingPrice' })
   }
   h.push({ title: 'Поставщик', key: 'supplierName' })
   h.push({ title: 'Статус', key: 'statuses' })
-  h.push({ title: 'Цена', key: 'finalPrice' })
+  h.push({ title: 'Сумма', key: 'finalPrice' })
   return h
 })
 
@@ -48,11 +49,11 @@ const finalBill = computed<number | undefined>(() => {
     .reduce((a, c) => a + c.price?.price * c.quantity * c.coefficient, 0)
 })
 
-const makePrice = (price: Price | null, quantity: number, coefficient: number): string | number | null => {
-  if (price) {
-    return money(price.price * quantity * coefficient)
-  }
-  return 0
+const makePrice = (price: Price | null, quantity: number, coefficient: number): string | number => {
+  return price ? money(price.price * quantity * coefficient) : 0
+}
+const makeSellingPrice = (price: Price | null, coefficient: number): string | number => {
+  return price ? money(price.price * coefficient) : 0
 }
 </script>
 <template>
@@ -60,11 +61,21 @@ const makePrice = (price: Price | null, quantity: number, coefficient: number): 
     <v-row>
       <v-col>
         <h1>
-          {{ t('order.detail.title', { number: props.order.id, date: dateTimeHM(order.createdAt) }) }}
+          {{ t('order.detail.title', { number: props.order.id }) }}
         </h1>
+        <statuses-view-dialog
+          v-if="props.order.statuses.length"
+          v-slot="{ props: statusesProps }"
+          :statuses="props.order.statuses"
+        >
+          <v-chip v-bind="statusesProps">
+            {{ $t(`order.statuses.${props.order.statuses[props.order.statuses.length - 1].status}`) }}
+          </v-chip>
+        </statuses-view-dialog>
+        <v-chip>{{ dateTimeHM(props.order.createdAt) }}</v-chip>
       </v-col>
       <v-col>
-        <h2 class="text-right">Цена заказа: {{ money(finalBill) }}&euro;</h2>
+        <h2 class="text-right">Сумма заказа: {{ money(finalBill) }}&euro;</h2>
       </v-col>
     </v-row>
     <v-row>
@@ -108,6 +119,9 @@ const makePrice = (price: Price | null, quantity: number, coefficient: number): 
             >
               <template #[`item.price`]="{ item }">
                 {{ (item.raw.price && money(item.raw.price.price)) || 'Не указана' }}
+              </template>
+              <template #[`item.sellingPrice`]="{ item }">
+                {{ makeSellingPrice(item.raw.price, item.raw.coefficient) }}&euro;
               </template>
               <template #[`item.supplierName`]="{ item }">
                 {{ (item.raw.price && item.raw.price.supplierName) || 'Не указан' }}

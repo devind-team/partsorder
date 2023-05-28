@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { User } from '@generated/user'
-import { DeleteManyItemArgs } from '@generated/item'
+import { DeleteManyItemArgs, Item } from '@generated/item'
 import { DeleteOrderItemsType } from '@items/dto/delete-order-items.type'
 import { PrismaService } from '@common/services/prisma.service'
 import { Prisma } from '@prisma/client'
@@ -10,6 +10,17 @@ import { ItemStatus } from '@generated/prisma'
 export class ItemsService {
   constructor(private readonly prismaService: PrismaService) {}
 
+  /**
+   * Получение записи
+   * @param id
+   * @param include
+   */
+  async getItem(
+    id: number,
+    include?: Prisma.ItemInclude,
+  ): Promise<Prisma.ItemGetPayload<{ include: Prisma.ItemInclude; where: { id: number } }>> {
+    return this.prismaService.item.findUnique({ include, where: { id } })
+  }
   /**
    * Получение позиций в заказе
    * @param orderId
@@ -21,7 +32,6 @@ export class ItemsService {
   ): Promise<Array<Prisma.ItemGetPayload<{ include: Prisma.ItemInclude; where: { orderId: number } }>>> {
     return this.prismaService.item.findMany({ include, where: { orderId } })
   }
-
   /**
    * Получение идентификаторов позиций, привязанных к заказу
    * @param orderId: идентификатор заказа
@@ -37,7 +47,6 @@ export class ItemsService {
     })
     return items.map((item) => item.id)
   }
-
   /**
    * Добавляем статус к записям
    * @param user: пользователь
@@ -53,7 +62,6 @@ export class ItemsService {
       })),
     })
   }
-
   /**
    * Алгоритм автоматического проценивания
    * @param user: пользователь
@@ -61,27 +69,27 @@ export class ItemsService {
    */
   async recountPrices(user: User, itemsId: number[]): Promise<void> {
     const itemPrices = await this.prismaService.$queryRaw<{ price: number; item: number }[]>`
-        select pi.id as price, pi.item_id as item
-        from (select pr.id,
-                     pr.item_id,
-                     pr.price,
-                     pr.product_id,
-                     min(pr.price) over (partition by pr.product_id) as min_price
-              from (select p.id,
-                           i.id                                                                as item_id,
-                           p.price,
-                           p.created_at,
-                           p.product_id,
-                           p.supplier_name,
-                           max(p.created_at) over (partition by p.product_id, p.supplier_name) as created_at_max,
-                           min(p.price) over (partition by p.product_id, p.supplier_name)      as price_min
-                    from prices p
-                             left join products product on product.id = p.product_id
-                             left join items i on product.id = i.product_id
-                    where i.id in (${Prisma.join(itemsId)})) pr
-              where pr.created_at = pr.created_at_max
-                and pr.price = pr.price_min) pi
-        where pi.price = pi.min_price
+      select pi.id as price, pi.item_id as item
+      from (select pr.id,
+                   pr.item_id,
+                   pr.price,
+                   pr.product_id,
+                   min(pr.price) over (partition by pr.product_id) as min_price
+            from (select p.id,
+                         i.id as                                                                item_id,
+                         p.price,
+                         p.created_at,
+                         p.product_id,
+                         p.supplier_name,
+                         max(p.created_at) over (partition by p.product_id, p.supplier_name) as created_at_max,
+                         min(p.price) over (partition by p.product_id, p.supplier_name) as      price_min
+                  from prices p
+                         left join products product on product.id = p.product_id
+                         left join items i on product.id = i.product_id
+                  where i.id in (${Prisma.join(itemsId)})) pr
+            where pr.created_at = pr.created_at_max
+              and pr.price = pr.price_min) pi
+      where pi.price = pi.min_price
     `
     await this.prismaService.$transaction(
       itemPrices.map(({ price, item }) =>
@@ -92,7 +100,6 @@ export class ItemsService {
       ),
     )
   }
-
   /**
    * Изменение коэффицнетов заказа
    * @param itemsId: идентификаторы позиций
@@ -105,6 +112,32 @@ export class ItemsService {
     })
   }
 
+  /**
+   * Мутация изменения цены продажи за счет изменения коэффициента
+   * @param id: идентификатор позиции
+   * @param price: значение цены
+   */
+  async changeSellingPriceItem(id: number, price: number): Promise<Item> {
+    const item = await this.prismaService.item.findUnique({
+      select: { price: { select: { price: true } } },
+      where: { id },
+    })
+    return this.prismaService.item.update({
+      where: { id },
+      data: { coefficient: price / Number(item.price.price) },
+    })
+  }
+  /**
+   * Обновление количества элементов заказа
+   * @param itemId: идентификатор позиции
+   * @param quantity: количество
+   */
+  async changeQuantityItem(itemId: number, quantity: number): Promise<Item> {
+    return this.prismaService.item.update({
+      where: { id: itemId },
+      data: { quantity },
+    })
+  }
   /**
    * Удаление элементво из заказа
    * @param user: пользователь
