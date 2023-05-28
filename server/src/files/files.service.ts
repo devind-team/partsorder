@@ -94,10 +94,17 @@ export class FilesService {
   /**
    * Записываем значения из заказа в Excel файл.
    * @param sheetName: string
+   * @param headers: название заголовоков
    * @param values: Array<{}> - [{id: 1, name: 1, 'status.id': 1, 'status.name': 1}, {}]
+   * @param user: Пользователь
    */
-  async getExcelFile(sheetName: string, values: Array<Record<string, unknown>>, user?: User): Promise<File> {
-    const workbook = await this.createAndFillWorkbook(sheetName, values)
+  async getExcelFile(
+    sheetName: string,
+    headers: Record<string, string>,
+    values: Array<Record<string, unknown>>,
+    user?: User,
+  ): Promise<File> {
+    const workbook = await this.createAndFillWorkbook(sheetName, headers, values)
     const fileName = `UnloadOrder_${new Date().toJSON().slice(0, 10)}.xlsx`
     const name = await this.minioService.uploadObject({
       fileName,
@@ -107,12 +114,15 @@ export class FilesService {
     return await this.add({ fileName, name, bucket: this.minioService.getBucket() }, user)
   }
 
-  async createAndFillWorkbook(sheetName: string, values: Array<Record<string, unknown>>): Promise<ExcelJS.Workbook> {
+  async createAndFillWorkbook(
+    sheetName: string,
+    headers: Record<string, string>,
+    values: Array<Record<string, unknown>>,
+  ): Promise<ExcelJS.Workbook> {
     const data: Array<Record<string, string>> = values.map((item) => flatten(item))
-    const headers = Object.keys(data[0]).map((key) => ({ header: key, key }))
     const wb = new ExcelJS.Workbook()
     const ws = wb.addWorksheet(sheetName)
-    ws.columns = headers
+    ws.columns = Object.entries(headers).map(([key, header]) => ({ header, key }))
     ws.addRows(data)
     return wb
   }
