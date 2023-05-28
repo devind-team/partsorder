@@ -1,4 +1,5 @@
 import type { ComputedRef } from 'vue'
+import { ApolloCache } from '@apollo/client'
 import { computed, onMounted, watch } from 'vue'
 import type { ApolloQueryResult, DataProxy } from '@apollo/client'
 import type { FetchResult } from '@apollo/client/link/core'
@@ -6,15 +7,15 @@ import { OperationVariables } from '@apollo/client/core'
 import type { DocumentNode } from 'graphql'
 import type { DocumentParameter, OptionsParameter, UseQueryReturn } from '@vue/apollo-composable/dist/useQuery'
 import type { UseResultReturn } from '@vue/apollo-composable/dist/useResult'
-import type { ExtractSingleKey } from '@vue/apollo-composable/dist/util/ExtractSingleKey'
 
+import type { ExtractSingleKey } from '@vue/apollo-composable/dist/util/ExtractSingleKey'
 import { InvariantError } from 'ts-invariant'
 import { useQuery } from '@vue/apollo-composable'
 import { useEventListener } from '@vueuse/core'
 import { getValue, VT } from '~/services/graphql-relay'
 import { useResult } from '~/composables/query-result'
-import { useOffsetPagination } from '~/composables/pagination'
 
+import { useOffsetPagination } from '~/composables/pagination'
 import type { PageInfo, PaginationInterface } from '~/types/pagination'
 
 export type ResultDefaultValueType<TNode> = {
@@ -55,23 +56,23 @@ export type QueryRelayResult<
   fetchMoreAvailable: ComputedRef<boolean>
   fetchMoreData: () => void
   update: <TResultMutation>(
-    cache: DataProxy,
+    cache: ApolloCache<TResult>,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
     transform: TransformUpdate<TResult, TResultMutation>,
     isStrict: boolean,
   ) => void
   addUpdate: <TResultMutation>(
-    cache: DataProxy,
+    cache: ApolloCache<TResult>,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
     key?: string | null,
   ) => void
   changeUpdate: <TResultMutation>(
-    cache: DataProxy,
+    cache: ApolloCache<TResult>,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
     key?: string | null,
   ) => void
   deleteUpdate: <TResultMutation>(
-    cache: DataProxy,
+    cache: ApolloCache<TResult>,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
     isStrict?: boolean,
   ) => void
@@ -251,7 +252,7 @@ export function useQueryRelay<
    * @param key - элемент в мутации
    */
   const addUpdate = <TResultMutation>(
-    cache: DataProxy,
+    cache: ApolloCache<TResult>,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
     key: string | null = null,
   ): void => {
@@ -299,7 +300,7 @@ export function useQueryRelay<
    * @param key - элемент в мутации
    */
   const changeUpdate = <TResultMutation>(
-    cache: DataProxy,
+    cache: ApolloCache<TResult>,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
     key: string | null = null,
   ): void => {
@@ -325,7 +326,7 @@ export function useQueryRelay<
    * @param isStrict - происходит ли исключение, если запись отсутствует в кеше
    */
   const deleteUpdate = <TResultMutation>(
-    cache: DataProxy,
+    cache: ApolloCache<TResult>,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
     isStrict = true,
   ): void => {
@@ -335,6 +336,7 @@ export function useQueryRelay<
       (dataCache) => {
         const { id } = getMutationResult(result) as unknown as { id: string }
         if (id) {
+          // cache.evict({ id })
           const k: string = Object.keys(dataCache)[0]
           dataCache[k].edges = dataCache[k].edges.filter((el: { node: TNode }) => el.node.id !== id)
           --dataCache[k].totalCount
@@ -361,14 +363,10 @@ export function useQueryRelay<
 }
 
 export type UpdateRelayType<TResult = any> = <TResultMutation>(
-  cache: DataProxy,
+  cache: ApolloCache<TResult>,
   result: Omit<FetchResult<TResultMutation>, 'context'>,
   transform: TransformUpdate<TResult, TResultMutation>,
 ) => void
-export type AddUpdateRelayType = <TResultMutation>(
-  cache: DataProxy,
-  result: Omit<FetchResult<TResultMutation>, 'context'>,
-  key?: string | null,
-) => void
+export type AddUpdateRelayType = ReturnType<typeof useQueryRelay>['addUpdate']
 export type ChangeUpdateRelayType = ReturnType<typeof useQueryRelay>['changeUpdate']
 export type DeleteUpdateRelayType = ReturnType<typeof useQueryRelay>['deleteUpdate']

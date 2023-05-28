@@ -25,7 +25,7 @@ onDone(async ({ data }) => {
   const { accessToken, user } = data.login
   await onLogin(accessToken)
   authStore.user = user
-  await router.push(localePath({ name: 'index' }))
+  await router.push(localePath({ name: 'dashboard' }))
 })
 
 const schema = object({

@@ -22,8 +22,8 @@ const localePath = useLocalePath()
             <v-list-item :to="localePath({ name: 'profile-me' })" prepend-icon="mdi-account-circle">
               <v-list-item-title>{{ $t('profile.me') }}</v-list-item-title>
             </v-list-item>
-            <v-list-item :to="localePath({ name: 'orders' })" prepend-icon="mdi-delete-variant">
-              <v-list-item-title>{{ $t('order.my') }}</v-list-item-title>
+            <v-list-item :to="localePath({ name: 'dashboard' })" prepend-icon="mdi-view-dashboard-outline">
+              <v-list-item-title>{{ $t('dashboard.title') }}</v-list-item-title>
             </v-list-item>
             <v-list-item :to="localePath({ name: 'auth-logout' })" prepend-icon="mdi-logout">
               <v-list-item-title>{{ $t('auth.logout') }}</v-list-item-title>

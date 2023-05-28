@@ -1,17 +1,37 @@
 import { UseGuards } from '@nestjs/common'
-import { Args, Float, Int, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Float, Int, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { CurrentUser } from '@auth/auth.decorators'
 import { GqlAuthGuard } from '@auth/auth.guard'
 import { DeleteOrderItemsType } from '@items/dto/delete-order-items.type'
 import { ItemsService } from '@items/items.service'
-import { User } from '@generated/user'
+import { ItemConnectionArgs } from './dto/item-connection.args'
+import { ItemConnectionType } from './dto/item-connection.type'
 import { DeleteManyItemArgs, Item } from '@generated/item'
 import { ItemStatus } from '@generated/prisma'
+import { User } from '@generated/user'
 
 @UseGuards(GqlAuthGuard)
 @Resolver()
 export class ItemsResolver {
   constructor(private readonly itemsService: ItemsService) {}
+
+  @Query(() => ItemConnectionType)
+  async items(@Args() params: ItemConnectionArgs): Promise<ItemConnectionType> {
+    return await this.itemsService.getItemConnection(params)
+  }
+
+  /**
+   * Получение позиций по последнему статусу
+   * @param status: последний установленный статус
+   * @param params: параметры фильтрации
+   */
+  @Query(() => ItemConnectionType)
+  async itemsByLastStatus(
+    @Args({ type: () => ItemStatus, name: 'status', description: 'Текущий статус позиции' }) status: ItemStatus,
+    @Args() params: ItemConnectionArgs,
+  ): Promise<ItemConnectionType> {
+    return await this.itemsService.getItemsByLastStatusConnection(status, params)
+  }
   /**
    * Добавление статуса к заказу
    * @param user: пользователь
@@ -76,6 +96,13 @@ export class ItemsResolver {
   ): Promise<Item> {
     return await this.itemsService.changeSellingPriceItem(itemId, price)
   }
+
+  /**
+   * Изменение количества позиций в заказе
+   * @param user
+   * @param itemId
+   * @param quantity
+   */
   @Mutation(() => Item)
   async changeQuantityItem(
     @CurrentUser() user: User,

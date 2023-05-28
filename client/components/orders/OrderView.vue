@@ -36,21 +36,21 @@ const selectedItems: Ref<number[]> = ref<number[]>([])
 const search = ref<string | undefined>(undefined)
 
 const headers = computed<DataTableHeader[]>(() => {
-  const h = [
+  const h: DataTableHeader[] = [
     { title: '#', key: 'id' },
     { title: 'Производитель', key: 'product.manufacturer' },
     { title: 'Артикул', key: 'product.vendorCode' },
     { title: 'Название', key: 'product.name' },
-    { title: 'Количество', key: 'quantity', width: 150 },
+    { title: 'Количество', key: 'quantity', width: 150, align: 'end' },
   ]
   if (user.value?.role === 'ADMIN') {
-    h.push({ title: 'Цена закупки', key: 'price' })
+    h.push({ title: 'Цена закупки', key: 'price', align: 'end' })
     h.push({ title: 'Наценка', key: 'coefficient' })
-    h.push({ title: 'Цена продажи', key: 'sellingPrice' })
+    h.push({ title: 'Цена продажи', key: 'sellingPrice', align: 'end' })
   }
   h.push({ title: 'Поставщик', key: 'supplierName' })
   h.push({ title: 'Статус', key: 'statuses' })
-  h.push({ title: 'Сумма', key: 'finalPrice' })
+  h.push({ title: 'Сумма', key: 'finalPrice', align: 'end' })
   return h
 })
 
@@ -118,7 +118,7 @@ const changeFieldValue = async (item: Item, field: 'quantity' | 'sellingPrice', 
         <v-chip>{{ dateTimeHM(props.order.createdAt) }}</v-chip>
       </v-col>
       <v-col>
-        <h2 class="text-right">Сумма заказа: {{ money(finalBill) }}&euro;</h2>
+        <h2 class="text-right">Сумма заказа: &euro;{{ money(finalBill) }}</h2>
       </v-col>
     </v-row>
     <v-row>
@@ -181,7 +181,7 @@ const changeFieldValue = async (item: Item, field: 'quantity' | 'sellingPrice', 
                 {{ item.raw.coefficient.toFixed(4) }}
               </template>
               <template #[`item.price`]="{ item }">
-                {{ (item.raw.price && money(item.raw.price.price) + '&euro;') || 'Не указана' }}
+                {{ (item.raw.price && '&euro;' + money(item.raw.price.price)) || 'Не указана' }}
               </template>
               <template #[`item.sellingPrice`]="{ item }">
                 <template v-if="item.raw.price">
@@ -203,7 +203,7 @@ const changeFieldValue = async (item: Item, field: 'quantity' | 'sellingPrice', 
                       setChangeField(`sellingPrice_${item.raw.id}`, `${item.raw.price.price * item.raw.coefficient}`)
                     "
                   >
-                    {{ makeSellingPrice(item.raw.price, item.raw.coefficient) }}&euro;
+                    &euro;{{ makeSellingPrice(item.raw.price, item.raw.coefficient) }}
                   </div>
                 </template>
                 <template v-else>-&euro;</template>
@@ -224,7 +224,7 @@ const changeFieldValue = async (item: Item, field: 'quantity' | 'sellingPrice', 
                 <template v-else>{{ $t('order.status.noStatus') }}</template>
               </template>
               <template #[`item.finalPrice`]="{ item }">
-                {{ makePrice(item.raw.price, item.raw.quantity, item.raw.coefficient) }}&euro;
+                &euro;{{ makePrice(item.raw.price, item.raw.quantity, item.raw.coefficient) }}
               </template>
             </v-data-table>
           </v-card-text>
