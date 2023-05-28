@@ -109,7 +109,7 @@ const changeFieldValue = async (item: Item, field: 'quantity' | 'sellingPrice', 
         </h1>
         <status-menu v-slot="{ props: statusesProps }" :update="props.update" :order="props.order">
           <v-chip v-bind="statusesProps">
-            {{ $t(`order.statuses.${props.order.statuses[props.order.statuses.length - 1].status}`) }}
+            {{ $t(`order.statuses.${props.order.statuses[props.order.statuses.length - 1]?.status || '-'}`) }}
           </v-chip>
         </status-menu>
         <v-chip>{{ dateTimeHM(props.order.createdAt) }}</v-chip>

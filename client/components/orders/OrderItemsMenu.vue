@@ -9,12 +9,16 @@ import {
   DeleteOrderItemsMutation,
   DeleteOrderItemsMutationVariables,
   Item,
+  DeleteOrderMutation,
+  DeleteOrderMutationVariables,
 } from '~/types/graphql'
 import unloadOrderMutation from '~/graphql/orders/mutations/unload-order.graphql'
 import changePricesMutation from '~/graphql/items/mutations/recount-prices.graphql'
+import deleteOrderMutation from '~/graphql/orders/mutations/delete-order.graphql'
 import deleteOrderItemsMutation from '~/graphql/orders/mutations/delete-order-items.graphql'
 import AddStatusItems from '~/components/items/AddStatusItems.vue'
 import ChangeCoefficientItem from '~/components/items/ChangeCoefficientItem.vue'
+import { useRouter, useLocalePath } from '#imports'
 
 const props = defineProps<{
   orderId: number
@@ -26,6 +30,9 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'close'): void
 }>()
+
+const router = useRouter()
+const localePath = useLocalePath()
 
 const active = ref<boolean>(false)
 
@@ -49,6 +56,15 @@ onDoneUnloadOrder(({ data }) => {
     const url = new URL(`${bucket}/${key}`, serverUrl)
     window.location.href = url.href
   }
+})
+
+const { mutate: deleteOrder } = useMutation<DeleteOrderMutation, DeleteOrderMutationVariables>(deleteOrderMutation, {
+  update: (cache, result) => {
+    if (result.data) {
+      cache.evict({ id: `Order:${result.data.deleteOrder.id}` })
+      router.push(localePath({ name: 'orders' }))
+    }
+  },
 })
 
 const { mutate: deleteOrderItems } = useMutation<DeleteOrderItemsMutation, DeleteOrderItemsMutationVariables>(
@@ -80,11 +96,14 @@ const { mutate: deleteOrderItems } = useMutation<DeleteOrderItemsMutation, Delet
       <slot :props="propsMenu" />
     </template>
     <v-list density="compact">
+      <v-list-subheader>{{ $t('order.name') }}</v-list-subheader>
       <v-list-item
         :title="$t('order.items.uploadXlsx')"
         prepend-icon="mdi-file-excel-box-outline"
         @click="unloadOrder({ orderId: props.orderId })"
       />
+      <v-list-item :title="$t('order.delete')" prepend-icon="mdi-delete" @click="deleteOrder({ orderId })" />
+      <v-list-subheader>{{ $t('order.items.name') }}</v-list-subheader>
       <v-list-item :title="$t('add')" prepend-icon="mdi-plus" />
       <v-list-item
         :disabled="!props.selectedItems.length"
