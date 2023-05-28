@@ -41,6 +41,9 @@ query ItemsByLastStatus($status: ItemStatus!, $search: String, $first: Int, $aft
         }
         statuses {
           ...StatusItemFields
+          user {
+            ...UserFields
+          }
         }
         commentItem {
           ...CommentItemFields

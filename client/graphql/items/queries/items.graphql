@@ -41,6 +41,9 @@ query Items($filter: [ItemStatus!], $search: String, $first: Int, $after: String
         }
         statuses {
           ...StatusItemFields
+          user {
+            ...UserFields
+          }
         }
         commentItem {
           ...CommentItemFields

@@ -36,7 +36,7 @@ export class ItemsService {
           include: {
             order: true,
             product: true,
-            statuses: { orderBy: { createdAt: 'asc' } },
+            statuses: { include: { user: true }, orderBy: { createdAt: 'asc' } },
             price: true,
             commentItem: { orderBy: { createdAt: 'desc' } },
           },
@@ -55,8 +55,6 @@ export class ItemsService {
    * @param params: параметры фильтрации
    */
   async getItemsByLastStatusConnection(status: ItemStatus, params: ItemConnectionArgs): Promise<ItemConnectionType> {
-    console.log('-----------------------')
-    console.log(status)
     const availableItems = await this.prismaService.$queryRaw<{ id: number }[]>`
         select item.id as id
         from (select i.id                                        as id,
