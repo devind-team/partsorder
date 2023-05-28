@@ -198,7 +198,7 @@ model Price {
   /// Цена за единицу/штуку
   price    Decimal @db.Decimal(9, 2)
   /// Срок поставки в днях
-  duration String?
+  duration Int?    @default(30)
 
   /// Название поставщика
   /// @Validator.MinLength(2)

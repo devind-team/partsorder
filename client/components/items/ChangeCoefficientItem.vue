@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { object, number } from 'yup'
-import { Field, Form } from 'vee-validate'
-import changeCoefficientItemMutation from '~/graphql/items/mutations/change-coefficient-items.graphql'
 import { useMutation } from '@vue/apollo-composable'
-import { ChangeCoefficientItemsMutation, ChangeCoefficientItemsMutationVariables } from '~/types/graphql'
+import { Field, Form } from 'vee-validate'
 import { useI18n } from '#imports'
+import { ChangeCoefficientItemsMutation, ChangeCoefficientItemsMutationVariables } from '~/types/graphql'
 import { ChangePartialUpdate } from '~/composables/query-common'
+import changeCoefficientItemMutation from '~/graphql/items/mutations/change-coefficient-items.graphql'
 
 const props = defineProps<{
   orderId: number
@@ -31,7 +31,7 @@ const { mutate, loading } = useMutation<ChangeCoefficientItemsMutation, ChangeCo
 const handleChangeCoefficientItem = async (values: ChangeCoefficientItemsMutationVariables) => {
   await mutate({
     orderId: props.orderId,
-    itemsId: props.selectedItems.map(Number),
+    itemIds: props.selectedItems.map(Number),
     coefficient: Number(values.coefficient),
   })
   active.value = false
@@ -45,7 +45,7 @@ const handleChangeCoefficientItem = async (values: ChangeCoefficientItemsMutatio
     </template>
     <Form :validation-schema="schema" @submit="handleChangeCoefficientItem">
       <v-card :loading="loading">
-        <v-card-title>{{ $t('items.changeDialog') }}</v-card-title>
+        <v-card-title>{{ $t('items.changeCoefficient') }}</v-card-title>
         <v-card-text>
           <Field v-slot="{ field, errors }" name="coefficient">
             <v-text-field v-bind="field" :label="$t('items.coefficient')" :error-messages="errors" type="input" />
@@ -54,9 +54,7 @@ const handleChangeCoefficientItem = async (values: ChangeCoefficientItemsMutatio
         <v-card-actions>
           <v-btn @click="active = false">{{ $t('cancel') }}</v-btn>
           <v-spacer />
-          <v-btn color="primary" type="submit">
-            {{ $t('change') }}
-          </v-btn>
+          <v-btn color="primary" type="submit">{{ $t('change') }}</v-btn>
         </v-card-actions>
       </v-card>
     </Form>

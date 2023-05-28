@@ -16,50 +16,50 @@ export class ItemsResolver {
    * Добавление статуса к заказу
    * @param user: пользователь
    * @param orderId: идентификатор заказа
-   * @param itemsId: идентификаторы позиций
+   * @param itemIds: идентификаторы позиций
    * @param status: добавляемый статус
    */
   @Mutation(() => [Item])
-  async addStatuses(
+  async addStatusItems(
     @CurrentUser() user: User,
     @Args({ type: () => Int, name: 'orderId', description: 'Идентификатор заказа' }) orderId: number,
-    @Args({ type: () => [Int], name: 'itemIds', description: 'Идентификаторы позиций' }) itemsId: number[],
+    @Args({ type: () => [Int], name: 'itemIds', description: 'Идентификаторы позиций' }) itemIds: number[],
     @Args({ type: () => ItemStatus, name: 'status', description: 'Статус заказа' }) status: ItemStatus,
   ): Promise<Item[]> {
-    await this.itemsService.addStatuses(user, await this.itemsService.getOrderItems(orderId, itemsId), status)
-    return await this.itemsService.getItems(orderId, { statuses: true })
+    await this.itemsService.addStatuses(user, await this.itemsService.getOrderItems(orderId, itemIds), status)
+    return await this.itemsService.getItems(orderId, { statuses: { include: { user: true } } })
   }
   /**
    * Мутация для автоматического проценивания
    * @param user: пользователь
    * @param orderId: идентификтор заказа
-   * @param itemsId: идентификаторы позиций
+   * @param itemIds: идентификаторы позиций
    */
   @Mutation(() => [Item])
   async recountPrices(
     @CurrentUser() user: User,
     @Args({ type: () => Int, name: 'orderId', description: 'Идентификатор заказа' }) orderId: number,
-    @Args({ type: () => [Int], name: 'itemIds', description: 'Идентификаторы позиций' }) itemsId: number[],
+    @Args({ type: () => [Int], name: 'itemIds', description: 'Идентификаторы позиций' }) itemIds: number[],
   ): Promise<Item[]> {
-    await this.itemsService.recountPrices(user, await this.itemsService.getOrderItems(orderId, itemsId))
+    await this.itemsService.recountPrices(user, await this.itemsService.getOrderItems(orderId, itemIds))
     return await this.itemsService.getItems(orderId, { price: true })
   }
   /**
    * Мутация для изменения наценки заказа
    * @param user: Пользователь
    * @param orderId: Идентификатор заказа
-   * @param itemsId: Идентификаторы позиций
+   * @param itemIds: Идентификаторы позиций
    * @param coefficient: Новое значение коэффицнета
    */
   @Mutation(() => [Item])
   async changeCoefficientItems(
     @CurrentUser() user: User,
     @Args({ type: () => Int, name: 'orderId', description: 'Идентификатор заказа' }) orderId: number,
-    @Args({ type: () => [Int], name: 'itemIds', description: 'Идентификаторы позиций' }) itemsId: number[],
+    @Args({ type: () => [Int], name: 'itemIds', description: 'Идентификаторы позиций' }) itemIds: number[],
     @Args({ type: () => Float, name: 'coefficient', description: 'Коэффициент' }) coefficient: number,
   ): Promise<Item[]> {
     console.log(coefficient)
-    await this.itemsService.changeCoefficients(await this.itemsService.getOrderItems(orderId, itemsId), coefficient)
+    await this.itemsService.changeCoefficients(await this.itemsService.getOrderItems(orderId, itemIds), coefficient)
     return await this.itemsService.getItems(orderId)
   }
   /**

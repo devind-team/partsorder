@@ -68,7 +68,7 @@
     "items": {
       "recountPrices": "Проценить",
       "changeCoefficient": "Задать коэффициент наценки",
-      "changeStatus": "Изменить статус",
+      "addStatus": "Изменить статус",
       "uploadXlsx": "Выгрузить в Excel",
       "uploadOffer": "Выгрузить коммерческое предложение"
     }
@@ -108,8 +108,10 @@
     "prices": "Цены"
   },
   "items": {
-    "changeDialog": "Изменение коэффициента наценки",
-    "coefficient": "Коэффициент наценки"
+    "changeCoefficient": "Изменение коэффициента наценки",
+    "coefficient": "Коэффициент наценки",
+    "addStatus": "Изменение статуса",
+    "status": "Статус"
   },
   "index": {
     "header": "Запчасти для грузовой техники из Европы",

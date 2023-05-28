@@ -118,7 +118,7 @@ const makeSellingPrice = (price: Price | null, coefficient: number): string | nu
               hide-pagination
             >
               <template #[`item.price`]="{ item }">
-                {{ (item.raw.price && money(item.raw.price.price)) || 'Не указана' }}
+                {{ (item.raw.price && money(item.raw.price.price) + '&euro;') || 'Не указана' }}
               </template>
               <template #[`item.sellingPrice`]="{ item }">
                 {{ makeSellingPrice(item.raw.price, item.raw.coefficient) }}&euro;

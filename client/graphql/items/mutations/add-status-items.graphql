@@ -1,0 +1,15 @@
+#import "../../auth/fragments/user-fields.graphql"
+#import "../fragments/status-item-fields.graphql"
+
+mutation AddStatusItems($orderId: Int!, $itemIds: [Int!]!, $status: ItemStatus!) {
+  addStatusItems(orderId: $orderId, itemIds: $itemIds, status: $status) {
+    id
+    statuses {
+      ...StatusItemFields
+      user {
+        ...UserFields
+      }
+    }
+    __typename
+  }
+}

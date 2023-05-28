@@ -317,7 +317,7 @@ type Price {
   price: Decimal!
 
   """Срок поставки в днях"""
-  duration: String
+  duration: Int
 
   """Название поставщика"""
   supplierName: String!
@@ -738,19 +738,21 @@ type PriceCountAggregate {
 type PriceAvgAggregate {
   id: Float
   price: Decimal
+  duration: Float
   productId: Float
 }
 
 type PriceSumAggregate {
   id: Int
   price: Decimal
+  duration: Int
   productId: Int
 }
 
 type PriceMinAggregate {
   id: Int
   price: Decimal
-  duration: String
+  duration: Int
   supplierName: String
   country: String
   site: String
@@ -764,7 +766,7 @@ type PriceMinAggregate {
 type PriceMaxAggregate {
   id: Int
   price: Decimal
-  duration: String
+  duration: Int
   supplierName: String
   country: String
   site: String
@@ -890,7 +892,7 @@ input PriceWhereInput {
   NOT: [PriceWhereInput!]
   id: IntFilter
   price: DecimalFilter
-  duration: StringNullableFilter
+  duration: IntNullableFilter
   supplierName: StringFilter
   country: StringNullableFilter
   site: StringNullableFilter
@@ -947,38 +949,26 @@ input NestedDecimalFilter {
   not: NestedDecimalFilter
 }
 
-input StringNullableFilter {
-  equals: String
-  in: [String!]
-  notIn: [String!]
-  lt: String
-  lte: String
-  gt: String
-  gte: String
-  contains: String
-  startsWith: String
-  endsWith: String
-  mode: QueryMode
-  not: NestedStringNullableFilter
+input IntNullableFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: NestedIntNullableFilter
 }
 
-enum QueryMode {
-  default
-  insensitive
-}
-
-input NestedStringNullableFilter {
-  equals: String
-  in: [String!]
-  notIn: [String!]
-  lt: String
-  lte: String
-  gt: String
-  gte: String
-  contains: String
-  startsWith: String
-  endsWith: String
-  not: NestedStringNullableFilter
+input NestedIntNullableFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: NestedIntNullableFilter
 }
 
 input StringFilter {
@@ -996,6 +986,11 @@ input StringFilter {
   not: NestedStringFilter
 }
 
+enum QueryMode {
+  default
+  insensitive
+}
+
 input NestedStringFilter {
   equals: String
   in: [String!]
@@ -1008,6 +1003,35 @@ input NestedStringFilter {
   startsWith: String
   endsWith: String
   not: NestedStringFilter
+}
+
+input StringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  mode: QueryMode
+  not: NestedStringNullableFilter
+}
+
+input NestedStringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: NestedStringNullableFilter
 }
 
 input DateTimeFilter {
@@ -1192,28 +1216,6 @@ input NestedEnumDeliveryTypeNullableFilter {
   in: [DeliveryType!]
   notIn: [DeliveryType!]
   not: NestedEnumDeliveryTypeNullableFilter
-}
-
-input IntNullableFilter {
-  equals: Int
-  in: [Int!]
-  notIn: [Int!]
-  lt: Int
-  lte: Int
-  gt: Int
-  gte: Int
-  not: NestedIntNullableFilter
-}
-
-input NestedIntNullableFilter {
-  equals: Int
-  in: [Int!]
-  notIn: [Int!]
-  lt: Int
-  lte: Int
-  gt: Int
-  gte: Int
-  not: NestedIntNullableFilter
 }
 
 input OrderRelationFilter {
@@ -1642,7 +1644,7 @@ type Mutation {
   login(userLoginInput: UserLoginInput!): UserLoginType!
   register(userRegisterInput: UserRegisterInput!): UserLoginType
   uploadAvatar(fileUpload: FileUploadInput!): User!
-  addStatuses(
+  addStatusItems(
     """Идентификатор заказа"""
     orderId: Int!
 
@@ -1731,7 +1733,7 @@ input FileUploadInput {
 
 input CreatePriceInput {
   price: Decimal!
-  duration: String
+  duration: Int
   supplierName: String!
   country: String
   site: String
