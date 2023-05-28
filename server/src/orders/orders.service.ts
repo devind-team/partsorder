@@ -170,22 +170,34 @@ export class OrdersService {
    * @param orderId
    */
   async unloadOrder(user: User, orderId: number): Promise<File> {
-    const orderItem = await this.prismaService.item.findMany({
+    const headers: Record<string, string> = {
+      id: '#',
+      'product.vendorCode': 'Артикул',
+      'product.manufacturer': 'Производитель',
+      quantity: 'Количество',
+      price: 'Цена Евро без НДС',
+      bill: 'Сумма Евро без НДС',
+    }
+    const orderItems = await this.prismaService.item.findMany({
       select: {
-        coefficient: true,
         quantity: true,
         price: true,
         product: {
-          select: {
-            vendorCode: true,
-            manufacturer: true,
-          },
+          select: { vendorCode: true, manufacturer: true },
         },
       },
-      where: {
-        orderId,
-      },
+      where: { orderId },
     })
-    return await this.fileService.getExcelFile(`order#${orderId}`, orderItem, user)
+    return await this.fileService.getExcelFile(
+      `order#${orderId}`,
+      headers,
+      orderItems.map((item, index) => ({
+        ...item,
+        price: Number(item.price.price),
+        bill: Number(item.price.price) * item.quantity,
+        id: index + 1,
+      })),
+      user,
+    )
   }
 }
