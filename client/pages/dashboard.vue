@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { useHead, useI18n, useLocalePath } from '#imports'
+import { definePageMeta, useHead, useI18n, useLocalePath } from '#imports'
 
 const localePath = useLocalePath()
 const { t } = useI18n()
+
+definePageMeta({ middleware: 'auth' })
 useHead({ title: t('dashboard.title') })
 
 const cards: Record<string, string>[] = [
