@@ -36,7 +36,7 @@ const headers = [
   { title: t('items.tableHeaders.commentItem'), key: 'commentItem[0].text', sortable: false },
 ]
 
-const messageFiter = computed(() => {
+const messageFilter = computed(() => {
   if (selectedStatus.value) {
     return String(
       t(`items.filterStatus.filtrationMessage`, {
@@ -72,7 +72,7 @@ const reset = (e: MouseEvent) => {
             <template #append>
               <v-icon v-if="!!selectedStatus" @click="reset">mdi-close</v-icon>
             </template>
-            {{ messageFiter }}
+            {{ messageFilter }}
           </v-chip>
         </statuses-items-filter>
       </v-col>
