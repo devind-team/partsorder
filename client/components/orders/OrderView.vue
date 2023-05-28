@@ -5,21 +5,22 @@ import { storeToRefs } from 'pinia'
 import { ExtractSingleKey } from '@vue/apollo-composable/dist/util/ExtractSingleKey'
 import { useFilters, useI18n } from '#imports'
 import { useAuthStore } from '~/stores'
-import { ChangePartialUpdate, UpdateType } from '~/composables/query-common'
+import { ChangePartialUpdateType, UpdateType } from '~/composables/query-common'
 import { DataTableHeader } from '~/types/vuetify'
 import {
   ChangeQuantityItemMutation,
   ChangeQuantityItemMutationVariables,
   ChangeSellingPriceItemMutation,
   ChangeSellingPriceItemMutationVariables,
-  Item,
   OrderQuery,
+  Item,
   Price,
 } from '~/types/graphql'
 import StatusesViewDialog from '~/components/orders/StatusesViewDialog.vue'
 import OrderItemsMenu from '~/components/orders/OrderItemsMenu.vue'
 import changeQuantityItemMutation from '~/graphql/items/mutations/change-quantity-item.graphql'
 import changeSellingPriceItemMutation from '~/graphql/items/mutations/change-selling-price-item.graphql'
+import StatusMenu from '~/components/orders/StatusMenu.vue'
 
 const authStore = useAuthStore()
 const { dateTimeHM, money } = useFilters()
@@ -29,7 +30,7 @@ const { user } = storeToRefs(authStore)
 const props = defineProps<{
   order: ExtractSingleKey<OrderQuery, 'order'>
   update: UpdateType
-  changePartialUpdate: ChangePartialUpdate
+  changePartialUpdate: ChangePartialUpdateType
 }>()
 
 const selectedItems: Ref<number[]> = ref<number[]>([])
@@ -106,15 +107,11 @@ const changeFieldValue = async (item: Item, field: 'quantity' | 'sellingPrice', 
         <h1>
           {{ t('order.detail.title', { number: props.order.id }) }}
         </h1>
-        <statuses-view-dialog
-          v-if="props.order.statuses.length"
-          v-slot="{ props: statusesProps }"
-          :statuses="props.order.statuses"
-        >
+        <status-menu v-slot="{ props: statusesProps }" :update="props.update" :order="props.order">
           <v-chip v-bind="statusesProps">
             {{ $t(`order.statuses.${props.order.statuses[props.order.statuses.length - 1].status}`) }}
           </v-chip>
-        </statuses-view-dialog>
+        </status-menu>
         <v-chip>{{ dateTimeHM(props.order.createdAt) }}</v-chip>
       </v-col>
       <v-col>

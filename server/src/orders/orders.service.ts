@@ -10,15 +10,18 @@ import { findManyCursorConnection } from '@common/relay/find-many-cursor-connect
 import { ProductsService } from '@products/products.service'
 import { orderItemValidator } from '@items/validators'
 import { Order } from '@generated/order'
-import { Role } from '@generated/prisma'
+import { ItemStatus, OrderStatus, Role } from '@generated/prisma'
 import { User } from '@generated/user'
 import { File } from '@generated/file'
+import { Status } from '@generated/status'
+import { ItemsService } from '@items/items.service'
 
 @Injectable()
 export class OrdersService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly productsService: ProductsService,
+    private readonly itemsService: ItemsService,
     private readonly fileService: FilesService,
   ) {}
 
@@ -136,6 +139,31 @@ export class OrdersService {
     return orderId
   }
 
+  /**
+   * Добавляем статус к заказу.
+   * В случае, если добавляем к заказу согласован, то все позиции получают такой же статус
+   * @param user: пользователь
+   * @param orderId: идентификатор заказа
+   * @param status: статус заказа
+   */
+  async addStatus(user: User, orderId: number, status: OrderStatus): Promise<Status> {
+    if (status === 'APPROVED') {
+      const itemIds = await this.prismaService.item.findMany({ select: { id: true }, where: { orderId } })
+      await this.itemsService.addStatuses(
+        user,
+        itemIds.map((item) => item.id),
+        ItemStatus.APPROVED,
+      )
+    }
+    return this.prismaService.status.create({
+      include: { user: true },
+      data: {
+        orderId,
+        status,
+        userId: user.id,
+      },
+    })
+  }
   /**
    * Выгрузка заказа
    * @param user

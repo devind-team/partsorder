@@ -44,7 +44,7 @@ export class ItemsResolver {
     @CurrentUser() user: User,
     @Args({ type: () => Int, name: 'orderId', description: 'Идентификатор заказа' }) orderId: number,
     @Args({ type: () => [Int], name: 'itemIds', description: 'Идентификаторы позиций' }) itemIds: number[],
-    @Args({ type: () => ItemStatus, name: 'status', description: 'Статус заказа' }) status: ItemStatus,
+    @Args({ type: () => ItemStatus, name: 'status', description: 'Статус позиции заказа' }) status: ItemStatus,
   ): Promise<Item[]> {
     await this.itemsService.addStatuses(user, await this.itemsService.getOrderItems(orderId, itemIds), status)
     return await this.itemsService.getItems(orderId, { statuses: { include: { user: true } } })

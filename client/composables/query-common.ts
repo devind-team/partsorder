@@ -219,7 +219,7 @@ export type UpdateType<TResult = any> = <TResultMutation>(
   transform: TransformUpdate<TResult, TResultMutation>,
 ) => void
 export type AddUpdateType = ReturnType<typeof useCommonQuery>['addUpdate']
-export type ChangePartialUpdate = ReturnType<typeof useCommonQuery>['changePartialUpdate']
+export type ChangePartialUpdateType = ReturnType<typeof useCommonQuery>['changePartialUpdate']
 export type ChangeUpdateType = ReturnType<typeof useCommonQuery>['changeUpdate']
 export type ResetUpdateType = ReturnType<typeof useCommonQuery>['resetUpdate']
 export type DeleteUpdateType = ReturnType<typeof useCommonQuery>['deleteUpdate']

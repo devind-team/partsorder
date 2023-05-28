@@ -68,7 +68,6 @@ export class ItemsService {
         where item.created_at = item.created_at_max
           and status = '${Prisma.raw(status.toString())}'
     `
-    console.log(availableItems)
     const extendParams = { ...params, where: { ...params.where, id: { in: availableItems.map((i) => i.id) } } }
     return await this.getItemConnection(extendParams)
   }
