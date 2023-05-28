@@ -8,8 +8,9 @@ definePageMeta({ middleware: 'auth' })
 useHead({ title: t('dashboard.title') })
 
 const cards: Record<string, string>[] = [
-  { key: 'products', title: 'Поиск продуктов', to: 'products', icon: 'mdi-train-car-autorack' },
-  { key: 'orders', title: 'Мои заказы', to: 'orders', icon: 'mdi-basket' },
+  { key: 'products', title: t('products.title'), to: 'products', icon: 'mdi-train-car-autorack' },
+  { key: 'orders', title: t('order.title'), to: 'orders', icon: 'mdi-basket' },
+  { key: 'items-pending', title: t('items.pending.title'), to: 'items-pending', icon: 'mdi-archive-lock-open-outline' },
 ]
 </script>
 <template>

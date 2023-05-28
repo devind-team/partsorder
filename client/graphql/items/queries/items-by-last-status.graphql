@@ -1,3 +1,4 @@
+#import "../../auth/fragments/user-fields.graphql"
 #import "../../orders/fragments/order-fields.graphql"
 #import "../../products/fragments/product-fields.graphql"
 #import "../../prices/fragments/price-fields.graphql"
@@ -5,10 +6,10 @@
 #import "../fragments/comment-item-fields.graphql"
 #import "../fragments/item-fields.graphql"
 
-query Items($filter: [ItemStatus!], $search: String, $first: Int, $after: String, $skip: Int) {
-  items(
+query ItemsByLastStatus($status: ItemStatus!, $search: String, $first: Int, $after: String, $skip: Int) {
+  itemsByLastStatus(
+    status: $status,
     where: {
-      statuses: { some: { status: { in: $filter } } }
       OR: [
         { product: { is: { vendorCode: { contains: $search } } } }
         { product: { is: { manufacturer: { contains: $search } } } }
@@ -43,8 +44,14 @@ query Items($filter: [ItemStatus!], $search: String, $first: Int, $after: String
         }
         commentItem {
           ...CommentItemFields
+          user {
+            ...UserFields
+          }
         }
+        __typename
       }
+      __typename
     }
+    __typename
   }
 }

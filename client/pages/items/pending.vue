@@ -1,10 +1,15 @@
 <script lang="ts" setup>
+import { useHead, useI18n, useLocalePath } from '#imports'
+import { ItemsByLastStatusQuery, ItemsByLastStatusQueryVariables } from '~/types/graphql'
+import itemsByLastStatus from '~/graphql/items/queries/items-by-last-status.graphql'
 import StatusesItemsFilter from '~/components/items/StatusesItemsFilter.vue'
-import { ItemsQuery, ItemsQueryVariables } from '~/types/graphql'
-import itemsQuery from '~/graphql/items/query/items.graphql'
+import StatusesViewDialog from '~/components/orders/StatusesViewDialog.vue'
+
+const { t } = useI18n()
+const localePath = useLocalePath()
 
 definePageMeta({ middleware: 'auth' })
-const { t } = useI18n()
+useHead({ title: t('items.pending.title') })
 const { dateTimeHM, money } = useFilters()
 
 const selectedStatus = ref<string>('APPROVED')
@@ -14,11 +19,11 @@ const {
   data: items,
   pagination,
   loading,
-} = useQueryRelay<ItemsQuery, ItemsQueryVariables>({
-  document: itemsQuery,
+} = useQueryRelay<ItemsByLastStatusQuery, ItemsByLastStatusQueryVariables>({
+  document: itemsByLastStatus,
   variables: () => ({
     search: search.value,
-    filter: selectedStatus.value,
+    status: selectedStatus.value,
   }),
 })
 
@@ -31,34 +36,22 @@ const headers = [
   { title: t('items.tableHeaders.quantity'), key: 'quantity', sortable: false },
   { title: t('items.tableHeaders.supplierName'), key: 'price.supplierName', sortable: false },
   { title: t('items.tableHeaders.price'), key: 'price.price', sortable: false },
-  { title: t('items.tableHeaders.paymentStatus'), key: 'paymentStatus', sortable: false },
-  { title: t('items.tableHeaders.status'), key: 'statuses.status', sortable: false },
-  { title: t('items.tableHeaders.commentItem'), key: 'commentItem[0].text', sortable: false },
+  { title: t('items.tableHeaders.status'), key: 'statuses', sortable: false },
 ]
 
 const messageFilter = computed(() => {
-  if (selectedStatus.value) {
-    return String(
-      t(`items.filterStatus.filtrationMessage`, {
-        status: String(t(`items.filterStatus.statuses.${selectedStatus.value}`)),
-      }),
-    )
-  } else {
-    return String(t(`items.filterStatus.noFiltrationMessage`))
-  }
+  return t(`items.filterStatus.filtrationMessage`, { status: t(`items.filterStatus.statuses.${selectedStatus.value}`) })
 })
-
-const reset = (e: MouseEvent) => {
-  e.stopPropagation()
-  selectedStatus.value = 'APPROVED'
-}
 </script>
 
 <template>
   <v-container fluid>
     <v-row>
-      <v-col>
-        <h2>Товары</h2>
+      <v-col cols="12" md="10">
+        <h1>{{ $t('items.pending.title') }}</h1>
+      </v-col>
+      <v-col class="text-right" cols="12" md="2">
+        <v-btn color="primary">Выгрузить</v-btn>
       </v-col>
     </v-row>
     <v-row>
@@ -68,12 +61,7 @@ const reset = (e: MouseEvent) => {
           v-model="selectedStatus"
           :title="$t(`items.filterStatus.title`)"
         >
-          <v-chip v-bind="propsStatusesItemFilter">
-            <template #append>
-              <v-icon v-if="!!selectedStatus" @click="reset">mdi-close</v-icon>
-            </template>
-            {{ messageFilter }}
-          </v-chip>
+          <v-chip v-bind="propsStatusesItemFilter">{{ messageFilter }}</v-chip>
         </statuses-items-filter>
       </v-col>
       <v-col>
@@ -100,12 +88,21 @@ const reset = (e: MouseEvent) => {
               :items-length="pagination.totalCount.value"
               density="compact"
             >
+              <template #[`item.order.id`]="{ item }">
+                <nuxt-link :to="localePath({ name: 'orders-orderId', params: { orderId: item.raw.order.id } })">
+                  {{ item.raw.order.id }}
+                </nuxt-link>
+              </template>
               <template #[`item.order.createdAt`]="{ item }">{{ dateTimeHM(item.raw.order.createdAt) }}</template>
-              <template #[`item.price.price`]="{ item }">{{
-                `&euro; ${item.raw.price == null ? money(0) : money(item.raw.price.price)}`
-              }}</template>
-              <template #[`item.statuses.status`]="{ item }"
-                >{{ $t(`items.filterStatus.statuses.${item.raw.statuses[0].status}`) }}
+              <template #[`item.price.price`]="{ item }">
+                {{ item.raw.price ? '&euro;' + money(item.raw.price.price) : 'Не указана' }}
+              </template>
+              <template #[`item.statuses`]="{ item }">
+                <statuses-view-dialog v-slot="{ props: statusesProps }" :statuses="item.raw.statuses">
+                  <v-chip v-bind="statusesProps" size="small">
+                    {{ $t(`order.statuses.${item.raw.statuses[item.raw.statuses.length - 1].status}`) }}
+                  </v-chip>
+                </statuses-view-dialog>
               </template>
             </v-data-table-server>
           </v-card-text>

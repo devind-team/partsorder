@@ -892,6 +892,20 @@ type Query {
   me: User!
   presignedPutUrl(fileName: String!): FileUploadType!
   items(where: ItemWhereInput, orderBy: [ItemOrderByWithRelationInput!], cursor: ItemWhereUniqueInput, take: Int, skip: Int, distinct: [ItemScalarFieldEnum!], after: String, before: String, first: Int, last: Int): ItemConnectionType!
+  itemsByLastStatus(
+    """Текущий статус позиции"""
+    status: ItemStatus!
+    where: ItemWhereInput
+    orderBy: [ItemOrderByWithRelationInput!]
+    cursor: ItemWhereUniqueInput
+    take: Int
+    skip: Int
+    distinct: [ItemScalarFieldEnum!]
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ItemConnectionType!
   prices(where: PriceWhereInput, orderBy: [PriceOrderByWithRelationInput!], cursor: PriceWhereUniqueInput, take: Int, skip: Int, distinct: [PriceScalarFieldEnum!], after: String, before: String, first: Int, last: Int): PriceConnectionType!
   order(orderId: Int!): Order!
   orders(where: OrderWhereInput, orderBy: [OrderOrderByWithRelationInput!], cursor: OrderWhereUniqueInput, take: Int, skip: Int, distinct: [OrderScalarFieldEnum!], after: String, before: String, first: Int, last: Int): OrderConnectionType!

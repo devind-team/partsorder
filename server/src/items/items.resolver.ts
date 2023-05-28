@@ -19,6 +19,19 @@ export class ItemsResolver {
   async items(@Args() params: ItemConnectionArgs): Promise<ItemConnectionType> {
     return await this.itemsService.getItemConnection(params)
   }
+
+  /**
+   * Получение позиций по последнему статусу
+   * @param status: последний установленный статус
+   * @param params: параметры фильтрации
+   */
+  @Query(() => ItemConnectionType)
+  async itemsByLastStatus(
+    @Args({ type: () => ItemStatus, name: 'status', description: 'Текущий статус позиции' }) status: ItemStatus,
+    @Args() params: ItemConnectionArgs,
+  ): Promise<ItemConnectionType> {
+    return await this.itemsService.getItemsByLastStatusConnection(status, params)
+  }
   /**
    * Добавление статуса к заказу
    * @param user: пользователь

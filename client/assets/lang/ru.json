@@ -137,6 +137,9 @@
         "COMPLETED": "Доставлен"
       }
     },
+    "pending": {
+      "title": "Не закрытые позиции"
+    },
     "tableHeaders": {
       "orderId": "Номер заказа",
       "orderCreatedAt": "Дата создания",
@@ -145,8 +148,7 @@
       "quantity": "Количество",
       "supplierName": "Поставщик",
       "price": "Цена",
-      "paymentStatus": "Статус оплаты",
-      "status": "Статус отправки",
+      "status": "Статус",
       "commentItem": "Комментарий"
     }
   }
