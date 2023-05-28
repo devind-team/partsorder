@@ -646,7 +646,44 @@ type OrderConnectionType {
 
 type DeleteOrderType {
   """Идентификатор удаленного заказа"""
-  deleteId: Float!
+  id: Float!
+}
+
+type StatusCountAggregate {
+  id: Int!
+  status: Int!
+  createdAt: Int!
+  orderId: Int!
+  userId: Int!
+  _all: Int!
+}
+
+type StatusAvgAggregate {
+  id: Float
+  orderId: Float
+  userId: Float
+}
+
+type StatusSumAggregate {
+  id: Int
+  orderId: Int
+  userId: Int
+}
+
+type StatusMinAggregate {
+  id: Int
+  status: OrderStatus
+  createdAt: DateTime
+  orderId: Int
+  userId: Int
+}
+
+type StatusMaxAggregate {
+  id: Int
+  status: OrderStatus
+  createdAt: DateTime
+  orderId: Int
+  userId: Int
 }
 
 type DeleteOrderItemsType {
@@ -1717,7 +1754,7 @@ type Mutation {
     """Идентификаторы позиций"""
     itemIds: [Int!]!
 
-    """Статус заказа"""
+    """Статус позиции заказа"""
     status: ItemStatus!
   ): [Item!]!
   recountPrices(
@@ -1763,6 +1800,13 @@ type Mutation {
     """Идентификатор заказа"""
     orderId: Float!
   ): DeleteOrderType!
+  addStatusOrder(
+    """Идентификатор заказа"""
+    orderId: Int!
+
+    """Статус заказа"""
+    status: OrderStatus!
+  ): Status!
   unloadOrder(
     """Идентификатор заказа"""
     orderId: Int!

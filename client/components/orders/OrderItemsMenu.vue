@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useMutation } from '@vue/apollo-composable'
-import { ChangePartialUpdate, UpdateType } from '~/composables/query-common'
+import { ChangePartialUpdateType, UpdateType } from '~/composables/query-common'
 import {
   UnloadOrderMutation,
   UnloadOrderMutationVariables,
@@ -20,7 +20,7 @@ const props = defineProps<{
   orderId: number
   selectedItems: number[]
   update: UpdateType
-  changePartialUpdate: ChangePartialUpdate
+  changePartialUpdate: ChangePartialUpdateType
 }>()
 
 const emit = defineEmits<{

@@ -3,14 +3,14 @@ import { object, string } from 'yup'
 import { useMutation } from '@vue/apollo-composable'
 import { Field, Form } from 'vee-validate'
 import { useI18n } from '#imports'
-import { ChangePartialUpdate } from '~/composables/query-common'
+import { ChangePartialUpdateType } from '~/composables/query-common'
 import { AddStatusItemsMutation, AddStatusItemsMutationVariables } from '~/types/graphql'
 import addStatusItems from '~/graphql/items/mutations/add-status-items.graphql'
 
 const props = defineProps<{
   orderId: number
   selectedItems: number[]
-  changePartialUpdate: ChangePartialUpdate
+  changePartialUpdate: ChangePartialUpdateType
 }>()
 
 const emit = defineEmits<{

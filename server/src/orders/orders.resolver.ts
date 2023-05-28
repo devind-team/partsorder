@@ -8,9 +8,11 @@ import { CreateOrderInput } from '@orders/dto/create-order.input'
 import { CreateOrderType } from '@orders/dto/create-order.type'
 import { OrderConnectionType } from '@orders/dto/order-connection.type'
 import { OrderConnectionArgs } from '@orders/dto/order-connection.args'
+import { DeleteOrderType } from '@orders/dto/delete-order.type'
 import { User } from '@generated/user'
 import { Order } from '@generated/order'
-import { DeleteOrderType } from '@orders/dto/delete-order.type'
+import { Status } from '@generated/status'
+import { OrderStatus } from '@generated/prisma'
 
 @UseGuards(GqlAuthGuard)
 @Resolver()
@@ -26,7 +28,6 @@ export class OrdersResolver {
   async orders(@CurrentUser() user: User, @Args() params: OrderConnectionArgs): Promise<OrderConnectionType> {
     return await this.ordersService.getOrderConnection(user, params)
   }
-
   /**
    * Мутация для создания заказа
    * @param user: пользователь
@@ -43,7 +44,6 @@ export class OrdersResolver {
   ): Promise<CreateOrderType> {
     return await this.ordersService.createOrder(user, order)
   }
-
   /**
    * Мутация для удаления заказа
    * @param user: пользователь
@@ -54,9 +54,23 @@ export class OrdersResolver {
     @CurrentUser() user: User,
     @Args({ type: () => Number, name: 'orderId', description: 'Идентификатор заказа' }) orderId: number,
   ): Promise<DeleteOrderType> {
-    return { deleteId: await this.ordersService.deleteOrder(user, orderId) }
+    return { id: await this.ordersService.deleteOrder(user, orderId) }
   }
 
+  /**
+   * Добавление статуса к заказу
+   * @param user
+   * @param orderId
+   * @param status
+   */
+  @Mutation(() => Status)
+  async addStatusOrder(
+    @CurrentUser() user: User,
+    @Args({ type: () => Int, name: 'orderId', description: 'Идентификатор заказа' }) orderId: number,
+    @Args({ type: () => OrderStatus, name: 'status', description: 'Статус заказа' }) status: OrderStatus,
+  ): Promise<Status> {
+    return await this.ordersService.addStatus(user, orderId, status)
+  }
   /**
    * Выгрузка заказа
    * @param user

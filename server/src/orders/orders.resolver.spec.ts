@@ -4,6 +4,7 @@ import { PrismaService } from '@common/services/prisma.service'
 import { OrdersService } from '@orders/orders.service'
 import { OrdersResolver } from './orders.resolver'
 import { ProductsService } from '@products/products.service'
+import { ItemsService } from '@items/items.service'
 
 describe('OrdersResolver', () => {
   let resolver: OrdersResolver
@@ -11,7 +12,7 @@ describe('OrdersResolver', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [FilesModule],
-      providers: [PrismaService, ProductsService, OrdersService, OrdersResolver],
+      providers: [PrismaService, ProductsService, OrdersService, OrdersResolver, ItemsService],
       exports: [OrdersService],
     }).compile()
 
