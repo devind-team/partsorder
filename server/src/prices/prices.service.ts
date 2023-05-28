@@ -80,7 +80,7 @@ export class PricesService {
         })
         if (validatedPrice.success) {
           const { price, ...validateData } = validatedPrice.data
-          data.push({ ...(validateData as PriceCreateManyInput), price: new Decimal(price) })
+          data.push({ ...(validateData as Omit<PriceCreateManyInput, 'price'>), price: new Decimal(price) })
         }
         rows.push({
           success: validatedPrice.success,

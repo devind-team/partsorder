@@ -6,6 +6,7 @@
   "create": "Дата создания",
   "search": "Поиск",
   "add": "Добавить",
+  "change": "Изменить",
   "delete": "Удалить",
   "auth": {
     "title": "Авторизация",
@@ -62,12 +63,12 @@
       "CLOSED": "Закрыт"
     },
     "detail": {
-      "title": "Детализация заказа #{number} ({date})"
+      "title": "Детализация заказа #{number}"
     },
     "items": {
       "recountPrices": "Проценить",
       "changeCoefficient": "Задать коэффициент наценки",
-      "changeStatus": "Изменить статус",
+      "addStatus": "Изменить статус",
       "uploadXlsx": "Выгрузить в Excel",
       "uploadOffer": "Выгрузить коммерческое предложение"
     }
@@ -105,6 +106,12 @@
     "manufacturer": "Производитель",
     "attributes": "Атрибуты",
     "prices": "Цены"
+  },
+  "items": {
+    "changeCoefficient": "Изменение коэффициента наценки",
+    "coefficient": "Коэффициент наценки",
+    "addStatus": "Изменение статуса",
+    "status": "Статус"
   },
   "index": {
     "header": "Запчасти для грузовой техники из Европы",

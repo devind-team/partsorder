@@ -1,0 +1,7 @@
+mutation ChangeQuantityItem($itemId: Int!, $quantity: Int!) {
+  changeQuantityItem(itemId: $itemId, quantity: $quantity) {
+    id
+    quantity
+    __typename
+  }
+}

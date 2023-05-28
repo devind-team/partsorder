@@ -13,6 +13,8 @@ import {
 import unloadOrderMutation from '~/graphql/orders/mutations/unload-order.graphql'
 import changePricesMutation from '~/graphql/items/mutations/recount-prices.graphql'
 import deleteOrderItemsMutation from '~/graphql/orders/mutations/delete-order-items.graphql'
+import AddStatusItems from '~/components/items/AddStatusItems.vue'
+import ChangeCoefficientItem from '~/components/items/ChangeCoefficientItem.vue'
 
 const props = defineProps<{
   orderId: number
@@ -83,7 +85,6 @@ const { mutate: deleteOrderItems } = useMutation<DeleteOrderItemsMutation, Delet
         prepend-icon="mdi-file-excel-box-outline"
         @click="unloadOrder({ orderId: props.orderId })"
       />
-      <v-list-item :title="$t('order.items.uploadOffer')" prepend-icon="mdi-file-pdf-box" />
       <v-list-item :title="$t('add')" prepend-icon="mdi-plus" />
       <v-list-item
         :disabled="!props.selectedItems.length"
@@ -91,8 +92,34 @@ const { mutate: deleteOrderItems } = useMutation<DeleteOrderItemsMutation, Delet
         prepend-icon="mdi-ballot-recount-outline"
         @click="recountPrices({ orderId: props.orderId, itemIds: selectedItems.map(Number) })"
       />
-      <v-list-item :title="$t('order.items.changeStatus')" prepend-icon="mdi-list-status" />
-      <v-list-item :title="$t('order.items.changeCoefficient')" prepend-icon="mdi-circle-multiple-outline" />
+      <add-status-items
+        v-slot="{ props: propsAddStatusItems }"
+        :order-id="props.orderId"
+        :selected-items="props.selectedItems"
+        :change-partial-update="props.changePartialUpdate"
+        @close="close"
+      >
+        <v-list-item
+          v-bind="propsAddStatusItems"
+          :disabled="!props.selectedItems.length"
+          :title="$t('order.items.addStatus')"
+          prepend-icon="mdi-list-status"
+        />
+      </add-status-items>
+      <change-coefficient-item
+        v-slot="{ props: propsChangeCoefficientItem }"
+        :order-id="props.orderId"
+        :selected-items="props.selectedItems"
+        :change-partial-update="props.changePartialUpdate"
+        @close="close"
+      >
+        <v-list-item
+          v-bind="propsChangeCoefficientItem"
+          :disabled="!props.selectedItems.length"
+          :title="$t('order.items.changeCoefficient')"
+          prepend-icon="mdi-circle-multiple-outline"
+        />
+      </change-coefficient-item>
       <v-list-item
         :title="$t('delete')"
         :disabled="!props.selectedItems.length"
