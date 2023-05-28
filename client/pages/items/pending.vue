@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useHead, useI18n, useLocalePath } from '#imports'
-import { ItemsByLastStatusQuery, ItemsByLastStatusQueryVariables } from '~/types/graphql'
+import { ItemsByLastStatusQuery, ItemsByLastStatusQueryVariables, Price } from '~/types/graphql'
 import itemsByLastStatus from '~/graphql/items/queries/items-by-last-status.graphql'
 import StatusesItemsFilter from '~/components/items/StatusesItemsFilter.vue'
 import StatusesViewDialog from '~/components/orders/StatusesViewDialog.vue'
@@ -30,18 +30,27 @@ const {
 const headers = [
   { title: '#', key: 'id' },
   { title: t('items.tableHeaders.orderId'), key: 'order.id', sortable: false },
-  { title: t('items.tableHeaders.orderCreatedAt'), key: 'order.createdAt', sortable: false },
-  { title: t('items.tableHeaders.manufacturer'), key: 'product.manufacturer', sortable: false },
   { title: t('items.tableHeaders.vendorCode'), key: 'product.vendorCode', sortable: false },
-  { title: t('items.tableHeaders.quantity'), key: 'quantity', sortable: false },
+  { title: t('items.tableHeaders.manufacturer'), key: 'product.manufacturer', sortable: false },
   { title: t('items.tableHeaders.supplierName'), key: 'price.supplierName', sortable: false },
+  { title: t('items.tableHeaders.quantity'), key: 'quantity', sortable: false },
+  { title: t('items.tableHeaders.coefficient'), key: 'coefficient', sortable: false },
   { title: t('items.tableHeaders.price'), key: 'price.price', sortable: false },
+  { title: t('items.tableHeaders.sellingPrice'), key: 'sellingPrice', sortable: false },
+  { title: t('items.tableHeaders.bill'), key: 'bill', sortable: false },
   { title: t('items.tableHeaders.status'), key: 'statuses', sortable: false },
+  { title: t('items.tableHeaders.orderCreatedAt'), key: 'order.createdAt', sortable: false },
 ]
 
 const messageFilter = computed(() => {
   return t(`items.filterStatus.filtrationMessage`, { status: t(`items.filterStatus.statuses.${selectedStatus.value}`) })
 })
+const makeSellingPrice = (price: Price | null, coefficient: number): string | number => {
+  return price ? money(price.price * coefficient) : 0
+}
+const makePrice = (price: Price | null, quantity: number, coefficient: number): string | number => {
+  return price ? money(price.price * quantity * coefficient) : 0
+}
 </script>
 
 <template>
@@ -49,9 +58,6 @@ const messageFilter = computed(() => {
     <v-row>
       <v-col cols="12" md="10">
         <h1>{{ $t('items.pending.title') }}</h1>
-      </v-col>
-      <v-col class="text-right" cols="12" md="2">
-        <v-btn color="primary">Выгрузить</v-btn>
       </v-col>
     </v-row>
     <v-row>
@@ -96,6 +102,12 @@ const messageFilter = computed(() => {
               <template #[`item.order.createdAt`]="{ item }">{{ dateTimeHM(item.raw.order.createdAt) }}</template>
               <template #[`item.price.price`]="{ item }">
                 {{ item.raw.price ? '&euro;' + money(item.raw.price.price) : 'Не указана' }}
+              </template>
+              <template #[`item.sellingPrice`]="{ item }">
+                &euro;{{ makeSellingPrice(item.raw.price, item.raw.coefficient) }}
+              </template>
+              <template #[`item.bill`]="{ item }">
+                &euro;{{ makePrice(item.raw.price, item.raw.quantity, item.raw.coefficient) }}
               </template>
               <template #[`item.statuses`]="{ item }">
                 <statuses-view-dialog v-slot="{ props: statusesProps }" :statuses="item.raw.statuses">

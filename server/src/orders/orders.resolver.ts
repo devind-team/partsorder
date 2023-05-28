@@ -52,7 +52,7 @@ export class OrdersResolver {
   @Mutation(() => DeleteOrderType)
   async deleteOrder(
     @CurrentUser() user: User,
-    @Args({ type: () => Number, name: 'orderId', description: 'Идентификатор заказа' }) orderId: number,
+    @Args({ type: () => Int, name: 'orderId', description: 'Идентификатор заказа' }) orderId: number,
   ): Promise<DeleteOrderType> {
     return { id: await this.ordersService.deleteOrder(user, orderId) }
   }

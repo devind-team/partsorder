@@ -1798,7 +1798,7 @@ type Mutation {
   createOrder(order: CreateOrderInput!): CreateOrderType!
   deleteOrder(
     """Идентификатор заказа"""
-    orderId: Float!
+    orderId: Int!
   ): DeleteOrderType!
   addStatusOrder(
     """Идентификатор заказа"""

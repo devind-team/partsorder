@@ -148,8 +148,11 @@
       "manufacturer": "Производитель",
       "vendorCode": "Артикул",
       "quantity": "Количество",
+      "coefficient": "Коэффициент наценки",
       "supplierName": "Поставщик",
-      "price": "Цена",
+      "price": "Цена закупки",
+      "sellingPrice": "Цена продажи",
+      "bill": "Сумма",
       "status": "Статус",
       "commentItem": "Комментарий"
     }
