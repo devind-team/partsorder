@@ -1,5 +1,5 @@
 import { DocumentNode } from 'graphql'
-import { DataProxy } from '@apollo/client'
+import { ApolloCache, DataProxy } from '@apollo/client'
 import { UseQueryReturn } from '@vue/apollo-composable/dist/useQuery'
 import { FetchResult } from '@apollo/client/link/core'
 import { useQuery } from '@vue/apollo-composable'
@@ -70,7 +70,7 @@ export function useCommonQuery<
    * @param start - добавление элемента в начало
    */
   const addUpdate = <TResultMutation>(
-    cache: DataProxy,
+    cache: ApolloCache<TResult>,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
     key: string | null = null,
     start = true,
@@ -97,7 +97,7 @@ export function useCommonQuery<
    * @param key - элемент в мутации
    */
   const changeUpdate = <TResultMutation>(
-    cache: DataProxy,
+    cache: ApolloCache<TResult>,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
     key: string | null = null,
   ): void => {
@@ -128,7 +128,7 @@ export function useCommonQuery<
    * @param key
    */
   const changePartialUpdate = <TResultMutation>(
-    cache: DataProxy,
+    cache: ApolloCache<TResult>,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
     field: string,
     key: string,
@@ -162,7 +162,7 @@ export function useCommonQuery<
    * @param result - результат выполнения мутации
    */
   const resetUpdate = <TResultMutation>(
-    cache: DataProxy,
+    cache: ApolloCache<TResult>,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
   ): void => {
     update(cache, result, (dataCache) => {
@@ -181,7 +181,7 @@ export function useCommonQuery<
    * @param isStrict - происходит ли исключение, если запись отсутствует в кеше
    */
   const deleteUpdate = <TResultMutation>(
-    cache: DataProxy,
+    cache: ApolloCache<TResult>,
     result: Omit<FetchResult<TResultMutation>, 'context'>,
     isStrict = true,
   ): void => {
@@ -191,6 +191,7 @@ export function useCommonQuery<
       (dataCache) => {
         const { id = null } = getMutationResult(result) as { id: number | string | null }
         if (id) {
+          // cache.evict({ id: id as string })
           const dataKey: keyof typeof dataCache = Object.keys(dataCache)[0]
           dataCache[dataKey] = dataCache[dataKey].filter((e: any) => e.id !== id)
         }
@@ -213,7 +214,7 @@ export function useCommonQuery<
 }
 
 export type UpdateType<TResult = any> = <TResultMutation>(
-  cache: DataProxy,
+  cache: ApolloCache<TResult>,
   result: Omit<FetchResult<TResultMutation>, 'context'>,
   transform: TransformUpdate<TResult, TResultMutation>,
 ) => void
