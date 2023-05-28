@@ -85,7 +85,6 @@ const { mutate: deleteOrderItems } = useMutation<DeleteOrderItemsMutation, Delet
         prepend-icon="mdi-file-excel-box-outline"
         @click="unloadOrder({ orderId: props.orderId })"
       />
-      <v-list-item :title="$t('order.items.uploadOffer')" prepend-icon="mdi-file-pdf-box" />
       <v-list-item :title="$t('add')" prepend-icon="mdi-plus" />
       <v-list-item
         :disabled="!props.selectedItems.length"

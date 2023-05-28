@@ -1,18 +1,29 @@
 <script lang="ts" setup>
 import { Ref } from 'vue'
+import { useMutation } from '@vue/apollo-composable'
 import { storeToRefs } from 'pinia'
 import { ExtractSingleKey } from '@vue/apollo-composable/dist/util/ExtractSingleKey'
 import { useFilters, useI18n } from '#imports'
-import { OrderQuery, Price } from '~/types/graphql'
 import { useAuthStore } from '~/stores'
 import { ChangePartialUpdate, UpdateType } from '~/composables/query-common'
-import StatusesViewDialog from '~/components/orders/StatusesViewDialog.vue'
 import { DataTableHeader } from '~/types/vuetify'
+import StatusesViewDialog from '~/components/orders/StatusesViewDialog.vue'
 import OrderItemsMenu from '~/components/orders/OrderItemsMenu.vue'
+import {
+  ChangeQuantityItemMutation,
+  ChangeQuantityItemMutationVariables,
+  ChangeSellingPriceItemMutation,
+  ChangeSellingPriceItemMutationVariables,
+  Item,
+  OrderQuery,
+  Price,
+} from '~/types/graphql'
+import changeQuantityItemMutation from '~/graphql/items/mutations/change-quantity-item.graphql'
+import changeSellingPriceItemMutation from '~/graphql/items/mutations/change-selling-price-item.graphql'
 
 const authStore = useAuthStore()
-const { t } = useI18n()
 const { dateTimeHM, money } = useFilters()
+const { t } = useI18n()
 const { user } = storeToRefs(authStore)
 
 const props = defineProps<{
@@ -22,7 +33,7 @@ const props = defineProps<{
 }>()
 
 const selectedItems: Ref<number[]> = ref<number[]>([])
-const search = ref<string>('')
+const search = ref<string | undefined>(undefined)
 
 const headers = computed<DataTableHeader[]>(() => {
   const h = [
@@ -30,7 +41,7 @@ const headers = computed<DataTableHeader[]>(() => {
     { title: 'Производитель', key: 'product.manufacturer' },
     { title: 'Артикул', key: 'product.vendorCode' },
     { title: 'Название', key: 'product.name' },
-    { title: 'Количество', key: 'quantity' },
+    { title: 'Количество', key: 'quantity', width: 150 },
   ]
   if (user.value?.role === 'ADMIN') {
     h.push({ title: 'Цена закупки', key: 'price' })
@@ -54,6 +65,38 @@ const makePrice = (price: Price | null, quantity: number, coefficient: number): 
 }
 const makeSellingPrice = (price: Price | null, coefficient: number): string | number => {
   return price ? money(price.price * coefficient) : 0
+}
+
+const changeField = ref<string | undefined>(undefined)
+const fieldValue = ref<string>('')
+const setChangeField = (field: string | undefined, value: string) => {
+  changeField.value = field
+  fieldValue.value = value
+}
+const { mutate: changeQuantityItem } = useMutation<ChangeQuantityItemMutation, ChangeQuantityItemMutationVariables>(
+  changeQuantityItemMutation,
+  { update: (cache, result) => props.changePartialUpdate(cache, result, 'items', 'quantity') },
+)
+const { mutate: changeSellingPriceItem } = useMutation<
+  ChangeSellingPriceItemMutation,
+  ChangeSellingPriceItemMutationVariables
+>(changeSellingPriceItemMutation, {
+  update: (cache, result) => props.changePartialUpdate(cache, result, 'items', 'coefficient'),
+})
+const changeFieldValue = async (item: Item, field: 'quantity' | 'sellingPrice', value: string): Promise<void> => {
+  if (field === 'quantity') {
+    const quantity = parseInt(value)
+    if (!Number.isNaN(quantity)) {
+      await changeQuantityItem({ itemId: Number(item.id), quantity: Math.max(quantity, 1) })
+    }
+  }
+  if (field === 'sellingPrice') {
+    const price = parseFloat(value)
+    if (!Number.isNaN(price)) {
+      await changeSellingPriceItem({ itemId: Number(item.id), price: Math.max(price, 1) })
+    }
+  }
+  setChangeField(undefined, '')
 }
 </script>
 <template>
@@ -117,11 +160,53 @@ const makeSellingPrice = (price: Price | null, coefficient: number): string | nu
               show-select
               hide-pagination
             >
+              <template #[`item.quantity`]="{ item }">
+                <v-text-field
+                  v-if="changeField === `quantity_${item.raw.id}`"
+                  v-model="fieldValue"
+                  clear-icon="mdi-close-circle"
+                  append-inner-icon="mdi-check"
+                  density="compact"
+                  :clearable="true"
+                  hide-details
+                  single-line
+                  @click:clear="setChangeField(undefined, '')"
+                  @click:append-inner="changeFieldValue(item.raw, 'quantity', fieldValue)"
+                />
+                <div v-else @click="setChangeField(`quantity_${item.raw.id}`, item.raw.quantity)">
+                  {{ item.raw.quantity }}
+                </div>
+              </template>
+              <template #[`item.coefficient`]="{ item }">
+                {{ item.raw.coefficient.toFixed(4) }}
+              </template>
               <template #[`item.price`]="{ item }">
                 {{ (item.raw.price && money(item.raw.price.price) + '&euro;') || 'Не указана' }}
               </template>
               <template #[`item.sellingPrice`]="{ item }">
-                {{ makeSellingPrice(item.raw.price, item.raw.coefficient) }}&euro;
+                <template v-if="item.raw.price">
+                  <v-text-field
+                    v-if="changeField === `sellingPrice_${item.raw.id}`"
+                    v-model="fieldValue"
+                    clear-icon="mdi-close-circle"
+                    append-inner-icon="mdi-check"
+                    density="compact"
+                    :clearable="true"
+                    hide-details
+                    single-line
+                    @click:clear="setChangeField(undefined, '')"
+                    @click:append-inner="changeFieldValue(item.raw, 'sellingPrice', fieldValue)"
+                  />
+                  <div
+                    v-else
+                    @click="
+                      setChangeField(`sellingPrice_${item.raw.id}`, `${item.raw.price.price * item.raw.coefficient}`)
+                    "
+                  >
+                    {{ makeSellingPrice(item.raw.price, item.raw.coefficient) }}&euro;
+                  </div>
+                </template>
+                <template v-else>-&euro;</template>
               </template>
               <template #[`item.supplierName`]="{ item }">
                 {{ (item.raw.price && item.raw.price.supplierName) || 'Не указан' }}
