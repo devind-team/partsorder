@@ -2,8 +2,8 @@
 #import "../fragments/order-fields.graphql"
 #import "../fragments/status-fields.graphql"
 
-query Orders($first: Int, $after: String) {
-  orders(first: $first, after: $after, orderBy: { createdAt: desc }) {
+query Orders($first: Int, $skip: Int) {
+  orders(first: $first, skip: $skip, orderBy: { createdAt: desc }) {
     totalCount
     pageInfo {
       startCursor

@@ -1,7 +1,13 @@
 {
   "title": "Best Trans Parts",
+  "open": "Открыть",
   "cancel": "Отменить",
   "close": "Закрыть",
+  "create": "Дата создания",
+  "search": "Поиск",
+  "add": "Добавить",
+  "change": "Изменить",
+  "delete": "Удалить",
   "auth": {
     "title": "Авторизация",
     "register": "Регистрация",
@@ -35,21 +41,36 @@
     "add": "Добавить новый заказ",
     "create": "Отправить  заказ",
     "address": "Адрес доставки",
+    "manager": "Менеджер",
+    "notSet": "Не назначен",
     "file": "Файл заказа",
     "status": {
+      "index": "Статус",
       "title": "Изменение статусов",
       "noStatus": "Не указаны"
     },
     "statuses": {
+      "title": "Статус",
       "CREATED": "Создан",
       "APPROVAL": "Принят",
       "APPROVED": "Согласован",
-      "PURCHASING": "Оплачен",
+      "PURCHASING": "В закупке",
+      "PURCHASED": "Оплачен",
       "DELIVERY": "В пути",
+      "EUSTOCK": "На складе в Европе",
+      "RUSTOCK": "На складе в России",
+      "COMPLETED": "Доставлен",
       "CLOSED": "Закрыт"
     },
     "detail": {
       "title": "Детализация заказа #{number}"
+    },
+    "items": {
+      "recountPrices": "Проценить",
+      "changeCoefficient": "Задать коэффициент наценки",
+      "addStatus": "Изменить статус",
+      "uploadXlsx": "Выгрузить в Excel",
+      "uploadOffer": "Выгрузить коммерческое предложение"
     }
   },
   "prices": {
@@ -75,7 +96,22 @@
       "name": "Название",
       "manufacturer": "Производитель",
       "error": "Ошибка"
-    }
+    },
+    "withoutVAT": "без НДС"
+  },
+  "products": {
+    "title": "Поиск продуктов",
+    "vendorCode": "Артикул",
+    "name": "Название",
+    "manufacturer": "Производитель",
+    "attributes": "Атрибуты",
+    "prices": "Цены"
+  },
+  "items": {
+    "changeCoefficient": "Изменение коэффициента наценки",
+    "coefficient": "Коэффициент наценки",
+    "addStatus": "Изменение статуса",
+    "status": "Статус"
   },
   "index": {
     "header": "Запчасти для грузовой техники из Европы",

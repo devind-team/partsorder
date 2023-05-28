@@ -1,7 +1,10 @@
 {
   "title": "Best Trans Parts",
+  "open": "Open",
   "cancel": "Cancel",
   "close": "Close",
+  "create": "Create date",
+  "search": "Search",
   "auth": {
     "title": "Authorization",
     "register": "Registration",
@@ -29,18 +32,76 @@
     "put": "Upload"
   },
   "order": {
-    "new": "Create a new order",
+    "title": "My orders",
     "my": "My orders",
+    "new": "Create a new order",
+    "add": "Add new order",
     "create": "Send an order",
     "address": "Delivery address",
-    "file": "Order file"
+    "manager": "Manager",
+    "notSet": "Not set",
+    "file": "Order file",
+    "status": {
+      "title": "Status Change",
+      "noStatus": "Not specified"
+    },
+    "statuses": {
+      "title": "Status",
+      "CREATED": "Created",
+      "APPROVAL": "Accept",
+      "APPROVED": "Approved",
+      "PURCHASING": "Purchasing",
+      "PURCHASED": "Paid",
+      "DELIVERY": "In transit",
+      "EUSTOCK": "On stock EU",
+      "RUSTOCK": "On stock RU",
+      "COMPLETED": "Delivered",
+      "CLOSED": "Closed"
+    },
+    "detail": {
+      "title": "Order details #{number} ({date})"
+    }
+  },
+  "prices": {
+    "unload": {
+      "title": "Loading prices",
+      "file": "Select a file with prices",
+      "submit": "Upload a file",
+      "result": "Price loading result",
+      "format": "Upload format",
+      "formatInfo": "xlsx files must contain the following fields",
+      "related": "Refers to",
+      "status": "Status",
+      "price": "Price, EURO",
+      "productCreate": "The product is created",
+      "data": "Data",
+      "duration": "Delivery time",
+      "supplierName": "Supplier",
+      "country": "Supplier's country",
+      "site": "Site",
+      "comment": "Comment",
+      "validAt": "Date of the price request",
+      "vendorCode": "Article number",
+      "name": "Title",
+      "manufacturer": "Manufacturer",
+      "error": "Error"
+    },
+    "withoutVAT": "w/o VAT"
+  },
+  "products": {
+    "title": "Product Search",
+    "vendorCode": "Article number",
+    "name": "Title",
+    "manufacturer": "Manufacturer",
+    "attributes": "Attributes",
+    "prices": "Prices"
   },
   "index": {
     "header": "Spare parts for trucks from Europe",
     "title": "Direct deliveries of original spare parts for trucks from Volvo, MAN, DAF, Scania, Mercedes, Iveco and other brands",
     "info": "User registration is temporarily closed. Orders via managers by phone +7(4812)688-555",
     "searchtitle": "Enter the article of the spare part to search",
-    "dosearch": "Search",
-    "article": "Article"
+    "search": "Search",
+    "vendorCode": "Article"
   }
 }

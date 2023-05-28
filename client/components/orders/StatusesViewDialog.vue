@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { useFilters } from '~/composables/filters'
-import { Status } from '~/types/graphql'
+import { Status, User } from '~/types/graphql'
 import UserView from '~/components/common/UserView.vue'
 
 const { dateTimeHM } = useFilters()
 
-const props = withDefaults(defineProps<{ statuses: Status[] }>(), {
+const props = withDefaults(defineProps<{ statuses: Status[] & { user?: User } }>(), {
   statuses: () => [],
 })
 const active = ref(false)

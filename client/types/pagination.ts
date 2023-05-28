@@ -24,4 +24,5 @@ export interface PaginationInterface {
   extendVariables: ComputedRef<PaginationVariablesType>
   recountPage?: () => void
   pageInfo?: Ref<PageInfo>
+  setOptions: (options: { page: number; itemsPerPage: number }) => void
 }

@@ -63,6 +63,9 @@ scalar DateTime
 
 enum Role {
   USER
+  SELLER
+  BUYER
+  LOGIST
   ADMIN
 }
 
@@ -254,6 +257,9 @@ type Item {
   """Количество"""
   quantity: Int!
 
+  """Коэффициент наценки"""
+  coefficient: Float!
+
   """Номер машины"""
   carNo: String
 
@@ -311,7 +317,7 @@ type Price {
   price: Decimal!
 
   """Срок поставки в днях"""
-  duration: String
+  duration: Int
 
   """Название поставщика"""
   supplierName: String!
@@ -535,6 +541,50 @@ type UserLoginType {
   user: User!
 }
 
+type FileCountAggregate {
+  id: Int!
+  name: Int!
+  serverUrl: Int!
+  bucket: Int!
+  key: Int!
+  createdAt: Int!
+  updatedAt: Int!
+  userId: Int!
+  _all: Int!
+}
+
+type FileAvgAggregate {
+  id: Float
+  userId: Float
+}
+
+type FileSumAggregate {
+  id: Int
+  userId: Int
+}
+
+type FileMinAggregate {
+  id: Int
+  name: String
+  serverUrl: String
+  bucket: String
+  key: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  userId: Int
+}
+
+type FileMaxAggregate {
+  id: Int
+  name: String
+  serverUrl: String
+  bucket: String
+  key: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  userId: Int
+}
+
 type OrderCountAggregate {
   id: Int!
   address: Int!
@@ -594,6 +644,82 @@ type OrderConnectionType {
   totalCount: Int!
 }
 
+type DeleteOrderType {
+  """Идентификатор удаленного заказа"""
+  deleteId: Float!
+}
+
+type DeleteOrderItemsType {
+  """Идентификаторы удаленных записей"""
+  deleteIds: [Float!]!
+}
+
+type ItemCountAggregate {
+  id: Int!
+  quantity: Int!
+  coefficient: Int!
+  carNo: Int!
+  routeNo: Int!
+  deliveryType: Int!
+  createdAt: Int!
+  updatedAt: Int!
+  orderId: Int!
+  productId: Int!
+  priceId: Int!
+  userId: Int!
+  _all: Int!
+}
+
+type ItemAvgAggregate {
+  id: Float
+  quantity: Float
+  coefficient: Float
+  orderId: Float
+  productId: Float
+  priceId: Float
+  userId: Float
+}
+
+type ItemSumAggregate {
+  id: Int
+  quantity: Int
+  coefficient: Float
+  orderId: Int
+  productId: Int
+  priceId: Int
+  userId: Int
+}
+
+type ItemMinAggregate {
+  id: Int
+  quantity: Int
+  coefficient: Float
+  carNo: String
+  routeNo: String
+  deliveryType: DeliveryType
+  createdAt: DateTime
+  updatedAt: DateTime
+  orderId: Int
+  productId: Int
+  priceId: Int
+  userId: Int
+}
+
+type ItemMaxAggregate {
+  id: Int
+  quantity: Int
+  coefficient: Float
+  carNo: String
+  routeNo: String
+  deliveryType: DeliveryType
+  createdAt: DateTime
+  updatedAt: DateTime
+  orderId: Int
+  productId: Int
+  priceId: Int
+  userId: Int
+}
+
 type PriceCountAggregate {
   id: Int!
   price: Int!
@@ -612,19 +738,21 @@ type PriceCountAggregate {
 type PriceAvgAggregate {
   id: Float
   price: Decimal
+  duration: Float
   productId: Float
 }
 
 type PriceSumAggregate {
   id: Int
   price: Decimal
+  duration: Int
   productId: Int
 }
 
 type PriceMinAggregate {
   id: Int
   price: Decimal
-  duration: String
+  duration: Int
   supplierName: String
   country: String
   site: String
@@ -638,7 +766,7 @@ type PriceMinAggregate {
 type PriceMaxAggregate {
   id: Int
   price: Decimal
-  duration: String
+  duration: Int
   supplierName: String
   country: String
   site: String
@@ -764,7 +892,7 @@ input PriceWhereInput {
   NOT: [PriceWhereInput!]
   id: IntFilter
   price: DecimalFilter
-  duration: StringNullableFilter
+  duration: IntNullableFilter
   supplierName: StringFilter
   country: StringNullableFilter
   site: StringNullableFilter
@@ -821,38 +949,26 @@ input NestedDecimalFilter {
   not: NestedDecimalFilter
 }
 
-input StringNullableFilter {
-  equals: String
-  in: [String!]
-  notIn: [String!]
-  lt: String
-  lte: String
-  gt: String
-  gte: String
-  contains: String
-  startsWith: String
-  endsWith: String
-  mode: QueryMode
-  not: NestedStringNullableFilter
+input IntNullableFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: NestedIntNullableFilter
 }
 
-enum QueryMode {
-  default
-  insensitive
-}
-
-input NestedStringNullableFilter {
-  equals: String
-  in: [String!]
-  notIn: [String!]
-  lt: String
-  lte: String
-  gt: String
-  gte: String
-  contains: String
-  startsWith: String
-  endsWith: String
-  not: NestedStringNullableFilter
+input NestedIntNullableFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: NestedIntNullableFilter
 }
 
 input StringFilter {
@@ -870,6 +986,11 @@ input StringFilter {
   not: NestedStringFilter
 }
 
+enum QueryMode {
+  default
+  insensitive
+}
+
 input NestedStringFilter {
   equals: String
   in: [String!]
@@ -882,6 +1003,35 @@ input NestedStringFilter {
   startsWith: String
   endsWith: String
   not: NestedStringFilter
+}
+
+input StringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  mode: QueryMode
+  not: NestedStringNullableFilter
+}
+
+input NestedStringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: NestedStringNullableFilter
 }
 
 input DateTimeFilter {
@@ -1014,6 +1164,7 @@ input ItemWhereInput {
   NOT: [ItemWhereInput!]
   id: IntFilter
   quantity: IntFilter
+  coefficient: FloatFilter
   carNo: StringNullableFilter
   routeNo: StringNullableFilter
   deliveryType: EnumDeliveryTypeNullableFilter
@@ -1031,6 +1182,28 @@ input ItemWhereInput {
   commentItem: CommentItemListRelationFilter
 }
 
+input FloatFilter {
+  equals: Float
+  in: [Float!]
+  notIn: [Float!]
+  lt: Float
+  lte: Float
+  gt: Float
+  gte: Float
+  not: NestedFloatFilter
+}
+
+input NestedFloatFilter {
+  equals: Float
+  in: [Float!]
+  notIn: [Float!]
+  lt: Float
+  lte: Float
+  gt: Float
+  gte: Float
+  not: NestedFloatFilter
+}
+
 input EnumDeliveryTypeNullableFilter {
   equals: DeliveryType
   in: [DeliveryType!]
@@ -1043,28 +1216,6 @@ input NestedEnumDeliveryTypeNullableFilter {
   in: [DeliveryType!]
   notIn: [DeliveryType!]
   not: NestedEnumDeliveryTypeNullableFilter
-}
-
-input IntNullableFilter {
-  equals: Int
-  in: [Int!]
-  notIn: [Int!]
-  lt: Int
-  lte: Int
-  gt: Int
-  gte: Int
-  not: NestedIntNullableFilter
-}
-
-input NestedIntNullableFilter {
-  equals: Int
-  in: [Int!]
-  notIn: [Int!]
-  lt: Int
-  lte: Int
-  gt: Int
-  gte: Int
-  not: NestedIntNullableFilter
 }
 
 input OrderRelationFilter {
@@ -1493,9 +1644,63 @@ type Mutation {
   login(userLoginInput: UserLoginInput!): UserLoginType!
   register(userRegisterInput: UserRegisterInput!): UserLoginType
   uploadAvatar(fileUpload: FileUploadInput!): User!
+  addStatusItems(
+    """Идентификатор заказа"""
+    orderId: Int!
+
+    """Идентификаторы позиций"""
+    itemIds: [Int!]!
+
+    """Статус заказа"""
+    status: ItemStatus!
+  ): [Item!]!
+  recountPrices(
+    """Идентификатор заказа"""
+    orderId: Int!
+
+    """Идентификаторы позиций"""
+    itemIds: [Int!]!
+  ): [Item!]!
+  changeCoefficientItems(
+    """Идентификатор заказа"""
+    orderId: Int!
+
+    """Идентификаторы позиций"""
+    itemIds: [Int!]!
+
+    """Коэффициент"""
+    coefficient: Float!
+  ): [Item!]!
+  changeSellingPriceItem(
+    """Идентификатор позиции"""
+    itemId: Int!
+
+    """Цена продажи"""
+    price: Float!
+  ): Item!
+  changeQuantityItem(
+    """Идентификатор позиции"""
+    itemId: Int!
+
+    """Количество позиций"""
+    quantity: Int!
+  ): Item!
+  deleteOrderItems(
+    """Идентификатор заказа"""
+    orderId: Int!
+    where: ItemWhereInput
+  ): DeleteOrderItemsType!
   createPrice(price: CreatePriceInput!): CreatePriceType!
   uploadPrices(fileUpload: FileUploadInput!): CreateUploadPricesType!
   createOrder(order: CreateOrderInput!): CreateOrderType!
+  deleteOrder(
+    """Идентификатор заказа"""
+    orderId: Float!
+  ): DeleteOrderType!
+  unloadOrder(
+    """Идентификатор заказа"""
+    orderId: Int!
+  ): File!
 }
 
 input UserLoginInput {
@@ -1528,7 +1733,7 @@ input FileUploadInput {
 
 input CreatePriceInput {
   price: Decimal!
-  duration: String
+  duration: Int
   supplierName: String!
   country: String
   site: String

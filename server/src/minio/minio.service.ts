@@ -53,13 +53,14 @@ export class MinioService {
   async getFileObject(objectName: string): Promise<ReadableStream> {
     return await this.minioClient.getObject(this.getBucket(), objectName)
   }
+
   /**
    * Загружаем файл в S3
    * @param file
    * @return objectName
    */
   async uploadObject(file): Promise<string> {
-    const [hashedFileName, ext] = this.hashedName(file.filename)
+    const [hashedFileName, ext] = this.hashedName(file.filename || file.fileName)
 
     const objectName = `${hashedFileName}${ext}`
     const metaData = {

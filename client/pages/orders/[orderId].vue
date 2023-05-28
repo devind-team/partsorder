@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { definePageMeta, useHead, useRoute } from '#imports'
+import { definePageMeta, useHead, useRoute, useI18n, useCommonQuery } from '#imports'
+import OrderView from '~/components/orders/OrderView.vue'
 import orderQuery from '~/graphql/orders/queries/order.graphql'
 import { OrderQuery, OrderQueryVariables } from '~/types/graphql'
 
@@ -11,16 +12,17 @@ useHead({
   title: t('order.detail.title', { number: route.params.orderId }),
 })
 
-const { data: order, loading } = useCommonQuery<OrderQuery, OrderQueryVariables>({
+const {
+  data: order,
+  loading,
+  update,
+  changePartialUpdate,
+} = useCommonQuery<OrderQuery, OrderQueryVariables>({
   document: orderQuery,
   variables: { orderId: +route.params.orderId },
 })
 </script>
 <template>
-  <v-container>
-    <v-card :loading="loading">
-      <v-card-title>{{ t('order.detail.title', { number: route.params.orderId }) }}</v-card-title>
-      <v-card-text>{{ order }}</v-card-text>
-    </v-card>
-  </v-container>
+  <v-progress-circular v-if="loading" indeterminate />
+  <order-view v-else :update="update" :change-partial-update="changePartialUpdate" :order="order" />
 </template>

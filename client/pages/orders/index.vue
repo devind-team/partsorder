@@ -22,10 +22,10 @@ const {
 
 const headers = [
   { title: '#', key: 'id', sortable: false },
-  { title: 'Адрес доставки', key: 'address', sortable: false },
-  { title: 'Дата создания', key: 'createdAt', sortable: false },
-  { title: 'Статус', key: 'statuses', sortable: false },
-  { title: 'Менеджер', key: 'manager', sortable: false },
+  { title: t('order.address'), key: 'address', sortable: false },
+  { title: t('create'), key: 'createdAt', sortable: false },
+  { title: t('order.status.index'), key: 'statuses', sortable: false },
+  { title: t('order.manager'), key: 'manager', sortable: false },
 ]
 </script>
 <template>
@@ -40,22 +40,22 @@ const headers = [
       </v-card-actions>
       <v-card-text>
         <v-data-table-server
-          v-model:page="pagination.page.value"
           v-model:items-per-page="pagination.pageSize.value"
-          :items-length="pagination.count.value"
+          :items-length="pagination.totalCount.value"
           :headers="headers"
           :items="orders"
           :loading="loading"
+          @update:options="pagination.setOptions"
         >
-          <template #item.id="{ item }">
+          <template #[`item.id`]="{ item }">
             <nuxt-link :to="localePath({ name: 'orders-orderId', params: { orderId: item.raw.id } })">
               {{ item.raw.id }}
             </nuxt-link>
           </template>
-          <template #item.createdAt="{ item }">
+          <template #[`item.createdAt`]="{ item }">
             {{ dateTimeHM(item.raw.createdAt) }}
           </template>
-          <template #item.statuses="{ item }">
+          <template #[`item.statuses`]="{ item }">
             <statuses-view-dialog v-if="item.raw.statuses.length" v-slot="{ props }" :statuses="item.raw.statuses">
               <v-chip v-bind="props" size="small">
                 {{ $t(`order.statuses.${item.raw.statuses[item.raw.statuses.length - 1].status}`) }}
@@ -63,9 +63,9 @@ const headers = [
             </statuses-view-dialog>
             <template v-else>{{ $t('order.status.noStatus') }}</template>
           </template>
-          <template #item.manager="{ item }">
+          <template #[`item.manager`]="{ item }">
             <user-view v-if="item.raw.manager" :user="item.raw.manager" />
-            <div v-else>Не назначен</div>
+            <div v-else>{{ $t('order.notSet') }}</div>
           </template>
         </v-data-table-server>
       </v-card-text>

@@ -107,6 +107,9 @@ model User {
 
 enum Role {
   USER
+  SELLER
+  BUYER
+  LOGIST
   ADMIN
 }
 
@@ -195,7 +198,7 @@ model Price {
   /// Цена за единицу/штуку
   price    Decimal @db.Decimal(9, 2)
   /// Срок поставки в днях
-  duration String?
+  duration Int?    @default(30)
 
   /// Название поставщика
   /// @Validator.MinLength(2)
@@ -346,6 +349,8 @@ model Item {
   id           Int           @id @default(autoincrement())
   /// Количество
   quantity     Int           @default(1)
+  /// Коэффициент наценки
+  coefficient  Float         @default(2)
   /// Номер машины
   carNo        String?       @map("car_no") @db.VarChar(50)
   /// Номер рейса
