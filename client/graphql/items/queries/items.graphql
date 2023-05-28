@@ -6,15 +6,9 @@
 #import "../fragments/comment-item-fields.graphql"
 #import "../fragments/item-fields.graphql"
 
-query Items($filter: [ItemStatus!], $search: String, $first: Int, $after: String, $skip: Int) {
+query Items($where: ItemWhereInput!, $first: Int, $after: String, $skip: Int) {
   items(
-    where: {
-      statuses: { some: { status: { in: $filter } } }
-      OR: [
-        { product: { is: { vendorCode: { contains: $search } } } }
-        { product: { is: { manufacturer: { contains: $search } } } }
-      ]
-    }
+    where:$where
     first: $first
     after: $after
     skip: $skip

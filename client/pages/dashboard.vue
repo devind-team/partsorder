@@ -11,6 +11,7 @@ const cards: Record<string, string>[] = [
   { key: 'products', title: t('products.title'), to: 'products', icon: 'mdi-train-car-autorack' },
   { key: 'orders', title: t('order.title'), to: 'orders', icon: 'mdi-basket' },
   { key: 'items-pending', title: t('items.pending.title'), to: 'items-pending', icon: 'mdi-archive-lock-open-outline' },
+  { key: 'items-pricing', title: t('items.pricing.title'), to: 'items-pricing', icon: 'mdi-currency-eur' },
 ]
 </script>
 <template>
