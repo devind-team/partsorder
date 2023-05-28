@@ -34,6 +34,9 @@
     "media": "Выберете файл",
     "put": "Загрузить"
   },
+  "dashboard": {
+    "title": "Панель управления"
+  },
   "order": {
     "title": "Мои заказы",
     "my": "Мои заказы",
@@ -107,12 +110,6 @@
     "attributes": "Атрибуты",
     "prices": "Цены"
   },
-  "items": {
-    "changeCoefficient": "Изменение коэффициента наценки",
-    "coefficient": "Коэффициент наценки",
-    "addStatus": "Изменение статуса",
-    "status": "Статус"
-  },
   "index": {
     "header": "Запчасти для грузовой техники из Европы",
     "title": "Прямые поставки оригинальных запчастей для грузовой техники Volvo, MAN, DAF, Scania, Mercedes, Iveco и других марок",
@@ -122,6 +119,10 @@
     "vendorCode": "Артикул или название"
   },
   "items": {
+    "changeCoefficient": "Изменение коэффициента наценки",
+    "coefficient": "Коэффициент наценки",
+    "addStatus": "Изменение статуса",
+    "status": "Статус",
     "filterStatus": {
       "noFiltrationMessage": "Фильтр товаров по статусам",
       "filtrationMessage": "Фильтрация по статусу: {status}",

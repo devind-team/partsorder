@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { useHead } from '#imports'
+import { useHead, useI18n } from '#imports'
+const { t } = useI18n()
 
-useHead({ titleTemplate: '%s | Template for Nuxt/Nest' })
+useHead({ titleTemplate: `%s | ${t('title')}` })
 </script>
 <template>
   <NuxtLayout>

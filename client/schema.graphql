@@ -258,7 +258,7 @@ type Item {
   quantity: Int!
 
   """Коэффициент наценки"""
-  coefficient: Int!
+  coefficient: Float!
 
   """Номер машины"""
   carNo: String
@@ -317,7 +317,7 @@ type Price {
   price: Decimal!
 
   """Срок поставки в днях"""
-  duration: String
+  duration: Int
 
   """Название поставщика"""
   supplierName: String!
@@ -649,6 +649,11 @@ type DeleteOrderType {
   deleteId: Float!
 }
 
+type DeleteOrderItemsType {
+  """Идентификаторы удаленных записей"""
+  deleteIds: [Float!]!
+}
+
 type ItemCountAggregate {
   id: Int!
   quantity: Int!
@@ -678,7 +683,7 @@ type ItemAvgAggregate {
 type ItemSumAggregate {
   id: Int
   quantity: Int
-  coefficient: Int
+  coefficient: Float
   orderId: Int
   productId: Int
   priceId: Int
@@ -688,7 +693,7 @@ type ItemSumAggregate {
 type ItemMinAggregate {
   id: Int
   quantity: Int
-  coefficient: Int
+  coefficient: Float
   carNo: String
   routeNo: String
   deliveryType: DeliveryType
@@ -703,7 +708,7 @@ type ItemMinAggregate {
 type ItemMaxAggregate {
   id: Int
   quantity: Int
-  coefficient: Int
+  coefficient: Float
   carNo: String
   routeNo: String
   deliveryType: DeliveryType
@@ -713,11 +718,6 @@ type ItemMaxAggregate {
   productId: Int
   priceId: Int
   userId: Int
-}
-
-type DeleteOrderItemsType {
-  """Идентификаторы удаленных записей"""
-  deleteIds: [Float!]!
 }
 
 type ItemEdge {
@@ -749,19 +749,21 @@ type PriceCountAggregate {
 type PriceAvgAggregate {
   id: Float
   price: Decimal
+  duration: Float
   productId: Float
 }
 
 type PriceSumAggregate {
   id: Int
   price: Decimal
+  duration: Int
   productId: Int
 }
 
 type PriceMinAggregate {
   id: Int
   price: Decimal
-  duration: String
+  duration: Int
   supplierName: String
   country: String
   site: String
@@ -775,7 +777,7 @@ type PriceMinAggregate {
 type PriceMaxAggregate {
   id: Int
   price: Decimal
-  duration: String
+  duration: Int
   supplierName: String
   country: String
   site: String
@@ -902,7 +904,7 @@ input ItemWhereInput {
   NOT: [ItemWhereInput!]
   id: IntFilter
   quantity: IntFilter
-  coefficient: IntFilter
+  coefficient: FloatFilter
   carNo: StringNullableFilter
   routeNo: StringNullableFilter
   deliveryType: EnumDeliveryTypeNullableFilter
@@ -940,6 +942,28 @@ input NestedIntFilter {
   gt: Int
   gte: Int
   not: NestedIntFilter
+}
+
+input FloatFilter {
+  equals: Float
+  in: [Float!]
+  notIn: [Float!]
+  lt: Float
+  lte: Float
+  gt: Float
+  gte: Float
+  not: NestedFloatFilter
+}
+
+input NestedFloatFilter {
+  equals: Float
+  in: [Float!]
+  notIn: [Float!]
+  lt: Float
+  lte: Float
+  gt: Float
+  gte: Float
+  not: NestedFloatFilter
 }
 
 input StringNullableFilter {
@@ -1246,7 +1270,7 @@ input PriceWhereInput {
   NOT: [PriceWhereInput!]
   id: IntFilter
   price: DecimalFilter
-  duration: StringNullableFilter
+  duration: IntNullableFilter
   supplierName: StringFilter
   country: StringNullableFilter
   site: StringNullableFilter
@@ -1672,7 +1696,7 @@ type Mutation {
   login(userLoginInput: UserLoginInput!): UserLoginType!
   register(userRegisterInput: UserRegisterInput!): UserLoginType
   uploadAvatar(fileUpload: FileUploadInput!): User!
-  addStatuses(
+  addStatusItems(
     """Идентификатор заказа"""
     orderId: Int!
 
@@ -1699,6 +1723,20 @@ type Mutation {
     """Коэффициент"""
     coefficient: Float!
   ): [Item!]!
+  changeSellingPriceItem(
+    """Идентификатор позиции"""
+    itemId: Int!
+
+    """Цена продажи"""
+    price: Float!
+  ): Item!
+  changeQuantityItem(
+    """Идентификатор позиции"""
+    itemId: Int!
+
+    """Количество позиций"""
+    quantity: Int!
+  ): Item!
   deleteOrderItems(
     """Идентификатор заказа"""
     orderId: Int!
@@ -1747,7 +1785,7 @@ input FileUploadInput {
 
 input CreatePriceInput {
   price: Decimal!
-  duration: String
+  duration: Int
   supplierName: String!
   country: String
   site: String

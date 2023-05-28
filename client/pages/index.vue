@@ -1,26 +1,89 @@
 <script setup lang="ts">
-import { useHead, useI18n, useLocalePath } from '#imports'
+import { useFilters, useHead, useI18n } from '#imports'
+import productsQuery from '~/graphql/products/queries/products.graphql'
+import { ProductsQuery, ProductsQueryVariables } from '~/types/graphql'
 
-const localePath = useLocalePath()
 const { t } = useI18n()
-useHead({
-  title: t('title'),
-})
+const { date, money } = useFilters()
+useHead({ title: t('products.title') })
 
-const cards: Record<string, string>[] = [
-  { key: 'products', title: 'Поиск продуктов', to: 'products', icon: 'mdi-train-car-autorack' },
-  { key: 'orders', title: 'Мои заказы', to: 'orders', icon: 'mdi-basket' },
+const search = ref<string>('')
+
+const {
+  data: products,
+  loading,
+  pagination,
+} = useQueryRelay<ProductsQuery, ProductsQueryVariables>({
+  document: productsQuery,
+  variables: () => ({
+    search: search.value,
+  }),
+  options: {
+    debounce: 250,
+  },
+})
+const headers = [
+  { title: '#', key: 'id', sortable: false },
+  ...['vendorCode', 'name', 'manufacturer'].map((key) => ({
+    title: t(`products.${key}`),
+    key,
+    sortable: false,
+  })),
 ]
 </script>
 <template>
   <v-container>
     <v-row>
-      <v-col v-for="card in cards" :key="card.key" :cols="12 / cards.length">
-        <v-card :to="localePath({ name: card.to })">
-          <v-card-text class="text-center">
-            <v-icon :icon="card.icon" size="100px" />
-          </v-card-text>
-          <v-card-title>{{ card.title }}</v-card-title>
+      <v-col>
+        <v-text-field
+          v-model="search"
+          :label="$t('index.vendorCode')"
+          :loading="loading"
+          append-inner-icon="mdi-magnify"
+          density="compact"
+          hide-details
+          single-line
+        />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-card>
+          <v-data-table-server
+            v-model:items-per-page="pagination.pageSize.value"
+            v-model:page="pagination.page.value"
+            :headers="headers"
+            :loading="loading"
+            :items="products"
+            :items-length="pagination.totalCount.value"
+            show-expand
+            density="compact"
+          >
+            <template #expanded-row="{ columns, item }">
+              <tr>
+                <td :colspan="columns.length">
+                  <v-row>
+                    <v-col>
+                      <v-list density="compact">
+                        <v-list-subheader>{{ $t('products.prices') }}</v-list-subheader>
+                        <v-list-item
+                          v-for="price in item.raw.prices"
+                          :key="price.id"
+                          :title="`&euro;${money(price.price * 2)} ${$t('prices.withoutVAT')}`"
+                          :subtitle="`${price.supplierName} - ${date(price.createdAt)}`"
+                        />
+                      </v-list>
+                    </v-col>
+                    <v-col>
+                      <v-list>
+                        <v-list-subheader>{{ $t('products.attributes') }}</v-list-subheader>
+                      </v-list>
+                    </v-col>
+                  </v-row>
+                </td>
+              </tr>
+            </template>
+          </v-data-table-server>
         </v-card>
       </v-col>
     </v-row>
