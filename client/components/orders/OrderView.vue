@@ -7,8 +7,6 @@ import { useFilters, useI18n } from '#imports'
 import { useAuthStore } from '~/stores'
 import { ChangePartialUpdate, UpdateType } from '~/composables/query-common'
 import { DataTableHeader } from '~/types/vuetify'
-import StatusesViewDialog from '~/components/orders/StatusesViewDialog.vue'
-import OrderItemsMenu from '~/components/orders/OrderItemsMenu.vue'
 import {
   ChangeQuantityItemMutation,
   ChangeQuantityItemMutationVariables,
@@ -18,6 +16,8 @@ import {
   OrderQuery,
   Price,
 } from '~/types/graphql'
+import StatusesViewDialog from '~/components/orders/StatusesViewDialog.vue'
+import OrderItemsMenu from '~/components/orders/OrderItemsMenu.vue'
 import changeQuantityItemMutation from '~/graphql/items/mutations/change-quantity-item.graphql'
 import changeSellingPriceItemMutation from '~/graphql/items/mutations/change-selling-price-item.graphql'
 
