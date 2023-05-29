@@ -210,6 +210,8 @@ model Price {
   site         String? @db.VarChar(128)
   /// Комментарий
   comment      String?
+  /// Комментарий
+  relevant     Boolean? @default(true)
 
   /// Дата создания
   createdAt DateTime  @default(now()) @map("created_at")
@@ -224,6 +226,7 @@ model Price {
   item      Item[]
 
   @@map("prices")
+  @@unique([price, duration, supplierName, validAt])
 }
 
 /// Модель атрибутов товара
