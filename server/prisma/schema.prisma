@@ -156,23 +156,37 @@ model File {
 /// Список доступных товаров
 model Product {
   /// Идентификатор товара
-  id           Int     @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   /// Артикул
   /// @Validator.MinLength(3)
   /// @Validator.MaxLength(30)
-  vendorCode   String  @unique @map("verndor_code") @db.VarChar(128)
-  /// Название
+  vendorCode   String   @unique @map("verndor_code") @db.VarChar(128)
+  /// Название на английском
   /// @Validator.MinLength(2)
   /// @Validator.MaxLength(30)
-  name         String? @db.VarChar(256)
+  name_en      String?  @db.VarChar(256)
+  /// Название на русском
+  /// @Validator.MinLength(2)
+  /// @Validator.MaxLength(30)
+  name_ru      String?  @db.VarChar(256)
+  /// Название на польском
+  /// @Validator.MinLength(2)
+  /// @Validator.MaxLength(30)
+  name_pl      String?  @db.VarChar(256)
   /// Производитель
-  manufacturer String? @map("manufacturer") @db.VarChar(256)
+  manufacturer String?  @map("manufacturer") @db.VarChar(256)
   /// Псевдонимы через запятую
-  aliases      String? @db.VarChar(500)
+  aliases      String?  @db.VarChar(500)
   /// Оригинальность товара
-  original     Boolean @default(true)
+  original     Boolean  @default(true)
   /// Товаров на складе
-  stock        Int     @default(0)
+  stock        Int      @default(0)
+  /// Вес нетто
+  netto        Decimal? @db.Decimal(9, 2)
+  /// Вес брутто
+  brutto       Decimal? @db.Decimal(9, 2)
+  /// Код ТН ВЭД
+  tnved        String?  @db.VarChar(50)
 
   /// Дата создания продукта
   createdAt DateTime @default(now()) @map("created_at")
@@ -197,8 +211,8 @@ model Price {
   id       Int     @id @default(autoincrement())
   /// Цена за единицу/штуку
   price    Decimal @db.Decimal(9, 2)
-  /// Срок поставки в днях
-  duration Int?    @default(30)
+  /// Срок поставки в днях до склада в Европе
+  duration Int?    @default(0)
 
   /// Название поставщика
   /// @Validator.MinLength(2)
