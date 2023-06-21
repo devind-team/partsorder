@@ -240,7 +240,6 @@ model Price {
   item      Item[]
 
   @@map("prices")
-  @@unique([price, duration, supplierName, validAt])
 }
 
 /// Модель атрибутов товара
