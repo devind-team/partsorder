@@ -50,8 +50,8 @@ dependencies:
     specifier: ^2.1.3
     version: 2.1.3(typescript@5.0.4)(vue@3.3.4)
   vee-validate:
-    specifier: ^4.9.5
-    version: 4.9.5(vue@3.3.4)
+    specifier: ^4.10.0
+    version: 4.10.0(vue@3.3.4)
   vuetify:
     specifier: ^3.3.1
     version: 3.3.1(typescript@5.0.4)(vite-plugin-vuetify@1.0.2)(vue@3.3.4)
@@ -1825,6 +1825,11 @@ packages:
   /@intlify/shared@9.3.0-beta.17:
     resolution: {integrity: sha512-mscf7RQsUTOil35jTij4KGW1RC9SWQjYScwLxP53Ns6g24iEd5HN7ksbt9O6FvTmlQuX77u+MXpBdfJsGqizLQ==}
     engines: {node: '>= 14'}
+    dev: false
+
+  /@intlify/shared@9.3.0-beta.19:
+    resolution: {integrity: sha512-+lhQggrLvlQ/O5OmIYAc9gadcYXMoaDi0Doef+X/f6TLZFr9PTMjOpBWmpwNNHi026e54jckntUn6GzqDtIN4w==}
+    engines: {node: '>= 16'}
     dev: false
 
   /@intlify/unplugin-vue-i18n@0.10.1(vue-i18n@9.3.0-beta.17):
@@ -10214,8 +10219,8 @@ packages:
     engines: {node: '>=12.20'}
     dev: false
 
-  /type-fest@3.11.0:
-    resolution: {integrity: sha512-JaPw5U9ixP0XcpUbQoVSbxSDcK/K4nww20C3kjm9yE6cDRRhptU28AH60VWf9ltXmCrIfIbtt9J+2OUk2Uqiaw==}
+  /type-fest@3.12.0:
+    resolution: {integrity: sha512-qj9wWsnFvVEMUDbESiilKeXeHL7FwwiFcogfhfyjmvT968RXSvnl23f1JOClTHYItsi7o501C/7qVllscUP3oA==}
     engines: {node: '>=14.16'}
     dev: false
 
@@ -10553,13 +10558,13 @@ packages:
     engines: {node: '>= 0.8'}
     dev: false
 
-  /vee-validate@4.9.5(vue@3.3.4):
-    resolution: {integrity: sha512-BVhGHjD6lWdEltDg08+wN/oTtSEDJcpwpgb5IJVvTmzEU0Dunn3j/JwVfbM+WSLCj4SMxnfar59qLnDLyZpQWg==}
+  /vee-validate@4.10.0(vue@3.3.4):
+    resolution: {integrity: sha512-1bZIMLTqMtO4SLxjlB+ePpC+/TQhQyeZ2RLPFOjDYkU3j47CpWEOVYfeS+mbG5q+LRVkZZlpUF7c0h313LarMQ==}
     peerDependencies:
-      vue: ^3.3.0
+      vue: ^3.3.4
     dependencies:
       '@vue/devtools-api': 6.5.0
-      type-fest: 3.11.0
+      type-fest: 3.12.0
       vue: 3.3.4
     dev: false
 
@@ -10856,7 +10861,7 @@ packages:
       vue-router:
         optional: true
     dependencies:
-      '@intlify/shared': 9.3.0-beta.17
+      '@intlify/shared': 9.3.0-beta.19
       '@intlify/vue-i18n-bridge': 0.8.0(vue-i18n@9.3.0-beta.17)
       '@intlify/vue-router-bridge': 0.8.0(vue@3.3.4)
       ufo: 1.1.2
