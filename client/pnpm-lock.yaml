@@ -32,8 +32,8 @@ dependencies:
     specifier: ^0.5.9
     version: 0.5.9(tailwindcss@3.3.2)
   '@vee-validate/i18n':
-    specifier: ^4.9.5
-    version: 4.9.5
+    specifier: ^4.10.0
+    version: 4.10.0
   '@vueuse/core':
     specifier: ^10.1.2
     version: 10.1.2(vue@3.3.4)
@@ -1827,6 +1827,11 @@ packages:
     engines: {node: '>= 14'}
     dev: false
 
+  /@intlify/shared@9.3.0-beta.19:
+    resolution: {integrity: sha512-+lhQggrLvlQ/O5OmIYAc9gadcYXMoaDi0Doef+X/f6TLZFr9PTMjOpBWmpwNNHi026e54jckntUn6GzqDtIN4w==}
+    engines: {node: '>= 16'}
+    dev: false
+
   /@intlify/unplugin-vue-i18n@0.10.1(vue-i18n@9.3.0-beta.17):
     resolution: {integrity: sha512-9ZzE0ddlDO06Xzg25JPiNbx6PJPDho5k/Np+uL9fJRZEKq2TxT3c+ZK+Pec6j0ybhhVXeda8/yE3tPUf4SOXZQ==}
     engines: {node: '>= 14.16'}
@@ -3190,8 +3195,8 @@ packages:
       vue: 3.3.4
     dev: false
 
-  /@vee-validate/i18n@4.9.5:
-    resolution: {integrity: sha512-aV1vWOKH2NPOQEvwFWKJxQPN3I1X80H4I4la9x8+gI0hrDEzrCZzwQ9Rr5z4jDrddvM1RDX36Q9jcdrRMiev2Q==}
+  /@vee-validate/i18n@4.10.0:
+    resolution: {integrity: sha512-XLAjhWQveyYaDXHN5JJeHbze/ob2D87S86BoTzwNr/kXs/VMmBPP+0g9bW5YvDMUotpHvInX8reorXvoh4WtuQ==}
     dev: false
 
   /@vercel/nft@0.22.6:
@@ -10856,7 +10861,7 @@ packages:
       vue-router:
         optional: true
     dependencies:
-      '@intlify/shared': 9.3.0-beta.17
+      '@intlify/shared': 9.3.0-beta.19
       '@intlify/vue-i18n-bridge': 0.8.0(vue-i18n@9.3.0-beta.17)
       '@intlify/vue-router-bridge': 0.8.0(vue@3.3.4)
       ufo: 1.1.2
