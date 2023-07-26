@@ -21,7 +21,7 @@
   "devDependencies": {
     "@types/accounting": "^0.4.2",
     "@graphql-codegen/add": "^5.0.0",
-    "@graphql-codegen/cli": "^4.0.0",
+    "@graphql-codegen/cli": "^5.0.0",
     "@graphql-codegen/introspection": "^4.0.0",
     "@graphql-codegen/schema-ast": "^4.0.0",
     "@graphql-codegen/typescript": "^4.0.0",
